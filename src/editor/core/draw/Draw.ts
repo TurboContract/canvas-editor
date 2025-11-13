@@ -89,7 +89,7 @@ import { IMargin } from '../../interface/Margin';
 import { BlockParticle } from './particle/block/BlockParticle';
 import { EDITOR_COMPONENT, EDITOR_PREFIX } from '../../dataset/constant/Editor';
 import { I18n } from '../i18n/I18n';
-import { Parser } from 'expr-eval';
+import { Parser } from 'expr-eval-fork';
 import { ImageObserver } from '../observer/ImageObserver';
 import { Zone } from '../zone/Zone';
 import { Footer } from './frame/Footer';
