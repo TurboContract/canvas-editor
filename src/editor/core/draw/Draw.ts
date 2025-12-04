@@ -89,7 +89,7 @@ import { IMargin } from '../../interface/Margin';
 import { BlockParticle } from './particle/block/BlockParticle';
 import { EDITOR_COMPONENT, EDITOR_PREFIX } from '../../dataset/constant/Editor';
 import { I18n } from '../i18n/I18n';
-import { Parser } from 'expr-eval-fork';
+import { evaluate } from 'mathjs';
 import { ImageObserver } from '../observer/ImageObserver';
 import { Zone } from '../zone/Zone';
 import { Footer } from './frame/Footer';
@@ -3418,17 +3418,16 @@ export class Draw {
             const trIndex = parseInt(row, 10);
             return getCellValue(tdIndex, trIndex);
         });
-        const parser = new Parser();
         let result;
         try {
-            result = parser.evaluate(formula);
+            result = evaluate(formula);
         } catch (error) {
             result = '#ERROR';
         }
         const resultElements: IElement[] = result
             .toString()
             .split('')
-            .map((el) => {
+            .map((el: any) => {
                 return {
                     value: el,
                     tdId: elementList[0].tdId,
