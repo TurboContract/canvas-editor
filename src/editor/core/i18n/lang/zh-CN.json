@@ -46,16 +46,18 @@
       "border": "表格边框",
       "borderAll": "所有框线",
       "borderEmpty": "无框线",
-      "borderDash": "虚框线",
       "borderExternal": "外侧框线",
-      "borderInternal": "内侧框线",
       "borderTd": "单元格边框",
       "borderTdTop": "上边框",
       "borderTdRight": "右边框",
       "borderTdBottom": "下边框",
       "borderTdLeft": "左边框",
       "borderTdForward": "正斜线",
-      "borderTdBack": "反斜线"
+      "borderTdBack": "反斜线",
+      "cell": "cell",
+      "insertFormulaInCell": "insertFormulaInCell",
+      "editFormulaInCell": "edit formula",
+      "deleteFormulaInCell": "delete formula"
     }
   },
   "datePicker": {

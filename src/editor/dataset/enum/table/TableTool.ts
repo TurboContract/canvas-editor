@@ -1,4 +1,4 @@
 export enum TableOrder {
-  ROW = 'row',
-  COL = 'col'
+    ROW = 'row',
+    COL = 'col',
 }

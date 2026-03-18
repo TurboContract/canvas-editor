@@ -1,6 +1,6 @@
 export enum MoveDirection {
-  UP = 'top',
-  DOWN = 'down',
-  LEFT = 'left',
-  RIGHT = 'right'
+    UP = 'top',
+    DOWN = 'down',
+    LEFT = 'left',
+    RIGHT = 'right',
 }

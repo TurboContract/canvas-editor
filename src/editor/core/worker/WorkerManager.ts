@@ -1,68 +1,79 @@
-import { Draw } from '../draw/Draw'
-import WordCountWorker from './works/wordCount?worker&inline'
-import CatalogWorker from './works/catalog?worker&inline'
-import GroupWorker from './works/group?worker&inline'
-import { ICatalog } from '../../interface/Catalog'
+import { Draw } from '../draw/Draw';
+import WordCountWorker from './works/wordCount.worker?worker&inline';
+import CatalogWorker from './works/catalog.worker?worker&inline';
+import GroupWorker from './works/group.worker?worker&inline';
+import { ICatalog } from '../../interface/Catalog';
 
 export class WorkerManager {
-  private draw: Draw
-  private wordCountWorker: Worker
-  private catalogWorker: Worker
-  private groupWorker: Worker
+    private draw: Draw;
+    private wordCountWorker: Worker;
+    private catalogWorker: Worker;
+    private groupWorker: Worker;
 
-  constructor(draw: Draw) {
-    this.draw = draw
-    this.wordCountWorker = new WordCountWorker()
-    this.catalogWorker = new CatalogWorker()
-    this.groupWorker = new GroupWorker()
-  }
+    constructor(draw: Draw) {
+        this.draw = draw;
+        this.wordCountWorker = new WordCountWorker() as Worker;
+        this.catalogWorker = new CatalogWorker() as Worker;
+        this.groupWorker = new GroupWorker() as Worker;
+    }
 
-  public getWordCount(): Promise<number> {
-    return new Promise((resolve, reject) => {
-      this.wordCountWorker.onmessage = evt => {
-        resolve(evt.data)
-      }
+    public getWordCount(): Promise<number> {
+        return new Promise((resolve, reject) => {
+            this.wordCountWorker.onmessage = (evt) => {
+                resolve(evt.data);
+            };
 
-      this.wordCountWorker.onerror = evt => {
-        reject(evt)
-      }
+            this.wordCountWorker.onerror = (evt) => {
+                reject(evt);
+            };
 
-      const elementList = this.draw.getOriginalMainElementList()
-      this.wordCountWorker.postMessage(elementList)
-    })
-  }
+            const elementList = this.draw.getOriginalMainElementList();
 
-  public getCatalog(): Promise<ICatalog | null> {
-    return new Promise((resolve, reject) => {
-      this.catalogWorker.onmessage = evt => {
-        resolve(evt.data)
-      }
+            if (!Array.isArray(elementList)) {
+                console.error('elementList is not an array:', elementList);
+                return;
+            }
+            this.wordCountWorker.postMessage(elementList);
+        });
+    }
 
-      this.catalogWorker.onerror = evt => {
-        reject(evt)
-      }
+    public getCatalog(): Promise<ICatalog | null> {
+        return new Promise((resolve, reject) => {
+            this.catalogWorker.onmessage = (evt) => {
+                resolve(evt.data);
+            };
 
-      const elementList = this.draw.getOriginalMainElementList()
-      const positionList = this.draw.getPosition().getOriginalMainPositionList()
-      this.catalogWorker.postMessage({
-        elementList,
-        positionList
-      })
-    })
-  }
+            this.catalogWorker.onerror = (evt) => {
+                reject(evt);
+            };
 
-  public getGroupIds(): Promise<string[]> {
-    return new Promise((resolve, reject) => {
-      this.groupWorker.onmessage = evt => {
-        resolve(evt.data)
-      }
+            const elementList = this.draw.getOriginalMainElementList();
 
-      this.groupWorker.onerror = evt => {
-        reject(evt)
-      }
+            if (!Array.isArray(elementList)) {
+                console.error('elementList is not an array:', elementList);
+                return;
+            }
+            this.catalogWorker.postMessage(elementList);
+        });
+    }
 
-      const elementList = this.draw.getOriginalMainElementList()
-      this.groupWorker.postMessage(elementList)
-    })
-  }
+    public getGroupIds(): Promise<string[]> {
+        return new Promise((resolve, reject) => {
+            this.groupWorker.onmessage = (evt) => {
+                resolve(evt.data);
+            };
+
+            this.groupWorker.onerror = (evt) => {
+                reject(evt);
+            };
+
+            const elementList = this.draw.getOriginalMainElementList();
+
+            if (!Array.isArray(elementList)) {
+                console.error('elementList is not an array:', elementList);
+                return;
+            }
+            this.groupWorker.postMessage(elementList);
+        });
+    }
 }

@@ -1,4 +1,4 @@
 export enum LineNumberType {
-  PAGE = 'page',
-  CONTINUITY = 'continuity'
+    PAGE = 'page',
+    CONTINUITY = 'continuity',
 }

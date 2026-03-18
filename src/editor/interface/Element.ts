@@ -1,206 +1,215 @@
-import { ImageDisplay } from '../dataset/enum/Common'
-import { ControlComponent } from '../dataset/enum/Control'
-import { ElementType } from '../dataset/enum/Element'
-import { ListStyle, ListType } from '../dataset/enum/List'
-import { RowFlex } from '../dataset/enum/Row'
-import { TitleLevel } from '../dataset/enum/Title'
-import { TableBorder } from '../dataset/enum/table/Table'
-import { IArea } from './Area'
-import { IBlock } from './Block'
-import { ICheckbox } from './Checkbox'
-import { IControl } from './Control'
-import { IRadio } from './Radio'
-import { ITextDecoration } from './Text'
-import { ITitle } from './Title'
-import { IColgroup } from './table/Colgroup'
-import { ITr } from './table/Tr'
+import { ImageDisplay } from '../dataset/enum/Common';
+import { ControlComponent } from '../dataset/enum/Control';
+import { ElementType } from '../dataset/enum/Element';
+import { ListStyle, ListType } from '../dataset/enum/List';
+import { RowFlex } from '../dataset/enum/Row';
+import { TitleLevel } from '../dataset/enum/Title';
+import { TableBorder } from '../dataset/enum/table/Table';
+import { IBlock } from './Block';
+import { ICheckbox } from './Checkbox';
+import { IControl } from './Control';
+import { IRadio } from './Radio';
+import { ITextDecoration } from './Text';
+import { ITitle } from './Title';
+import { IColgroup } from './table/Colgroup';
+import { ITr } from './table/Tr';
 
 export interface IElementBasic {
-  id?: string
-  type?: ElementType
-  value: string
-  extension?: unknown
-  externalId?: string
+    id?: string;
+    type?: ElementType;
+    value: string;
+    extension?: unknown;
+    externalId?: string;
 }
 
 export interface IElementStyle {
-  font?: string
-  size?: number
-  width?: number
-  height?: number
-  bold?: boolean
-  color?: string
-  highlight?: string
-  italic?: boolean
-  underline?: boolean
-  strikeout?: boolean
-  rowFlex?: RowFlex
-  rowMargin?: number
-  letterSpacing?: number
-  textDecoration?: ITextDecoration
+    font?: string;
+    size?: number;
+    metrics?: IElementMetrics;
+    width?: number;
+    height?: number;
+    bold?: boolean;
+    color?: string;
+    highlight?: string;
+    italic?: boolean;
+    underline?: boolean;
+    strikeout?: boolean;
+    rowFlex?: RowFlex;
+    rowMargin?: number;
+    letterSpacing?: number;
+    textDecoration?: ITextDecoration;
 }
 
 export interface IElementGroup {
-  groupIds?: string[]
+    groupIds?: string[];
+}
+
+export interface IParagraph {
+    id?: string | undefined;
+    v?: string[]; // ID вариативностей
+    r?: IElement[]; // Элементы (runs) внутри параграфа
+    size?: number;
+    bold?: boolean;
+    spacing?: {
+        before?: number;
+        after?: number;
+        firstLine?: number; //для первой строки
+    };
+    rowFlex?: RowFlex; // Дополнительные стили параграфа
+}
+
+export interface IPlaceholder {
+    isPlaceholder?: boolean;
+    isDisabled?: boolean;
+}
+
+export interface IFootnote {
+    isFootnote?: boolean;
+}
+
+// Элемент параграфа
+export interface IParagraphElement {
+    r: IElement[];
 }
 
 export interface ITitleElement {
-  valueList?: IElement[]
-  level?: TitleLevel
-  titleId?: string
-  title?: ITitle
+    valueList?: IElement[];
+    level?: TitleLevel;
+    titleId?: string;
+    title?: ITitle;
 }
 
 export interface IListElement {
-  valueList?: IElement[]
-  listType?: ListType
-  listStyle?: ListStyle
-  listId?: string
-  listWrap?: boolean
+    valueList?: IElement[];
+    listType?: ListType;
+    listStyle?: ListStyle;
+    listId?: string;
+    listWrap?: boolean;
+    listLevel?: number;
 }
 
 export interface ITableAttr {
-  colgroup?: IColgroup[]
-  trList?: ITr[]
-  borderType?: TableBorder
-  borderColor?: string
-}
-
-export interface ITableRule {
-  tableToolDisabled?: boolean
+    colgroup?: IColgroup[];
+    trList?: ITr[];
+    borderType?: TableBorder;
 }
 
 export interface ITableElement {
-  tdId?: string
-  trId?: string
-  tableId?: string
-  conceptId?: string
-  pagingId?: string // 用于区分拆分的表格同属一个源表格
-  pagingIndex?: number // 拆分的表格索引
+    tdId?: string;
+    trId?: string;
+    tableId?: string;
+    conceptId?: string;
+    pagingId?: string; // 用于区分拆分的表格同属一个源表格
+    pagingIndex?: number; // 拆分的表格索引
 }
 
-export type ITable = ITableAttr & ITableRule & ITableElement
+export type ITable = ITableAttr & ITableElement;
 
 export interface IHyperlinkElement {
-  valueList?: IElement[]
-  url?: string
-  hyperlinkId?: string
+    valueList?: IElement[];
+    url?: string;
+    hyperlinkId?: string;
 }
 
 export interface ISuperscriptSubscript {
-  actualSize?: number
+    actualSize?: number;
 }
 
 export interface ISeparator {
-  dashArray?: number[]
+    dashArray?: number[];
 }
 
 export interface IControlElement {
-  control?: IControl
-  controlId?: string
-  controlComponent?: ControlComponent
+    control?: IControl;
+    controlId?: string;
+    controlComponent?: ControlComponent;
 }
 
 export interface ICheckboxElement {
-  checkbox?: ICheckbox
+    checkbox?: ICheckbox;
 }
 
 export interface IRadioElement {
-  radio?: IRadio
+    radio?: IRadio;
 }
 
 export interface ILaTexElement {
-  laTexSVG?: string
+    laTexSVG?: string;
 }
 
 export interface IDateElement {
-  dateFormat?: string
-  dateId?: string
+    dateFormat?: string;
+    dateId?: string;
 }
 
 export interface IImageElement {
-  imgDisplay?: ImageDisplay
-  imgFloatPosition?: {
-    x: number
-    y: number
-    pageNo?: number
-  }
+    imgDisplay?: ImageDisplay;
+    imgFloatPosition?: {
+        x: number;
+        y: number;
+        pageNo?: number;
+    };
 }
 
 export interface IBlockElement {
-  block?: IBlock
-}
-
-export interface IAreaElement {
-  valueList?: IElement[]
-  areaId?: string
-  area?: IArea
+    block?: IBlock;
 }
 
 export type IElement = IElementBasic &
-  IElementStyle &
-  IElementGroup &
-  ITable &
-  IHyperlinkElement &
-  ISuperscriptSubscript &
-  ISeparator &
-  IControlElement &
-  ICheckboxElement &
-  IRadioElement &
-  ILaTexElement &
-  IDateElement &
-  IImageElement &
-  IBlockElement &
-  ITitleElement &
-  IListElement &
-  IAreaElement
+    IElementStyle &
+    IElementGroup &
+    ITable &
+    IHyperlinkElement &
+    ISuperscriptSubscript &
+    ISeparator &
+    IControlElement &
+    ICheckboxElement &
+    IRadioElement &
+    ILaTexElement &
+    IDateElement &
+    IImageElement &
+    IBlockElement &
+    ITitleElement &
+    IListElement &
+    IParagraph &
+    IFootnote &
+    IPlaceholder;
 
 export interface IElementMetrics {
-  width: number
-  height: number
-  boundingBoxAscent: number
-  boundingBoxDescent: number
+    width: number;
+    height: number;
+    boundingBoxAscent: number;
+    boundingBoxDescent: number;
 }
 
 export interface IElementPosition {
-  pageNo: number
-  index: number
-  value: string
-  rowIndex: number
-  rowNo: number
-  ascent: number
-  lineHeight: number
-  left: number
-  metrics: IElementMetrics
-  isFirstLetter: boolean
-  isLastLetter: boolean
-  coordinate: {
-    leftTop: number[]
-    leftBottom: number[]
-    rightTop: number[]
-    rightBottom: number[]
-  }
+    pageNo: number;
+    index: number;
+    value: string;
+    rowIndex: number;
+    rowNo: number;
+    ascent: number;
+    lineHeight: number;
+    left: number;
+    metrics: IElementMetrics;
+    isFirstLetter: boolean;
+    isLastLetter: boolean;
+    coordinate: {
+        leftTop: number[];
+        leftBottom: number[];
+        rightTop: number[];
+        rightBottom: number[];
+    };
 }
 
 export interface IElementFillRect {
-  x: number
-  y: number
-  width: number
-  height: number
+    x: number;
+    y: number;
+    width: number;
+    height: number;
 }
 
 export interface IUpdateElementByIdOption {
-  id?: string
-  conceptId?: string
-  properties: Omit<Partial<IElement>, 'id'>
-}
-
-export interface IDeleteElementByIdOption {
-  id?: string
-  conceptId?: string
-}
-
-export interface IGetElementByIdOption {
-  id?: string
-  conceptId?: string
+    id: string;
+    properties: Omit<Partial<IElement>, 'id'>;
 }

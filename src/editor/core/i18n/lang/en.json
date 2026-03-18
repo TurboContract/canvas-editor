@@ -46,16 +46,18 @@
       "border": "Table border",
       "borderAll": "All",
       "borderEmpty": "Empty",
-      "borderDash": "Dash",
       "borderExternal": "External",
-      "borderInternal": "Internal",
       "borderTd": "Table cell border",
       "borderTdTop": "Top",
       "borderTdRight": "Right",
       "borderTdBottom": "Bottom",
       "borderTdLeft": "Left",
       "borderTdForward": "Forward",
-      "borderTdBack": "Back"
+      "borderTdBack": "Back",
+      "cell": "Cell",
+      "insertFormulaInCell": "Insert formula in a cell",
+      "editFormulaInCell": "Edit formula",
+      "deleteFormulaInCell": "Delete formula"
     }
   },
   "datePicker": {

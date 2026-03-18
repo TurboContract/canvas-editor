@@ -1,8 +1,7 @@
-import { MaxHeightRatio } from '../dataset/enum/Common'
+import { MaxHeightRatio } from '../dataset/enum/Common';
 
 export interface IFooter {
-  bottom?: number
-  maxHeightRadio?: MaxHeightRatio
-  disabled?: boolean
-  editable?: boolean
+    bottom?: number;
+    maxHeightRadio?: MaxHeightRatio;
+    disabled?: boolean;
 }
