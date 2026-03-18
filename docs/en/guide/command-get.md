@@ -23,6 +23,21 @@ const {
 } = instance.command.getValue(options?: IGetValueOption)
 ```
 
+## getValueAsync
+
+Feature: Get the current document value (async)
+
+Usage:
+
+```javascript
+const {
+  version: string
+  data: IEditorData
+  options: IEditorOption
+} = await instance.command.getValueAsync(options?: IGetValueOption)
+```
+
+
 ## getImage
 
 Feature: Gets the base64 string of the current page image
@@ -61,6 +76,28 @@ Usage:
 
 ```javascript
 const range = instance.command.getCursorPosition()
+```
+
+## getRemainingContentHeight
+
+Feature: Get remaining available content height on last page
+
+Usage:
+
+```javascript
+const remainingHeight = instance.command.getRemainingContentHeight()
+```
+
+## computeElementListHeight
+
+Feature: Compute element list height
+
+Usage:
+
+```javascript
+const height = instance.command.computeElementListHeight(
+  elementList: IElement[]
+)
 ```
 
 ## getRange

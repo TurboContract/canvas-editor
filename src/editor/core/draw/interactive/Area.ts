@@ -2,31 +2,41 @@ import { Draw } from '../Draw'
 import { deepClone, getUUID, isNonValue } from '../../../utils'
 import { ElementType } from '../../../dataset/enum/Element'
 import {
+  IArea,
   IAreaInfo,
+  IDeleteAreaOption,
   IGetAreaValueOption,
   IGetAreaValueResult,
   IInsertAreaOption,
-  ISetAreaPropertiesOption
+  ILocationAreaOption,
+  ISetAreaPropertiesOption,
+  ISetAreaValueOption
 } from '../../../interface/Area'
 import { EditorZone } from '../../../dataset/enum/Editor'
 import { LocationPosition } from '../../../dataset/enum/Common'
 import { RangeManager } from '../../range/RangeManager'
 import { Zone } from '../../zone/Zone'
 import { Position } from '../../position/Position'
-import { zipElementList } from '../../../utils/element'
+import { formatElementList, zipElementList } from '../../../utils/element'
 import { AreaMode } from '../../../dataset/enum/Area'
 import { IRange } from '../../../interface/Range'
 import { IElementPosition } from '../../../interface/Element'
+import { Placeholder } from '../frame/Placeholder'
+import { defaultPlaceholderOption } from '../../../dataset/constant/Placeholder'
+import { DeepRequired } from '../../../interface/Common'
+import { IEditorOption } from '../../../interface/Editor'
 
 export class Area {
   private draw: Draw
   private zone: Zone
   private range: RangeManager
   private position: Position
+  private options: DeepRequired<IEditorOption>
   private areaInfoMap = new Map<string, IAreaInfo>()
 
   constructor(draw: Draw) {
     this.draw = draw
+    this.options = draw.getOptions()
     this.zone = draw.getZone()
     this.range = draw.getRange()
     this.position = draw.getPosition()
@@ -66,6 +76,7 @@ export class Area {
   }
 
   public insertArea(payload: IInsertAreaOption): string | null {
+    const { id, value, area, position, range } = payload
     // 切换至正文
     if (this.zone.getZone() !== EditorZone.MAIN) {
       this.zone.setZone(EditorZone.MAIN)
@@ -74,14 +85,24 @@ export class Area {
     this.draw.getPosition().setPositionContext({
       isTable: false
     })
-    // 设置插入位置
-    const { id, value, area, position } = payload
-    if (position === LocationPosition.BEFORE) {
-      this.range.setRange(0, 0)
-    } else {
+    // 通过光标插入area && 不能在area内再次插入area
+    if (range && !this.getActiveAreaId()) {
+      const { startIndex, endIndex } = range
+      // 校验位置合法性
       const elementList = this.draw.getOriginalMainElementList()
-      const lastIndex = elementList.length - 1
-      this.range.setRange(lastIndex, lastIndex)
+      if (!elementList[startIndex] || !elementList[endIndex]) {
+        return null
+      }
+      this.range.setRange(range.startIndex, range.endIndex)
+    } else {
+      // 设置插入位置
+      if (position === LocationPosition.BEFORE) {
+        this.range.setRange(0, 0)
+      } else {
+        const elementList = this.draw.getOriginalMainElementList()
+        const lastIndex = elementList.length - 1
+        this.range.setRange(lastIndex, lastIndex)
+      }
     }
     const areaId = id || getUUID()
     this.draw.insertElementList([
@@ -103,7 +124,12 @@ export class Area {
     const width = this.draw.getInnerWidth()
     for (const areaInfoItem of this.areaInfoMap) {
       const { area, positionList } = areaInfoItem[1]
-      if (!area?.backgroundColor && !area?.borderColor) continue
+      if (
+        area?.hide ||
+        (!area?.backgroundColor && !area?.borderColor && !area?.placeholder)
+      ) {
+        continue
+      }
       const pagePositionList = positionList.filter(p => p.pageNo === pageNo)
       if (!pagePositionList.length) continue
       ctx.translate(0.5, 0.5)
@@ -123,6 +149,18 @@ export class Area {
         ctx.strokeStyle = area.borderColor
         ctx.strokeRect(x, y, width, height)
       }
+      // 提示词
+      if (area.placeholder && positionList.length <= 1) {
+        const placeholder = new Placeholder(this.draw)
+        placeholder.render(ctx, {
+          placeholder: {
+            ...defaultPlaceholderOption,
+            ...area.placeholder
+          },
+          startY: firstPosition.coordinate.leftTop[1]
+        })
+      }
+      ctx.translate(-0.5, -0.5)
     }
     ctx.restore()
   }
@@ -168,20 +206,40 @@ export class Area {
   }
 
   public getContextByAreaId(
-    areaId: string
+    areaId: string,
+    options?: ILocationAreaOption
   ): { range: IRange; elementPosition: IElementPosition } | null {
     const elementList = this.draw.getOriginalMainElementList()
     for (let e = 0; e < elementList.length; e++) {
       const element = elementList[e]
-      if (element.areaId === areaId) {
-        const positionList = this.position.getOriginalMainPositionList()
-        return {
-          range: {
-            startIndex: e,
-            endIndex: e
-          },
-          elementPosition: positionList[e]
+      if (options?.position === LocationPosition.OUTER_BEFORE) {
+        // 区域外面最前
+        if (elementList[e + 1]?.areaId !== areaId) continue
+      } else if (options?.position === LocationPosition.AFTER) {
+        // 区域内部最后
+        if (
+          !(element.areaId === areaId && elementList[e + 1]?.areaId !== areaId)
+        ) {
+          continue
         }
+      } else if (options?.position === LocationPosition.OUTER_AFTER) {
+        // 区域外部最后
+        if (
+          !(element.areaId !== areaId && elementList[e - 1]?.areaId === areaId)
+        ) {
+          continue
+        }
+      } else {
+        // 区域内部最前
+        if (element.areaId !== areaId) continue
+      }
+      const positionList = this.position.getOriginalMainPositionList()
+      return {
+        range: {
+          startIndex: e,
+          endIndex: e
+        },
+        elementPosition: positionList[e]
       }
     }
     return null
@@ -195,24 +253,79 @@ export class Area {
     if (!areaInfo.area) {
       areaInfo.area = {}
     }
-    // 是否计算
+    // 需要计算的属性
     let isCompute = false
-    // 修改属性
-    if (payload.properties.mode) {
-      areaInfo.area.mode = payload.properties.mode
-    }
-    if (payload.properties.borderColor) {
-      areaInfo.area.borderColor = payload.properties.borderColor
-    }
-    if (payload.properties.backgroundColor) {
-      areaInfo.area.backgroundColor = payload.properties.backgroundColor
-    }
-    if (!isNonValue(payload.properties.top)) {
-      isCompute = true
-      areaInfo.area.top = payload.properties.top
-    }
+    const computeProps: Array<keyof IArea> = ['top', 'hide']
+    // 循环设置
+    Object.entries(payload.properties).forEach(([key, value]) => {
+      if (isNonValue(value)) return
+      const propKey = key as keyof IArea
+      areaInfo.area[propKey] = value
+      if (computeProps.includes(propKey)) {
+        isCompute = true
+      }
+    })
     this.draw.render({
       isCompute,
+      isSetCursor: false
+    })
+  }
+
+  public setAreaValue(payload: ISetAreaValueOption) {
+    const areaId = payload.id || this.getActiveAreaId()
+    if (!areaId) return
+    const areaInfo = this.areaInfoMap.get(areaId)
+    if (!areaInfo) return
+    // 删除旧数据并替换新的格式化数据
+    const { positionList } = areaInfo
+    const elementList = this.draw.getOriginalMainElementList()
+    const valueList = payload.value
+    formatElementList(
+      [
+        {
+          type: ElementType.AREA,
+          value: '',
+          valueList,
+          areaId: areaInfo.id,
+          area: areaInfo.area
+        }
+      ],
+      {
+        editorOptions: this.options
+      }
+    )
+    this.draw.spliceElementList(
+      elementList,
+      positionList[0].index,
+      positionList.length,
+      valueList,
+      {
+        isIgnoreDeletedRule: true
+      }
+    )
+    this.draw.render({
+      isSetCursor: false
+    })
+  }
+
+  public deleteArea(options: IDeleteAreaOption = {}) {
+    const areaId = options.id || this.getActiveAreaId()
+    if (!areaId) return
+    const areaInfo = this.areaInfoMap.get(areaId)
+    if (!areaInfo) return
+    // 删除区域内的所有元素
+    const { positionList } = areaInfo
+    const elementList = this.draw.getOriginalMainElementList()
+    this.draw.spliceElementList(
+      elementList,
+      positionList[0].index,
+      positionList.length,
+      [],
+      {
+        isIgnoreDeletedRule: true
+      }
+    )
+    this.draw.render({
       isSetCursor: false
     })
   }

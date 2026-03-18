@@ -33,6 +33,12 @@ export interface IControlDate {
     dateFormat?: string;
 }
 
+export interface IControlNumber {
+  numberExclusiveOptions?: {
+    calculatorDisabled?: boolean
+  }
+}
+
 export interface IControlHighlightRule {
     keyword: string;
     alpha?: number;

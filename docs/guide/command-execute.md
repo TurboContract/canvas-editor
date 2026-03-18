@@ -9,6 +9,18 @@ const instance = new Editor(container, <IElement[]>data, options)
 instance.command.commandName()
 ```
 
+::: tip
+某些命令的执行，会使光标从文档中移出（比如：点击自定义工具栏-加粗文字）。此时可以设置一个标识(EDITOR_COMPONENT)给编辑器，让编辑器将其识别为内部组件。如：
+
+```js
+import { EDITOR_COMPONENT, EditorComponent } from '@hufe921/canvas-editor'
+
+<div class="menu" :[EDITOR_COMPONENT]="EditorComponent.MENU">
+  <button class="bold"></button>
+</div>
+```
+:::
+
 ## executeMode
 
 功能：切换编辑器模式（编辑、清洁、只读、表单）
@@ -127,6 +139,16 @@ instance.command.executeForceUpdate(options?: IForceUpdateOption)
 instance.command.executeBlur()
 ```
 
+## executeHideCursor
+
+功能：隐藏光标（保留选区）
+
+用法：
+
+```javascript
+instance.command.executeHideCursor()
+```
+
 ## executeUndo
 
 功能：撤销
@@ -174,7 +196,7 @@ instance.command.executeApplyPainterStyle()
 用法：
 
 ```javascript
-instance.command.executeFormat()
+instance.command.executeFormat(options?: IRichtextOption)
 ```
 
 ## executeFont
@@ -184,7 +206,7 @@ instance.command.executeFormat()
 用法：
 
 ```javascript
-instance.command.executeFont(font: string)
+instance.command.executeFont(font: string, options?: IRichtextOption)
 ```
 
 ## executeSize
@@ -194,7 +216,7 @@ instance.command.executeFont(font: string)
 用法：
 
 ```javascript
-instance.command.executeSize(size: number)
+instance.command.executeSize(size: number, options?: IRichtextOption)
 ```
 
 ## executeSizeAdd
@@ -204,7 +226,7 @@ instance.command.executeSize(size: number)
 用法：
 
 ```javascript
-instance.command.executeSizeAdd()
+instance.command.executeSizeAdd(options?: IRichtextOption)
 ```
 
 ## executeSizeMinus
@@ -214,7 +236,7 @@ instance.command.executeSizeAdd()
 用法：
 
 ```javascript
-instance.command.executeSizeMinus()
+instance.command.executeSizeMinus(options?: IRichtextOption)
 ```
 
 ## executeBold
@@ -224,7 +246,7 @@ instance.command.executeSizeMinus()
 用法：
 
 ```javascript
-instance.command.executeBold()
+instance.command.executeBold(options?: IRichtextOption)
 ```
 
 ## executeItalic
@@ -234,7 +256,7 @@ instance.command.executeBold()
 用法：
 
 ```javascript
-instance.command.executeItalic()
+instance.command.executeItalic(options?: IRichtextOption)
 ```
 
 ## executeUnderline
@@ -244,7 +266,7 @@ instance.command.executeItalic()
 用法：
 
 ```javascript
-instance.command.executeUnderline(textDecoration?: ITextDecoration)
+instance.command.executeUnderline(textDecoration?: ITextDecoration, options?: IRichtextOption)
 ```
 
 ## executeStrikeout
@@ -254,7 +276,7 @@ instance.command.executeUnderline(textDecoration?: ITextDecoration)
 用法：
 
 ```javascript
-instance.command.executeStrikeout()
+instance.command.executeStrikeout(options?: IRichtextOption)
 ```
 
 ## executeSuperscript
@@ -264,7 +286,7 @@ instance.command.executeStrikeout()
 用法：
 
 ```javascript
-instance.command.executeSuperscript()
+instance.command.executeSuperscript(options?: IRichtextOption)
 ```
 
 ## executeSubscript
@@ -274,7 +296,7 @@ instance.command.executeSuperscript()
 用法：
 
 ```javascript
-instance.command.executeSubscript()
+instance.command.executeSubscript(options?: IRichtextOption)
 ```
 
 ## executeColor
@@ -284,7 +306,7 @@ instance.command.executeSubscript()
 用法：
 
 ```javascript
-instance.command.executeColor(color: string | null)
+instance.command.executeColor(color: string | null, options?: IRichtextOption)
 ```
 
 ## executeHighlight
@@ -294,7 +316,7 @@ instance.command.executeColor(color: string | null)
 用法：
 
 ```javascript
-instance.command.executeHighlight(color: string | null)
+instance.command.executeHighlight(color: string | null, options?: IRichtextOption)
 ```
 
 ## executeTitle
@@ -595,7 +617,7 @@ instance.command.executeEditHyperlink(newUrl: string)
 用法：
 
 ```javascript
-instance.command.executeSeparator(dashArray: number[])
+instance.command.executeSeparator(dashArray: number[], option?: { lineWidth?: number; color?: string })
 ```
 
 ## executePageBreak
@@ -641,7 +663,7 @@ instance.command.executeDeleteWatermark()
 用法：
 
 ```javascript
-instance.command.executeSearch(keyword: string)
+instance.command.executeSearch(keyword: string, options?: ISearchOption)
 ```
 
 ## executeSearchNavigatePre
@@ -712,6 +734,16 @@ instance.command.executeSaveAsImageElement()
 
 ```javascript
 instance.command.executeChangeImageDisplay(element: IElement, display: ImageDisplay)
+```
+
+## executeSetImageCrop
+
+功能：设置图片裁剪信息
+
+用法：
+
+```javascript
+instance.command.executeSetImageCrop(crop: IImageCrop)
 ```
 
 ## executePageMode
@@ -821,7 +853,7 @@ instance.command.executeSetAreaBadge(payload: IAreaBadge[])
 用法：
 
 ```javascript
-instance.command.executeInsertElementList(elementList: IElement[])
+instance.command.executeInsertElementList(elementList: IElement[], options?: IInsertElementListOption)
 ```
 
 ## executeAppendElementList
@@ -964,6 +996,16 @@ instance.command.executeSetZone(zone: EditorZone)
 instance.command.executeSetControlValue(payload: ISetControlValueOption)
 ```
 
+## executeSetControlValueList
+
+功能：批量设置控件值
+
+用法：
+
+```javascript
+instance.command.executeSetControlValueList(payload: ISetControlValueOption[])
+```
+
 ## executeSetControlExtension
 
 功能：设置控件扩展值
@@ -974,6 +1016,16 @@ instance.command.executeSetControlValue(payload: ISetControlValueOption)
 instance.command.executeSetControlExtension(payload: ISetControlExtensionOption)
 ```
 
+## executeSetControlExtensionList
+
+功能：批量设置控件扩展值
+
+用法：
+
+```javascript
+instance.command.executeSetControlExtensionList(payload: ISetControlExtensionOption[])
+```
+
 ## executeSetControlProperties
 
 功能：设置控件属性
@@ -982,6 +1034,16 @@ instance.command.executeSetControlExtension(payload: ISetControlExtensionOption)
 
 ```javascript
 instance.command.executeSetControlProperties(payload: ISetControlProperties)
+```
+
+## executeSetControlPropertiesList
+
+功能：批量设置控件属性
+
+用法：
+
+```javascript
+instance.command.executeSetControlPropertiesList(payload: ISetControlProperties[])
 ```
 
 ## executeSetControlHighlight
@@ -1012,6 +1074,16 @@ instance.command.executeLocationControl(controlId: string, options?: ILocationCo
 
 ```javascript
 instance.command.executeInsertControl(payload: IElement)
+```
+
+## executeJumpControl
+
+功能：跳转到下/上一个控件
+
+用法：
+
+```javascript
+instance.command.executeJumpControl(payload?: { direction?: MoveDirection })
 ```
 
 ## executeUpdateOptions
@@ -1060,10 +1132,34 @@ const areaId = instance.command.executeInsertArea(payload: IInsertAreaOption)
 instance.command.executeSetAreaProperties(payload: ISetAreaPropertiesOption)
 ```
 
+## executeSetAreaValue
+
+功能：设置区域值
+
+```js
+instance.command.executeSetAreaValue(payload: ISetAreaValueOption)
+```
+
+## executeDeleteArea
+
+功能：删除区域
+
+```js
+instance.command.executeDeleteArea(payload?: IDeleteAreaOption)
+```
+
 ## executeLocationArea
 
 功能：定位区域位置
 
 ```js
-instance.command.executeLocationArea(areaId: string)
+instance.command.executeLocationArea(areaId: string, options?: ILocationAreaOption)
+```
+
+## executeClearGraffiti
+
+功能：清空涂鸦信息
+
+```js
+instance.command.executeClearGraffiti()
 ```

@@ -7,6 +7,11 @@ import { Position } from '../../position/Position';
 import { Draw } from '../Draw';
 import { LineBreakParticle } from '../particle/LineBreakParticle';
 
+export interface IPlaceholderRenderOption {
+  placeholder: Required<IPlaceholder>
+  startY?: number
+}
+
 export class Placeholder {
     private draw: Draw;
     private position: Position;

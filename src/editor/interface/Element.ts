@@ -40,6 +40,10 @@ export interface IElementStyle {
     textDecoration?: ITextDecoration;
 }
 
+export interface IElementRule {
+  hide?: boolean
+}
+
 export interface IElementGroup {
     groupIds?: string[];
 }
@@ -151,8 +155,20 @@ export interface IImageElement {
     };
 }
 
+export type IImageElement = IImageBasic & IImageRule
+
 export interface IBlockElement {
     block?: IBlock;
+}
+
+export interface ILabelElement {
+  labelId?: string
+  label?: {
+    color?: string
+    backgroundColor?: string
+    borderRadius?: number
+    padding?: IPadding
+  }
 }
 
 export type IElement = IElementBasic &
@@ -212,4 +228,14 @@ export interface IElementFillRect {
 export interface IUpdateElementByIdOption {
     id: string;
     properties: Omit<Partial<IElement>, 'id'>;
+}
+
+export interface IInsertElementListOption {
+  isReplace?: boolean
+  isSubmitHistory?: boolean
+  ignoreContextKeys?: Array<keyof IElement>
+}
+
+export interface ISpliceElementListOption {
+  isIgnoreDeletedRule?: boolean
 }

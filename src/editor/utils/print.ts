@@ -97,3 +97,26 @@ export function printImageBase64(
         );
     });
 }
+
+async function waitIframeLoad(doc: Document) {
+  const iframeList = Array.from(doc.querySelectorAll('iframe'))
+
+  const iframePromises = iframeList.map(iframe => {
+    const iframePromise = new Promise(resolve => {
+      // srcdoc需要等待事件（优先使用自定义事件，否则使用注入的脚本事件）
+      if (iframe.srcdoc) {
+        iframe.contentWindow?.addEventListener('message', e => {
+          if (e.data.type === '__LOADED_TO_CANVAS_EDITOR__') {
+            resolve(true)
+          }
+        })
+      } else {
+        // url不等待直接返回
+        resolve(true)
+      }
+    })
+    return iframePromise
+  })
+
+  await Promise.allSettled(iframePromises)
+}

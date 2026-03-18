@@ -25,6 +25,14 @@ export default defineConfig({
       {
         text: '官方插件',
         link: '/guide/plugin-internal.html'
+      },
+      {
+        text: '调试工具',
+        link: '/guide/devtools.html'
+      },
+      {
+        text: '赞助',
+        link: 'https://hufe.club/donate.jpg'
       }
     ],
     sidebar: [
@@ -80,7 +88,8 @@ export default defineConfig({
         text: '插件',
         items: [
           { text: '自定义插件', link: '/guide/plugin-custom' },
-          { text: '官方插件', link: '/guide/plugin-internal' }
+          { text: '官方插件', link: '/guide/plugin-internal' },
+          { text: '开发调试工具', link: '/guide/devtools' }
         ]
       }
     ],
@@ -118,6 +127,14 @@ export default defineConfig({
           {
             text: 'Official plugin',
             link: '/en/guide/plugin-internal.html'
+          },
+          {
+            text: 'DevTools',
+            link: '/en/guide/devtools.html'
+          },
+          {
+            text: 'Donate',
+            link: 'https://hufe.club/donate.jpg'
           }
         ],
         sidebar: [
@@ -173,7 +190,8 @@ export default defineConfig({
             text: 'Plugin',
             items: [
               { text: 'custom', link: '/en/guide/plugin-custom' },
-              { text: 'official', link: '/en/guide/plugin-internal' }
+              { text: 'official', link: '/en/guide/plugin-internal' },
+              { text: 'devtools', link: '/en/guide/devtools' }
             ]
           }
         ]

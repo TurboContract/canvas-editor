@@ -23,6 +23,20 @@ const {
 } = instance.command.getValue(options?: IGetValueOption)
 ```
 
+## getValueAsync
+
+功能：获取当前文档信息（异步）
+
+用法：
+
+```javascript
+const {
+  version: string
+  data: IEditorData
+  options: IEditorOption
+} = await instance.command.getValueAsync(options?: IGetValueOption)
+```
+
 ## getImage
 
 功能：获取当前页面图片 base64 字符串
@@ -61,6 +75,28 @@ const wordCount = await instance.command.getWordCount()
 
 ```javascript
 const range = instance.command.getCursorPosition()
+```
+
+## getRemainingContentHeight
+
+功能：获取最后一页剩余可用内容高度
+
+用法：
+
+```javascript
+const remainingHeight = instance.command.getRemainingContentHeight()
+```
+
+## computeElementListHeight
+
+功能：计算元素列表占用高度
+
+用法：
+
+```javascript
+const height = instance.command.computeElementListHeight(
+  elementList: IElement[]
+)
 ```
 
 ## getRange

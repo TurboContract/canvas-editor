@@ -28,7 +28,8 @@ enum ElementType {
   BLOCK = 'block',
   TITLE = 'title',
   AREA = 'area',
-  LIST = 'list'
+  LIST = 'list',
+  LABEL = 'label'
 }
 
 enum TitleLevel {
@@ -55,7 +56,8 @@ const TEXTLIKE_ELEMENT_TYPE: ElementType[] = [
   ElementType.SUBSCRIPT,
   ElementType.SUPERSCRIPT,
   ElementType.CONTROL,
-  ElementType.DATE
+  ElementType.DATE,
+  ElementType.LABEL
 ]
 
 const ZERO = '\u200B'
@@ -71,7 +73,11 @@ function getCatalog(payload: IGetCatalogPayload): ICatalog | null {
   let t = 0
   while (t < elementList.length) {
     const element = elementList[t]
-    if (element.titleId) {
+    const getElementInfo = (
+      element: IElement,
+      elementList: IElement[],
+      position: number
+    ) => {
       const titleId = element.titleId
       const level = element.level
       const titleElement: ICatalogElement = {
@@ -82,21 +88,51 @@ function getCatalog(payload: IGetCatalogPayload): ICatalog | null {
         pageNo: positionList[t].pageNo
       }
       const valueList: IElement[] = []
-      while (t < elementList.length) {
-        const titleE = elementList[t]
+      while (position < elementList.length) {
+        const titleE = elementList[position]
         if (titleId !== titleE.titleId) {
-          t--
+          position--
           break
         }
         valueList.push(titleE)
-        t++
+        position++
       }
       titleElement.value = valueList
         .filter(el => isTextLikeElement(el))
         .map(el => el.value)
         .join('')
         .replace(new RegExp(ZERO, 'g'), '')
+      return { position, titleElement }
+    }
+    if (element.titleId) {
+      const { position, titleElement } = getElementInfo(element, elementList, t)
+      t = position
       titleElementList.push(titleElement)
+    }
+    if (element.type === ElementType.TABLE) {
+      const trList = element.trList!
+      for (let r = 0; r < trList.length; r++) {
+        const tr = trList[r]
+        for (let d = 0; d < tr.tdList.length; d++) {
+          const td = tr.tdList[d]
+          const value = td.value
+          if (value.length > 1) {
+            let index = 1
+            while (index < value.length) {
+              if (value[index]?.titleId) {
+                const { titleElement, position } = getElementInfo(
+                  value[index],
+                  value,
+                  index
+                )
+                titleElementList.push(titleElement)
+                index = position
+              }
+              index++
+            }
+          }
+        }
+      }
     }
     t++
   }

@@ -190,6 +190,16 @@ Usage:
 instance.eventBus.on('click', (evt: MouseEvent) => void)
 ```
 
+## input
+
+Feature: Editor input event
+
+Usage:
+
+```javascript
+instance.eventBus.on('input', (evt: Event) => void)
+```
+
 ## positionContextChange
 
 Feature: The position context change
@@ -198,4 +208,53 @@ Usage:
 
 ```javascript
 instance.eventBus.on('positionContextChange', (payload: IPositionContextChangePayload) => void)
+```
+
+## imageSizeChange
+
+Feature: The image size change
+
+Usage:
+
+```javascript
+instance.eventBus.on('imageSizeChange', (payload: { element: IElement }) => void)
+```
+
+## imageMousedown
+
+Feature: The image mousedown event
+
+Usage:
+
+```javascript
+instance.eventBus.on('imageMousedown', (payload: {
+  evt: MouseEvent
+  element: IElement
+}) => void)
+```
+
+## imageDblclick
+
+Feature: The image double click event
+
+Usage:
+
+```javascript
+instance.eventBus.on('imageDblclick', (payload: {
+  evt: MouseEvent
+  element: IElement
+}) => void)
+```
+
+## labelMousedown
+
+Feature: The label mousedown event
+
+Usage:
+
+```javascript
+instance.eventBus.on('labelMousedown', (payload: {
+  evt: MouseEvent
+  element: IElement
+}) => void)
 ```

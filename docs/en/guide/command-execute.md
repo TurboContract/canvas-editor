@@ -9,6 +9,18 @@ const instance = new Editor(container, <IElement[]>data, options)
 instance.command.commandName()
 ```
 
+::: tip
+The execution of certain commands may cause the cursor to move out of the document (e.g., clicking the "Bold" button on the custom toolbar). In such cases, you can assign an identifier (EDITOR_COMPONENT) to the editor, allowing it to recognize the component as internal. For example:
+
+```js
+import { EDITOR_COMPONENT, EditorComponent } from '@hufe921/canvas-editor'
+
+<div class="menu" :[EDITOR_COMPONENT]="EditorComponent.MENU">
+  <button class="bold"></button>
+</div>
+```
+:::
+
 ## executeMode
 
 Feature: Switch editor mode (Edit, Clean, Read only)
@@ -127,6 +139,16 @@ Usage:
 instance.command.executeBlur()
 ```
 
+## executeHideCursor
+
+Feature: Hide cursor (keep range)
+
+Usage:
+
+```javascript
+instance.command.executeHideCursor()
+```
+
 ## executeUndo
 
 Feature: Undo
@@ -174,7 +196,7 @@ Feature: Clear format
 Usage:
 
 ```javascript
-instance.command.executeFormat()
+instance.command.executeFormat(options?: IRichtextOption)
 ```
 
 ## executeFont
@@ -184,7 +206,7 @@ Feature: Set font
 Usage:
 
 ```javascript
-instance.command.executeFont(font: string)
+instance.command.executeFont(font: string, options?: IRichtextOption)
 ```
 
 ## executeSize
@@ -194,7 +216,7 @@ Feature: Set font size
 Usage:
 
 ```javascript
-instance.command.executeSize(size: number)
+instance.command.executeSize(size: number, options?: IRichtextOption)
 ```
 
 ## executeSizeAdd
@@ -204,7 +226,7 @@ Feature: Increase the font size
 Usage:
 
 ```javascript
-instance.command.executeSizeAdd()
+instance.command.executeSizeAdd(options?: IRichtextOption)
 ```
 
 ## executeSizeMinus
@@ -214,7 +236,7 @@ Feature: Reduce the font size
 Usage:
 
 ```javascript
-instance.command.executeSizeMinus()
+instance.command.executeSizeMinus(options?: IRichtextOption)
 ```
 
 ## executeBold
@@ -224,7 +246,7 @@ Feature: Bold
 Usage:
 
 ```javascript
-instance.command.executeBold()
+instance.command.executeBold(options?: IRichtextOption)
 ```
 
 ## executeItalic
@@ -234,7 +256,7 @@ Feature: Italic
 Usage:
 
 ```javascript
-instance.command.executeItalic()
+instance.command.executeItalic(options?: IRichtextOption)
 ```
 
 ## executeUnderline
@@ -244,7 +266,7 @@ Feature: Underline
 Usage:
 
 ```javascript
-instance.command.executeUnderline(textDecoration?: ITextDecoration)
+instance.command.executeUnderline(textDecoration?: ITextDecoration, options?: IRichtextOption)
 ```
 
 ## executeStrikeout
@@ -254,7 +276,7 @@ Feature: Strikeout
 Usage:
 
 ```javascript
-instance.command.executeStrikeout()
+instance.command.executeStrikeout(options?: IRichtextOption)
 ```
 
 ## executeSuperscript
@@ -264,7 +286,7 @@ Feature: Superscript
 Usage:
 
 ```javascript
-instance.command.executeSuperscript()
+instance.command.executeSuperscript(options?: IRichtextOption)
 ```
 
 ## executeSubscript
@@ -274,7 +296,7 @@ Feature: Subscript
 Usage:
 
 ```javascript
-instance.command.executeSubscript()
+instance.command.executeSubscript(options?: IRichtextOption)
 ```
 
 ## executeColor
@@ -284,7 +306,7 @@ Feature: Font color
 Usage:
 
 ```javascript
-instance.command.executeColor(color: string | null)
+instance.command.executeColor(color: string | null, options?: IRichtextOption)
 ```
 
 ## executeHighlight
@@ -294,7 +316,7 @@ Feature: Highlight
 Usage:
 
 ```javascript
-instance.command.executeHighlight(color: string | null)
+instance.command.executeHighlight(color: string | null, options?: IRichtextOption)
 ```
 
 ## executeTitle
@@ -595,7 +617,7 @@ Feature: Insert a dividing line
 Usage:
 
 ```javascript
-instance.command.executeSeparator(dashArray: number[])
+instance.command.executeSeparator(dashArray: number[], option?: { lineWidth?: number; color?: string })
 ```
 
 ## executePageBreak
@@ -641,7 +663,7 @@ Feature: 搜索
 Usage:
 
 ```javascript
-instance.command.executeSearch(keyword: string)
+instance.command.executeSearch(keyword: string, options?: ISearchOption)
 ```
 
 ## executeSearchNavigatePre
@@ -712,6 +734,16 @@ Usage:
 
 ```javascript
 instance.command.executeChangeImageDisplay(element: IElement, display: ImageDisplay)
+```
+
+## executeSetImageCrop
+
+Feature: Set image crop information
+
+Usage:
+
+```javascript
+instance.command.executeSetImageCrop(crop: IImageCrop)
 ```
 
 ## executePageMode
@@ -821,7 +853,7 @@ Feature: Insert an element
 Usage:
 
 ```javascript
-instance.command.executeInsertElementList(elementList: IElement[])
+instance.command.executeInsertElementList(elementList: IElement[], options?: IInsertElementListOption)
 ```
 
 ## executeAppendElementList
@@ -964,6 +996,16 @@ Usage:
 instance.command.executeSetControlValue(payload: ISetControlValueOption)
 ```
 
+## executeSetControlValueList
+
+Feature: Batch set control value
+
+Usage:
+
+```javascript
+instance.command.executeSetControlValueList(payload: ISetControlValueOption[])
+```
+
 ## executeSetControlExtension
 
 Feature: Set control extension value
@@ -974,6 +1016,16 @@ Usage:
 instance.command.executeSetControlExtension(payload: ISetControlExtensionOption)
 ```
 
+## executeSetControlExtensionList
+
+Feature: Batch set control extension value
+
+Usage:
+
+```javascript
+instance.command.executeSetControlExtensionList(payload: ISetControlExtensionOption[])
+```
+
 ## executeSetControlProperties
 
 Feature: Set control properties
@@ -982,6 +1034,16 @@ Usage:
 
 ```javascript
 instance.command.executeSetControlProperties(payload: ISetControlProperties)
+```
+
+## executeSetControlPropertiesList
+
+Feature: Batch set control properties
+
+Usage:
+
+```javascript
+instance.command.executeSetControlPropertiesList(payload: ISetControlProperties[])
 ```
 
 ## executeSetControlHighlight
@@ -1012,6 +1074,16 @@ Usage:
 
 ```javascript
 instance.command.executeInsertControl(payload: IElement)
+```
+
+## executeJumpControl
+
+Feature: Jump to the next/previous control
+
+Usage:
+
+```javascript
+instance.command.executeJumpControl(payload?: { direction?: MoveDirection })
 ```
 
 ## executeUpdateOptions
@@ -1064,6 +1136,26 @@ Usage:
 instance.command.executeSetAreaProperties(payload: ISetAreaPropertiesOption)
 ```
 
+## executeSetAreaValue
+
+Feature: set area value
+
+Usage:
+
+```javascript
+instance.command.executeSetAreaValue(payload: ISetAreaValueOption)
+```
+
+## executeDeleteArea
+
+Feature: delete area
+
+Usage:
+
+```javascript
+instance.command.executeDeleteArea(payload?: IDeleteAreaOption)
+```
+
 ## executeLocationArea
 
 Feature: positioning area position
@@ -1071,5 +1163,15 @@ Feature: positioning area position
 Usage:
 
 ```javascript
-instance.command.executeLocationArea(areaId: string)
+instance.command.executeLocationArea(areaId: string, options?: ILocationAreaOption)
+```
+
+## executeClearGraffiti
+
+Feature: clear graffiti data
+
+Usage:
+
+```javascript
+instance.command.executeClearGraffiti()
 ```

@@ -58,6 +58,8 @@ export type IZoneChange = (payload: EditorZone) => void;
 
 export type IMouseEventChange = (evt: MouseEvent) => void;
 
+export type IInputEventChange = (evt: Event) => void
+
 export interface IPositionContextChangePayload {
     value: IPositionContext;
     oldValue: IPositionContext;
