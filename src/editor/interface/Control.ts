@@ -54,6 +54,7 @@ export interface IControlHighlight {
 export interface IControlRule {
     deletable?: boolean;
     disabled?: boolean;
+    hide?: boolean;
 }
 
 export interface IControlBasic {
@@ -85,7 +86,8 @@ export type IControl = IControlBasic &
     Partial<IControlSelect> &
     Partial<IControlCheckbox> &
     Partial<IControlRadio> &
-    Partial<IControlDate>;
+    Partial<IControlDate> &
+    Partial<IControlNumber>;
 
 export interface IControlOption {
     placeholderColor?: string;

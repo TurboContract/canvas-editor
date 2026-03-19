@@ -25,8 +25,13 @@ export function end(evt: KeyboardEvent, host: CanvasEvent) {
 
   let { rowNo } = anchorPosition
 
-  // 光标显示在下一行行首时，rowNo需下移
-  const hitLineStartIndex = draw.getCursor().getHitLineStartIndex()
+  // Совместимость со старой локальной версией Cursor:
+  // в ней нет getHitLineStartIndex, поэтому используем optional вызов.
+  const hitLineStartIndex = (
+    draw.getCursor() as unknown as {
+      getHitLineStartIndex?: () => number | undefined
+    }
+  ).getHitLineStartIndex?.()
 
   if (hitLineStartIndex !== undefined) {
     rowNo++
@@ -59,7 +64,7 @@ export function end(evt: KeyboardEvent, host: CanvasEvent) {
 
   if (anchorStart > anchorEnd) {
     // eslint-disable-next-line @typescript-eslint/no-extra-semi
-    ;[anchorStart, anchorEnd] = [anchorEnd, anchorStart]
+    [anchorStart, anchorEnd] = [anchorEnd, anchorStart]
   }
 
   rangeManager.setRange(anchorStart, anchorEnd)

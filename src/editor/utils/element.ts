@@ -689,14 +689,16 @@ export function pickElementAttr(
 
 interface IZipElementListOption {
     extraPickAttrs?: Array<keyof IElement>;
+    isClone?: boolean;
+    isClassifyArea?: boolean;
 }
 
 export function zipElementList(
     payload: IElement[],
     options: IZipElementListOption = {},
 ): IElement[] {
-    const { extraPickAttrs } = options;
-    const elementList = deepClone(payload);
+    const { extraPickAttrs, isClone = true } = options;
+    const elementList = isClone ? deepClone(payload) : payload;
     const zipElementListData: IElement[] = [];
     let e = 0;
     while (e < elementList.length) {

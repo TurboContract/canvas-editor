@@ -12,6 +12,8 @@ import { defaultPageNumberOption } from '../dataset/constant/PageNumber';
 import { defaultPlaceholderOption } from '../dataset/constant/Placeholder';
 import { defaultRadioOption } from '../dataset/constant/Radio';
 import { defaultSeparatorOption } from '../dataset/constant/Separator';
+import { defaultLabelOption } from '../dataset/constant/Label';
+import { defaultGraffitiOption } from '../dataset/constant/Graffiti';
 import { defaultTableOption } from '../dataset/constant/Table';
 import { defaultTitleOption } from '../dataset/constant/Title';
 import { defaultWatermarkOption } from '../dataset/constant/Watermark';
@@ -32,6 +34,8 @@ import { IPageNumber } from '../interface/PageNumber';
 import { IPlaceholder } from '../interface/Placeholder';
 import { IRadioOption } from '../interface/Radio';
 import { ISeparatorOption } from '../interface/Separator';
+import { ILabelOption } from '../interface/Label';
+import { IGraffitiOption } from '../interface/Graffiti';
 import { ITableOption } from '../interface/table/Table';
 import { ITitleOption } from '../interface/Title';
 import { IWatermark } from '../interface/Watermark';
@@ -118,6 +122,14 @@ export function mergeOption(
         ...defaultSeparatorOption,
         ...options.separator,
     };
+    const labelOptions: Required<ILabelOption> = {
+        ...defaultLabelOption,
+        ...options.label,
+    };
+    const graffitiOptions: Required<IGraffitiOption> = {
+        ...defaultGraffitiOption,
+        ...options.graffiti,
+    };
     const lineNumberOptions: Required<ILineNumberOption> = {
         ...defaultLineNumberOption,
         ...options.lineNumber,
@@ -186,6 +198,8 @@ export function mergeOption(
         background: backgroundOptions,
         lineBreak: lineBreakOptions,
         separator: separatorOptions,
+        label: labelOptions,
+        graffiti: graffitiOptions,
         lineNumber: lineNumberOptions,
         pageBorder: pageBorderOptions,
         isTableFormulaEditing: false,

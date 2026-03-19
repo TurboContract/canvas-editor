@@ -1,4 +1,7 @@
 import { ICatalog, ICatalogItem } from '../../../interface/Catalog'
+import { TEXTLIKE_ELEMENT_TYPE } from '../../../dataset/constant/Element'
+import { titleOrderNumberMapping } from '../../../dataset/constant/Title'
+import { ElementType } from '../../../dataset/enum/Element'
 import { IElement, IElementPosition } from '../../../interface/Element'
 
 interface IGetCatalogPayload {
@@ -9,56 +12,6 @@ interface IGetCatalogPayload {
 type ICatalogElement = IElement & {
   pageNo: number
 }
-
-enum ElementType {
-  TEXT = 'text',
-  IMAGE = 'image',
-  TABLE = 'table',
-  HYPERLINK = 'hyperlink',
-  SUPERSCRIPT = 'superscript',
-  SUBSCRIPT = 'subscript',
-  SEPARATOR = 'separator',
-  PAGE_BREAK = 'pageBreak',
-  CONTROL = 'control',
-  CHECKBOX = 'checkbox',
-  RADIO = 'radio',
-  LATEX = 'latex',
-  TAB = 'tab',
-  DATE = 'date',
-  BLOCK = 'block',
-  TITLE = 'title',
-  AREA = 'area',
-  LIST = 'list',
-  LABEL = 'label'
-}
-
-enum TitleLevel {
-  FIRST = 'first',
-  SECOND = 'second',
-  THIRD = 'third',
-  FOURTH = 'fourth',
-  FIFTH = 'fifth',
-  SIXTH = 'sixth'
-}
-
-const titleOrderNumberMapping: Record<TitleLevel, number> = {
-  [TitleLevel.FIRST]: 1,
-  [TitleLevel.SECOND]: 2,
-  [TitleLevel.THIRD]: 3,
-  [TitleLevel.FOURTH]: 4,
-  [TitleLevel.FIFTH]: 5,
-  [TitleLevel.SIXTH]: 6
-}
-
-const TEXTLIKE_ELEMENT_TYPE: ElementType[] = [
-  ElementType.TEXT,
-  ElementType.HYPERLINK,
-  ElementType.SUBSCRIPT,
-  ElementType.SUPERSCRIPT,
-  ElementType.CONTROL,
-  ElementType.DATE,
-  ElementType.LABEL
-]
 
 const ZERO = '\u200B'
 

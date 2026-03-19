@@ -16,10 +16,14 @@ export class WhiteSpaceParticle {
     x: number,
     y: number
   ) {
-    const {
-      scale,
-      whiteSpace: { color, radius }
-    } = this.options
+    const { scale } = this.options
+    const whiteSpace = (
+      this.options as unknown as {
+        whiteSpace?: { color?: string; radius?: number }
+      }
+    ).whiteSpace
+    const color = whiteSpace?.color ?? '#BFBFBF'
+    const radius = whiteSpace?.radius ?? 1.5
     const metrics = element.metrics
     ctx.save()
     ctx.fillStyle = color

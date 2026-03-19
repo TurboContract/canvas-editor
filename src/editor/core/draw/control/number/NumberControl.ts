@@ -1,4 +1,4 @@
-import { NON_NUMBER_STR_REG } from '../../../../dataset/constant/Regular'
+import { NUMBER_LIKE_REG } from '../../../../dataset/constant/Regular'
 import { ControlComponent } from '../../../../dataset/enum/Control'
 import { ElementType } from '../../../../dataset/enum/Element'
 import {
@@ -10,6 +10,7 @@ import { deepClone, omitObject, pickObject } from '../../../../utils'
 import { getElementListText, isTextElement } from '../../../../utils/element'
 import { TextControl } from '../text/TextControl'
 import { Calculator } from './Calculator'
+import { Control } from '../Control'
 import {
   CONTROL_STYLE_ATTR,
   EDITOR_ELEMENT_STYLE_ATTR
@@ -19,7 +20,7 @@ export class NumberControl extends TextControl {
   private isPopup: boolean
   private calculator: Calculator | null
 
-  constructor(element: IElement, control: any) {
+  constructor(element: IElement, control: Control) {
     super(element, control)
     this.isPopup = false
     this.calculator = null
@@ -36,7 +37,12 @@ export class NumberControl extends TextControl {
   ): number {
     // 禁止存在非文本元素
     if (
-      data.some(el => !isTextElement(el) || NON_NUMBER_STR_REG.test(el.value))
+      data.some(
+        el =>
+          !isTextElement(el) ||
+          !el.value ||
+          !el.value.split('').every(char => NUMBER_LIKE_REG.test(char) || char === '-')
+      )
     ) {
       return -1
     }
@@ -48,9 +54,7 @@ export class NumberControl extends TextControl {
     const controlElementList = deepClone(data)
     const { startIndex, endIndex } = range
     const startElement = elementList[startIndex]
-    if (
-      this.control.getIsExistValueByElementListIndex(elementList, startIndex)
-    ) {
+    if (this.getValue(context).length) {
       // 向左查找
       let preIndex = startIndex
       while (preIndex > 0) {
@@ -58,7 +62,7 @@ export class NumberControl extends TextControl {
         if (
           preElement.controlId !== startElement.controlId ||
           preElement.controlComponent === ControlComponent.PREFIX ||
-          preElement.controlComponent === ControlComponent.PRE_TEXT
+          preElement.controlComponent === ControlComponent.POSTFIX
         ) {
           break
         }
@@ -72,7 +76,7 @@ export class NumberControl extends TextControl {
         if (
           nextElement.controlId !== startElement.controlId ||
           nextElement.controlComponent === ControlComponent.POSTFIX ||
-          nextElement.controlComponent === ControlComponent.POST_TEXT
+          nextElement.controlComponent === ControlComponent.PREFIX
         ) {
           break
         }
@@ -94,7 +98,7 @@ export class NumberControl extends TextControl {
       {},
       {
         isAddPlaceholder: false,
-        isIgnoreDeletedRule: true
+        isIgnoreDisabledRule: true
       }
     )
     if (!~prefixIndex) return
@@ -135,9 +139,6 @@ export class NumberControl extends TextControl {
     this.control.repaintControl({
       curIndex: prefixIndex + data.length
     })
-
-    // 触发控件内容变化事件
-    this.control.emitControlContentChange()
 
     // 销毁弹窗
     this.destroy()

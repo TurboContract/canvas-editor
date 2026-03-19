@@ -26,6 +26,8 @@ import { ISeparatorOption } from './Separator';
 import { ITableOption } from './table/Table';
 import { ILineNumberOption } from './LineNumber';
 import { IPageBorderOption } from './PageBorder';
+import { ILabelOption } from './Label';
+import { IGraffitiOption } from './Graffiti';
 
 export interface IEditorData {
     header?: IElement[];
@@ -92,6 +94,8 @@ export interface IEditorOption {
     background?: IBackgroundOption;
     lineBreak?: ILineBreakOption;
     separator?: ISeparatorOption;
+    label?: ILabelOption;
+    graffiti?: IGraffitiOption;
     lineNumber?: ILineNumberOption;
     pageBorder?: IPageBorderOption;
     isTableFormulaEditing?: boolean;

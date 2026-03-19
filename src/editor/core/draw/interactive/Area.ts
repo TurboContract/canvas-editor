@@ -1,5 +1,5 @@
 import { Draw } from '../Draw'
-import { deepClone, getUUID, isNonValue } from '../../../utils'
+import { deepClone, getUUID } from '../../../utils'
 import { ElementType } from '../../../dataset/enum/Element'
 import {
   IArea,
@@ -21,10 +21,17 @@ import { formatElementList, zipElementList } from '../../../utils/element'
 import { AreaMode } from '../../../dataset/enum/Area'
 import { IRange } from '../../../interface/Range'
 import { IElementPosition } from '../../../interface/Element'
-import { Placeholder } from '../frame/Placeholder'
 import { defaultPlaceholderOption } from '../../../dataset/constant/Placeholder'
 import { DeepRequired } from '../../../interface/Common'
 import { IEditorOption } from '../../../interface/Editor'
+
+const AREA_TYPE = 'area' as ElementType
+const LOCATION_POSITION_OUTER_BEFORE = 'outer-before'
+const LOCATION_POSITION_OUTER_AFTER = 'outer-after'
+
+function isNonValue(value: unknown): boolean {
+  return value === null || value === undefined
+}
 
 export class Area {
   private draw: Draw
@@ -107,7 +114,7 @@ export class Area {
     const areaId = id || getUUID()
     this.draw.insertElementList([
       {
-        type: ElementType.AREA,
+        type: AREA_TYPE,
         value: '',
         areaId,
         valueList: value,
@@ -119,6 +126,7 @@ export class Area {
 
   public render(ctx: CanvasRenderingContext2D, pageNo: number) {
     if (!this.areaInfoMap.size) return
+    const { scale } = this.options
     ctx.save()
     const margins = this.draw.getMargins()
     const width = this.draw.getInnerWidth()
@@ -151,14 +159,20 @@ export class Area {
       }
       // 提示词
       if (area.placeholder && positionList.length <= 1) {
-        const placeholder = new Placeholder(this.draw)
-        placeholder.render(ctx, {
-          placeholder: {
-            ...defaultPlaceholderOption,
-            ...area.placeholder
-          },
-          startY: firstPosition.coordinate.leftTop[1]
-        })
+        const placeholder = {
+          ...defaultPlaceholderOption,
+          ...area.placeholder
+        }
+        ctx.save()
+        ctx.globalAlpha = placeholder.opacity
+        ctx.fillStyle = placeholder.color
+        ctx.font = `${placeholder.size * scale}px ${placeholder.font}`
+        ctx.fillText(
+          placeholder.data,
+          x,
+          firstPosition.coordinate.leftTop[1] + placeholder.size * scale
+        )
+        ctx.restore()
       }
       ctx.translate(-0.5, -0.5)
     }
@@ -212,7 +226,8 @@ export class Area {
     const elementList = this.draw.getOriginalMainElementList()
     for (let e = 0; e < elementList.length; e++) {
       const element = elementList[e]
-      if (options?.position === LocationPosition.OUTER_BEFORE) {
+      const locationPosition = options?.position as string | undefined
+      if (locationPosition === LOCATION_POSITION_OUTER_BEFORE) {
         // 区域外面最前
         if (elementList[e + 1]?.areaId !== areaId) continue
       } else if (options?.position === LocationPosition.AFTER) {
@@ -222,7 +237,7 @@ export class Area {
         ) {
           continue
         }
-      } else if (options?.position === LocationPosition.OUTER_AFTER) {
+      } else if (locationPosition === LOCATION_POSITION_OUTER_AFTER) {
         // 区域外部最后
         if (
           !(element.areaId !== areaId && elementList[e - 1]?.areaId === areaId)
@@ -260,7 +275,7 @@ export class Area {
     Object.entries(payload.properties).forEach(([key, value]) => {
       if (isNonValue(value)) return
       const propKey = key as keyof IArea
-      areaInfo.area[propKey] = value
+      ;(areaInfo.area as Record<string, unknown>)[propKey] = value
       if (computeProps.includes(propKey)) {
         isCompute = true
       }
@@ -283,7 +298,7 @@ export class Area {
     formatElementList(
       [
         {
-          type: ElementType.AREA,
+          type: AREA_TYPE,
           value: '',
           valueList,
           areaId: areaInfo.id,
@@ -298,10 +313,7 @@ export class Area {
       elementList,
       positionList[0].index,
       positionList.length,
-      valueList,
-      {
-        isIgnoreDeletedRule: true
-      }
+      valueList
     )
     this.draw.render({
       isSetCursor: false
@@ -320,10 +332,7 @@ export class Area {
       elementList,
       positionList[0].index,
       positionList.length,
-      [],
-      {
-        isIgnoreDeletedRule: true
-      }
+      []
     )
     this.draw.render({
       isSetCursor: false

@@ -1,18 +1,20 @@
-import { ImageDisplay } from '../dataset/enum/Common';
-import { ControlComponent } from '../dataset/enum/Control';
-import { ElementType } from '../dataset/enum/Element';
-import { ListStyle, ListType } from '../dataset/enum/List';
-import { RowFlex } from '../dataset/enum/Row';
-import { TitleLevel } from '../dataset/enum/Title';
-import { TableBorder } from '../dataset/enum/table/Table';
-import { IBlock } from './Block';
-import { ICheckbox } from './Checkbox';
-import { IControl } from './Control';
-import { IRadio } from './Radio';
-import { ITextDecoration } from './Text';
-import { ITitle } from './Title';
-import { IColgroup } from './table/Colgroup';
-import { ITr } from './table/Tr';
+import { ImageDisplay } from '../dataset/enum/Common'
+import { ControlComponent } from '../dataset/enum/Control'
+import { ElementType } from '../dataset/enum/Element'
+import { ListStyle, ListType } from '../dataset/enum/List'
+import { RowFlex } from '../dataset/enum/Row'
+import { TitleLevel } from '../dataset/enum/Title'
+import { TableBorder } from '../dataset/enum/table/Table'
+import { IBlock } from './Block'
+import { ICheckbox } from './Checkbox'
+import { IControl } from './Control'
+import { IRadio } from './Radio'
+import { ITextDecoration } from './Text'
+import { ITitle } from './Title'
+import { IColgroup } from './table/Colgroup'
+import { ITr } from './table/Tr'
+import { IPadding } from './Common'
+import type { IArea } from './Area'
 
 export interface IElementBasic {
     id?: string;
@@ -96,6 +98,7 @@ export interface ITableAttr {
     colgroup?: IColgroup[];
     trList?: ITr[];
     borderType?: TableBorder;
+    borderColor?: string;
 }
 
 export interface ITableElement {
@@ -121,6 +124,7 @@ export interface ISuperscriptSubscript {
 
 export interface ISeparator {
     dashArray?: number[];
+    lineWidth?: number;
 }
 
 export interface IControlElement {
@@ -155,7 +159,17 @@ export interface IImageElement {
     };
 }
 
-export type IImageElement = IImageBasic & IImageRule
+export interface IImgCaptionOption {
+    color?: string;
+    font?: string;
+    size?: number;
+    top?: number;
+}
+
+export interface IAreaElement {
+    areaId?: string;
+    area?: IArea;
+}
 
 export interface IBlockElement {
     block?: IBlock;
@@ -173,6 +187,7 @@ export interface ILabelElement {
 
 export type IElement = IElementBasic &
     IElementStyle &
+    IElementRule &
     IElementGroup &
     ITable &
     IHyperlinkElement &
@@ -184,6 +199,8 @@ export type IElement = IElementBasic &
     ILaTexElement &
     IDateElement &
     IImageElement &
+    IAreaElement &
+    ILabelElement &
     IBlockElement &
     ITitleElement &
     IListElement &

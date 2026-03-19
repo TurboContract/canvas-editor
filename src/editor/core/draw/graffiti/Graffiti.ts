@@ -26,8 +26,15 @@ export class Graffiti {
     this.pageContainer.addEventListener('mousemove', this.drawing.bind(this))
   }
 
+  private isGraffitiMode(): boolean {
+    const drawWithGraffiti = this.draw as Draw & {
+      isGraffitiMode?: () => boolean
+    }
+    return drawWithGraffiti.isGraffitiMode?.() ?? false
+  }
+
   private start(evt: MouseEvent) {
-    if (!this.draw.isGraffitiMode()) return
+    if (!this.isGraffitiMode()) return
     this.isDrawing = true
     // 缓存起始数据
     const { scale } = this.options
@@ -43,7 +50,7 @@ export class Graffiti {
   }
 
   private drawing(evt: MouseEvent) {
-    if (!this.isDrawing || !this.draw.isGraffitiMode()) return
+    if (!this.isDrawing || !this.isGraffitiMode()) return
     // 移动超过至少2个像素后开始绘制
     const { offsetX, offsetY } = evt
     const DISTANCE = 2
