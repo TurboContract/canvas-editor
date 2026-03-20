@@ -7,7 +7,7 @@ import {
     omitObject,
     pickObject,
     splitText,
-} from '.';
+} from '.'
 import {
     EditorMode,
     ElementType,
@@ -19,9 +19,9 @@ import {
     RowFlex,
     TableBorder,
     TdBorder,
-} from '..';
-import { LaTexParticle } from '../core/draw/particle/latex/LaTexParticle';
-import { NON_BREAKING_SPACE, ZERO } from '../dataset/constant/Common';
+} from '..'
+import { LaTexParticle } from '../core/draw/particle/latex/LaTexParticle'
+import { NON_BREAKING_SPACE, ZERO } from '../dataset/constant/Common'
 import {
     BLOCK_ELEMENT_TYPE,
     CONTROL_STYLE_ATTR,
@@ -33,37 +33,37 @@ import {
     TABLE_TD_ZIP_ATTR,
     TEXTLIKE_ELEMENT_TYPE,
     TITLE_CONTEXT_ATTR,
-} from '../dataset/constant/Element';
+} from '../dataset/constant/Element'
 import {
     listStyleCSSMapping,
     listTypeElementMapping,
     ulStyleMapping,
-} from '../dataset/constant/List';
-import { START_LINE_BREAK_REG } from '../dataset/constant/Regular';
+} from '../dataset/constant/List'
+import { START_LINE_BREAK_REG } from '../dataset/constant/Regular'
 import {
     titleNodeNameMapping,
     titleOrderNumberMapping,
     titleSizeMapping,
-} from '../dataset/constant/Title';
-import { ControlComponent, ControlType } from '../dataset/enum/Control';
-import { UlStyle } from '../dataset/enum/List';
-import { DeepRequired } from '../interface/Common';
-import { IControlSelect } from '../interface/Control';
-import { IRowElement } from '../interface/Row';
-import { ITd } from '../interface/table/Td';
-import { ITr } from '../interface/table/Tr';
-import { IParagraph } from '@src/lib/canvas-editor-new/src/editor/interface/Element';
+} from '../dataset/constant/Title'
+import { ControlComponent, ControlType } from '../dataset/enum/Control'
+import { UlStyle } from '../dataset/enum/List'
+import { DeepRequired } from '../interface/Common'
+import { IControlSelect } from '../interface/Control'
+import { IRowElement } from '../interface/Row'
+import { ITd } from '../interface/table/Td'
+import { ITr } from '../interface/table/Tr'
+import { IParagraph } from '../interface/Element'
 
 export function unzipElementList(elementList: IElement[]): IElement[] {
-    const result: IElement[] = [];
+    const result: IElement[] = []
     for (let v = 0; v < elementList.length; v++) {
-        const valueItem = elementList[v];
-        const textList = splitText(valueItem.value);
+        const valueItem = elementList[v]
+        const textList = splitText(valueItem.value)
         for (let d = 0; d < textList.length; d++) {
-            result.push({ ...valueItem, value: textList[d] });
+            result.push({ ...valueItem, value: textList[d] })
         }
     }
-    return result;
+    return result
 }
 
 interface IFormatElementListOption {
@@ -80,8 +80,8 @@ export function formatElementList(
         isHandleFirstElement = true,
         isForceCompensation = false,
         editorOptions,
-    } = options;
-    const startElement = elementList[0];
+    } = options
+    const startElement = elementList[0]
     // 非首字符零宽节点文本元素则补偿-列表元素内部会补偿此处忽略
     if (
 
@@ -92,234 +92,219 @@ export function formatElementList(
     ) {
         elementList.unshift({
             value: ZERO,
-        });
+        })
     }
-    let i = 0;
+    let i = 0
     while (i < elementList.length) {
-        let el = elementList[i];
+        let el = elementList[i]
         // 优先处理虚拟元素
         if (el.type === ElementType.PARAGRAPH && !el.listId) {
-            elementList.splice(i, 1);
+            elementList.splice(i, 1)
             const paragraphProperties: Partial<IParagraph> = {
                 spacing: el.spacing,
                 rowFlex: el.rowFlex,
                 id: el.id,
-            };
+            }
 
-            const valueList = el.r || [];
+            const valueList = el.r || []
             formatElementList(valueList, {
                 ...options,
                 isHandleFirstElement: false,
                 isForceCompensation: false,
-            });
+            })
 
             if (valueList.length) {
                 for (let v = 0; v < valueList.length; v++) {
-                    const value = valueList[v];
+                    const value = valueList[v]
 
-                    Object.assign(value, paragraphProperties);
-                    elementList.splice(i, 0, value);
-                    i++;
+                    Object.assign(value, paragraphProperties)
+                    elementList.splice(i, 0, value)
+                    i++
                 }
+                const nextParagraphElement = elementList[i]
+                const nextParagraphFirstR = nextParagraphElement?.r?.[0]
                 if (
                     i !== elementList.length &&
-                    elementList[i]?.r[0]?.type !== ElementType.SEPARATOR &&
-                    elementList[i]?.r[0]?.type !== ElementType.TABLE &&
-                    elementList[i]?.r[0]?.type !== ElementType.LIST
+                    nextParagraphFirstR?.type !== ElementType.SEPARATOR &&
+                    nextParagraphFirstR?.type !== ElementType.TABLE &&
+                    nextParagraphFirstR?.type !== ElementType.LIST
                 ) {
                     elementList.splice(i, 0, {
                         value: ZERO,
-                        id: elementList[i]?.id,
-                    });
-                    i++;
+                        id: nextParagraphElement?.id,
+                    })
+                    i++
                 }
             } else {
+                const nextParagraphElement = elementList[i]
+                const nextParagraphFirstR = nextParagraphElement?.r?.[0]
                 if (
                     i !== elementList.length &&
-                    elementList[i]?.r[0]?.type !== ElementType.SEPARATOR &&
-                    elementList[i]?.r[0]?.type !== ElementType.TABLE &&
-                    elementList[i]?.r[0]?.type !== ElementType.LIST
+                    nextParagraphFirstR?.type !== ElementType.SEPARATOR &&
+                    nextParagraphFirstR?.type !== ElementType.TABLE &&
+                    nextParagraphFirstR?.type !== ElementType.LIST
                 ) {
                     elementList.splice(i, 0, {
                         value: ZERO,
-                        id: elementList[i]?.id,
-                    });
+                        id: nextParagraphElement?.id,
+                    })
                 }
-                i++;
+                i++
             }
-            i--;
+            i--
         }
         if (el.type === ElementType.TITLE) {
             // 移除父节点
-            elementList.splice(i, 1);
+            elementList.splice(i, 1)
             // 格式化元素
-            const valueList = el.valueList || [];
+            const valueList = el.valueList || []
             formatElementList(valueList, {
                 ...options,
                 isHandleFirstElement: false,
                 isForceCompensation: false,
-            });
+            })
             // 追加节点
             if (valueList.length) {
-                const titleId = getUUID();
-                const titleOptions = editorOptions.title;
+                const titleId = getUUID()
+                const titleOptions = editorOptions.title
                 for (let v = 0; v < valueList.length; v++) {
-                    const value = valueList[v];
-                    value.title = el.title;
+                    const value = valueList[v]
+                    value.title = el.title
                     if (el.level) {
-                        value.titleId = titleId;
-                        value.level = el.level;
+                        value.titleId = titleId
+                        value.level = el.level
                     }
                     // 文本型元素设置字体及加粗
                     if (isTextLikeElement(value)) {
                         if (!value.size) {
                             value.size =
-                                titleOptions[titleSizeMapping[value.level!]];
+                                titleOptions[titleSizeMapping[value.level!]]
                         }
                         if (value.bold === undefined) {
-                            value.bold = true;
+                            value.bold = true
                         }
                     }
-                    elementList.splice(i, 0, value);
-                    i++;
+                    elementList.splice(i, 0, value)
+                    i++
                 }
             }
-            i--;
+            i--
         } else if (el.type === ElementType.LIST) {
             // 移除父节点
-            elementList.splice(i, 1);
+            elementList.splice(i, 1)
             // 格式化元素
-            const valueList = el.valueList || [];
+            const valueList = el.valueList || []
             formatElementList(valueList, {
                 ...options,
                 isHandleFirstElement: true,
                 isForceCompensation: false,
-            });
+            })
             // 追加节点
             if (valueList.length) {
-                const listId = getUUID();
-                const listLevel = 0;
+                const listId = getUUID()
+                const listLevel = 0
                 for (let v = 0; v < valueList.length; v++) {
-                    const value = valueList[v];
+                    const value = valueList[v]
+                    const nextValue = valueList[v + 1]
                     if (
-                        valueList[v + 1] &&
-                        valueList[v + 1].type === ElementType.TAB &&
+                        nextValue &&
+                        nextValue.type === ElementType.TAB &&
                         v !== 0 &&
                         (value.value === ZERO || value.type === ElementType.TAB)
                     ) {
-                        if (
-                            valueList[
-                                valueList.findLastIndex(
-                                    (el, index) =>
-                                        el.value === ZERO &&
-                                        valueList[v + 1].type ===
-                                            ElementType.TAB &&
-                                        index <= v,
-                                )
-                            ].listLevel
+                        const lastZeroIndex = valueList.findLastIndex(
+                            (el, index) => el.value === ZERO && index <= v,
                         )
-                            valueList[
-                                valueList.findLastIndex(
-                                    (el, index) =>
-                                        el.value === ZERO &&
-                                        valueList[v + 1].type ===
-                                            ElementType.TAB &&
-                                        index <= v,
-                                )
-                            ].listLevel += 1;
-                        else
-                            valueList[
-                                valueList.findLastIndex(
-                                    (el, index) =>
-                                        el.value === ZERO &&
-                                        valueList[v + 1].type ===
-                                            ElementType.TAB &&
-                                        index <= v,
-                                )
-                            ].listLevel = 1;
-                    } else value.listLevel = listLevel;
-                    value.listId = listId;
-                    value.listType = el.listType;
-                    value.listStyle = el.listStyle;
-                    elementList.splice(i, 0, value);
-                    i++;
+                        if (lastZeroIndex !== -1 && valueList[lastZeroIndex]) {
+                            if (valueList[lastZeroIndex].listLevel) {
+                                valueList[lastZeroIndex].listLevel += 1
+                            } else {
+                                valueList[lastZeroIndex].listLevel = 1
+                            }
+                        }
+                    } else value.listLevel = listLevel
+                    value.listId = listId
+                    value.listType = el.listType
+                    value.listStyle = el.listStyle
+                    elementList.splice(i, 0, value)
+                    i++
                 }
             }
-            i--;
+            i--
         } else if (el.type === ElementType.TABLE) {
-            const tableId = getUUID();
-            el.id = tableId;
+            const tableId = getUUID()
+            el.id = tableId
             if (el.trList) {
-                const { defaultTrMinHeight } = editorOptions.table;
+                const { defaultTrMinHeight } = editorOptions.table
                 for (let t = 0; t < el.trList.length; t++) {
-                    const tr = el.trList[t];
-                    const trId = getUUID();
-                    tr.id = trId;
+                    const tr = el.trList[t]
+                    const trId = getUUID()
+                    tr.id = trId
                     if (!tr.minHeight || tr.minHeight < defaultTrMinHeight) {
-                        tr.minHeight = defaultTrMinHeight;
+                        tr.minHeight = defaultTrMinHeight
                     }
                     if (tr.height < tr.minHeight) {
-                        tr.height = tr.minHeight;
+                        tr.height = tr.minHeight
                     }
                     for (let d = 0; d < tr.tdList.length; d++) {
-                        const td = tr.tdList[d];
-                        const tdId = getUUID();
-                        td.id = tdId;
+                        const td = tr.tdList[d]
+                        const tdId = getUUID()
+                        td.id = tdId
                         formatElementList(td.value, {
                             ...options,
                             isHandleFirstElement: true,
                             isForceCompensation: true,
-                        });
+                        })
                         for (let v = 0; v < td.value.length; v++) {
-                            const value = td.value[v];
-                            value.tdId = tdId;
-                            value.trId = trId;
-                            value.tableId = tableId;
+                            const value = td.value[v]
+                            value.tdId = tdId
+                            value.trId = trId
+                            value.tableId = tableId
                         }
                     }
                 }
             }
         } else if (el.type === ElementType.HYPERLINK) {
             // 移除父节点
-            elementList.splice(i, 1);
+            elementList.splice(i, 1)
             // 元素展开
-            const valueList = unzipElementList(el.valueList || []);
+            const valueList = unzipElementList(el.valueList || [])
             // 追加节点
             if (valueList.length) {
-                const hyperlinkId = getUUID();
+                const hyperlinkId = getUUID()
                 for (let v = 0; v < valueList.length; v++) {
-                    const value = valueList[v];
-                    value.type = el.type;
-                    value.url = el.url;
-                    value.hyperlinkId = hyperlinkId;
-                    elementList.splice(i, 0, value);
-                    i++;
+                    const value = valueList[v]
+                    value.type = el.type
+                    value.url = el.url
+                    value.hyperlinkId = hyperlinkId
+                    elementList.splice(i, 0, value)
+                    i++
                 }
             }
-            i--;
+            i--
         } else if (el.type === ElementType.DATE) {
             // 移除父节点
-            elementList.splice(i, 1);
+            elementList.splice(i, 1)
             // 元素展开
-            const valueList = unzipElementList(el.valueList || []);
+            const valueList = unzipElementList(el.valueList || [])
             // 追加节点
             if (valueList.length) {
-                const dateId = getUUID();
+                const dateId = getUUID()
                 for (let v = 0; v < valueList.length; v++) {
-                    const value = valueList[v];
-                    value.type = el.type;
-                    value.dateFormat = el.dateFormat;
-                    value.dateId = dateId;
-                    elementList.splice(i, 0, value);
-                    i++;
+                    const value = valueList[v]
+                    value.type = el.type
+                    value.dateFormat = el.dateFormat
+                    value.dateId = dateId
+                    elementList.splice(i, 0, value)
+                    i++
                 }
             }
-            i--;
+            i--
         } else if (el.type === ElementType.CONTROL) {
             // 兼容控件内容类型错误
             if (!el.control) {
-                i++;
-                continue;
+                i++
+                continue
             }
             const {
                 prefix,
@@ -329,36 +314,36 @@ export function formatElementList(
                 code,
                 type,
                 valueSets,
-            } = el.control;
+            } = el.control
             const {
                 editorOptions: {
                     control: controlOption,
                     checkbox: checkboxOption,
                     radio: radioOption,
                 },
-            } = options;
-            const controlId = getUUID();
+            } = options
+            const controlId = getUUID()
             // 移除父节点
-            elementList.splice(i, 1);
+            elementList.splice(i, 1)
             // 控件上下文提取（压缩后的控件上下文无法提取）
             const controlContext = pickObject(el, [
                 ...EDITOR_ELEMENT_CONTEXT_ATTR,
                 ...EDITOR_ROW_ATTR,
-            ]);
+            ])
             // 控件设置的默认样式（以前缀为基准）
             const controlDefaultStyle = pickObject(
                 <IElement>(<unknown>el.control),
                 CONTROL_STYLE_ATTR,
-            );
+            )
             // 前后缀个性化设置
             const thePrePostfixArg: Omit<IElement, 'value'> = {
                 ...controlDefaultStyle,
                 color: editorOptions.control.bracketColor,
-            };
+            }
             // 前缀
-            const prefixStrList = splitText(prefix || controlOption.prefix);
+            const prefixStrList = splitText(prefix || controlOption.prefix)
             for (let p = 0; p < prefixStrList.length; p++) {
-                const value = prefixStrList[p];
+                const value = prefixStrList[p]
                 elementList.splice(i, 0, {
                     ...controlContext,
                     ...thePrePostfixArg,
@@ -367,8 +352,8 @@ export function formatElementList(
                     type: el.type,
                     control: el.control,
                     controlComponent: ControlComponent.PREFIX,
-                });
-                i++;
+                })
+                i++
             }
             // 值
             if (
@@ -379,9 +364,9 @@ export function formatElementList(
                     code &&
                     (!value || !value.length))
             ) {
-                let valueList: IElement[] = value || [];
+                let valueList: IElement[] = value || []
                 if (type === ControlType.CHECKBOX) {
-                    const codeList = code ? code.split(',') : [];
+                    const codeList = code ? code.split(',') : []
                     if (Array.isArray(valueSets) && valueSets.length) {
                         // 拆分valueList优先使用其属性
                         const valueStyleList = valueList.reduce(
@@ -392,10 +377,10 @@ export function formatElementList(
                                         .map((v) => ({ ...cur, value: v })),
                                 ),
                             [] as IElement[],
-                        );
-                        let valueStyleIndex = 0;
+                        )
+                        let valueStyleIndex = 0
                         for (let v = 0; v < valueSets.length; v++) {
-                            const valueSet = valueSets[v];
+                            const valueSet = valueSets[v]
                             // checkbox组件
                             elementList.splice(i, 0, {
                                 ...controlContext,
@@ -409,14 +394,14 @@ export function formatElementList(
                                     code: valueSet.code,
                                     value: codeList.includes(valueSet.code),
                                 },
-                            });
-                            i++;
+                            })
+                            i++
                             // 文本
-                            const valueStrList = splitText(valueSet.value);
+                            const valueStrList = splitText(valueSet.value)
                             for (let e = 0; e < valueStrList.length; e++) {
-                                const value = valueStrList[e];
+                                const value = valueStrList[e]
                                 const isLastLetter =
-                                    e === valueStrList.length - 1;
+                                    e === valueStrList.length - 1
                                 elementList.splice(i, 0, {
                                     ...controlContext,
                                     ...controlDefaultStyle,
@@ -428,9 +413,9 @@ export function formatElementList(
                                         : 0,
                                     control: el.control,
                                     controlComponent: ControlComponent.VALUE,
-                                });
-                                valueStyleIndex++;
-                                i++;
+                                })
+                                valueStyleIndex++
+                                i++
                             }
                         }
                     }
@@ -445,10 +430,10 @@ export function formatElementList(
                                         .map((v) => ({ ...cur, value: v })),
                                 ),
                             [] as IElement[],
-                        );
-                        let valueStyleIndex = 0;
+                        )
+                        let valueStyleIndex = 0
                         for (let v = 0; v < valueSets.length; v++) {
-                            const valueSet = valueSets[v];
+                            const valueSet = valueSets[v]
                             // radio组件
                             elementList.splice(i, 0, {
                                 ...controlContext,
@@ -462,14 +447,14 @@ export function formatElementList(
                                     code: valueSet.code,
                                     value: code === valueSet.code,
                                 },
-                            });
-                            i++;
+                            })
+                            i++
                             // 文本
-                            const valueStrList = splitText(valueSet.value);
+                            const valueStrList = splitText(valueSet.value)
                             for (let e = 0; e < valueStrList.length; e++) {
-                                const value = valueStrList[e];
+                                const value = valueStrList[e]
                                 const isLastLetter =
-                                    e === valueStrList.length - 1;
+                                    e === valueStrList.length - 1
                                 elementList.splice(i, 0, {
                                     ...controlContext,
                                     ...controlDefaultStyle,
@@ -481,9 +466,9 @@ export function formatElementList(
                                         : 0,
                                     control: el.control,
                                     controlComponent: ControlComponent.VALUE,
-                                });
-                                valueStyleIndex++;
-                                i++;
+                                })
+                                valueStyleIndex++
+                                i++
                             }
                         }
                     }
@@ -492,13 +477,13 @@ export function formatElementList(
                         if (Array.isArray(valueSets) && valueSets.length) {
                             const valueSet = valueSets.find(
                                 (v) => v.code === code,
-                            );
+                            )
                             if (valueSet) {
                                 valueList = [
                                     {
                                         value: valueSet.value,
                                     },
-                                ];
+                                ]
                             }
                         }
                     }
@@ -506,10 +491,10 @@ export function formatElementList(
                         ...options,
                         isHandleFirstElement: false,
                         isForceCompensation: false,
-                    });
+                    })
                     for (let v = 0; v < valueList.length; v++) {
-                        const element = valueList[v];
-                        const value = element.value;
+                        const element = valueList[v]
+                        const value = element.value
                         elementList.splice(i, 0, {
                             ...controlContext,
                             ...controlDefaultStyle,
@@ -519,8 +504,8 @@ export function formatElementList(
                             type: element.type || ElementType.TEXT,
                             control: el.control,
                             controlComponent: ControlComponent.VALUE,
-                        });
-                        i++;
+                        })
+                        i++
                     }
                 }
             } else if (placeholder) {
@@ -528,10 +513,10 @@ export function formatElementList(
                 const thePlaceholderArgs: Omit<IElement, 'value'> = {
                     ...controlDefaultStyle,
                     color: editorOptions.control.placeholderColor,
-                };
-                const placeholderStrList = splitText(placeholder);
+                }
+                const placeholderStrList = splitText(placeholder)
                 for (let p = 0; p < placeholderStrList.length; p++) {
-                    const value = placeholderStrList[p];
+                    const value = placeholderStrList[p]
                     elementList.splice(i, 0, {
                         ...controlContext,
                         ...thePlaceholderArgs,
@@ -540,14 +525,14 @@ export function formatElementList(
                         type: el.type,
                         control: el.control,
                         controlComponent: ControlComponent.PLACEHOLDER,
-                    });
-                    i++;
+                    })
+                    i++
                 }
             }
             // 后缀
-            const postfixStrList = splitText(postfix || controlOption.postfix);
+            const postfixStrList = splitText(postfix || controlOption.postfix)
             for (let p = 0; p < postfixStrList.length; p++) {
-                const value = postfixStrList[p];
+                const value = postfixStrList[p]
                 elementList.splice(i, 0, {
                     ...controlContext,
                     ...thePrePostfixArg,
@@ -556,53 +541,51 @@ export function formatElementList(
                     type: el.type,
                     control: el.control,
                     controlComponent: ControlComponent.POSTFIX,
-                });
-                i++;
+                })
+                i++
             }
-            i--;
+            i--
         } else if (
             (!el.type || TEXTLIKE_ELEMENT_TYPE.includes(el.type)) &&
             el.value.length > 1
         ) {
-            elementList.splice(i, 1);
-            const valueList = splitText(el.value);
+            elementList.splice(i, 1)
+            const valueList = splitText(el.value)
             for (let v = 0; v < valueList.length; v++) {
-                elementList.splice(i + v, 0, { ...el, value: valueList[v] });
+                elementList.splice(i + v, 0, { ...el, value: valueList[v] })
             }
-            el = elementList[i];
+            el = elementList[i]
         }
         if (
-            Boolean(
-                (el.value === '\n' || el.value.match(/\u00A0/g)) &&
-                    elementList[i - 1]?.listId,
-            )
+            (el.value === '\n' || el.value.match(/\u00A0/g)) &&
+                    elementList[i - 1]?.listId
         ) {
-            elementList.splice(i, 1);
-            i--;
+            elementList.splice(i, 1)
+            i--
         }
         if (el.value === '\n' || el.value == '\r\n') {
-            el.value = ZERO;
+            el.value = ZERO
         }
         if (el.value.match(/\u200B/g)?.length && el.italic === false) {
-            elementList.splice(i, 1);
-            i--;
+            elementList.splice(i, 1)
+            i--
         }
         if (el.value === '\t') {
-            el.type = ElementType.TAB;
+            el.type = ElementType.TAB
         }
         if (el.type === ElementType.IMAGE || el.type === ElementType.BLOCK) {
-            el.id = getUUID();
+            el.id = getUUID()
         }
         if (el.type === ElementType.LATEX) {
             const { svg, width, height } = LaTexParticle.convertLaTextToSVG(
                 el.value,
-            );
-            el.width = el.width || width;
-            el.height = el.height || height;
-            el.laTexSVG = svg;
-            el.id = getUUID();
+            )
+            el.width = el.width || width
+            el.height = el.height || height
+            el.laTexSVG = svg
+            el.id = getUUID()
         }
-        i++;
+        i++
     }
 }
 
@@ -610,8 +593,8 @@ export function isSameElementExceptValue(
     source: IElement,
     target: IElement,
 ): boolean {
-    const sourceKeys = Object.keys(source);
-    const targetKeys = Object.keys(target);
+    const sourceKeys = Object.keys(source)
+    const targetKeys = Object.keys(target)
 
     if (
         ((!targetKeys.find((key) => key === 'id') &&
@@ -621,31 +604,31 @@ export function isSameElementExceptValue(
         target.value !== ZERO &&
         target.value !== '\n'
     )
-        return true;
-    if (source.value === '\n' && target.value === '\n') return false;
+        return true
+    if (source.value === '\n' && target.value === '\n') return false
     if (
         sourceKeys.length !== targetKeys.length &&
         !targetKeys.find((el) => el === 'type')
     )
-        return false;
+        return false
     if (
         targetKeys.find((el) => el === 'type') &&
         target.type !== 'text' &&
         (sourceKeys.length !== targetKeys.length - 1 ||
             target.type === ElementType.SUPERSCRIPT)
     )
-        return false;
+        return false
     const count =
         sourceKeys.length > targetKeys.length
             ? sourceKeys.length
-            : targetKeys.length;
+            : targetKeys.length
     for (let s = 0; s < count; s++) {
         // const key = sourceKeys[s] as never;
-        const key = (sourceKeys[s] ? sourceKeys[s] : targetKeys[s]) as never;
+        const key = (sourceKeys[s] ? sourceKeys[s] : targetKeys[s]) as never
         // 值不需要校验
-        if (key === 'value') continue;
-        if (key === 'type') continue;
-        if (key === 'listLevel') continue;
+        if (key === 'value') continue
+        if (key === 'type') continue
+        if (key === 'listLevel') continue
         // groupIds数组需特殊校验数组是否相等
         if (
             key === 'groupIds' &&
@@ -653,13 +636,13 @@ export function isSameElementExceptValue(
             Array.isArray(target[key]) &&
             isArrayEqual(source[key], target[key])
         ) {
-            continue;
+            continue
         }
         if (source[key] !== target[key]) {
-            return false;
+            return false
         }
     }
-    return true;
+    return true
 }
 
 interface IPickElementOption {
@@ -670,21 +653,21 @@ export function pickElementAttr(
     payload: IElement,
     option: IPickElementOption = {},
 ): IElement {
-    const { extraPickAttrs } = option;
-    const zipAttrs = EDITOR_ELEMENT_ZIP_ATTR;
+    const { extraPickAttrs } = option
+    const zipAttrs = EDITOR_ELEMENT_ZIP_ATTR
     if (extraPickAttrs) {
-        zipAttrs.push(...extraPickAttrs);
+        zipAttrs.push(...extraPickAttrs)
     }
     const element: IElement = {
         value: payload.value === ZERO ? `\n` : payload.value,
-    };
+    }
     zipAttrs.forEach((attr) => {
-        const value = payload[attr] as never;
+        const value = payload[attr] as never
         if (value !== undefined) {
-            element[attr] = value;
+            element[attr] = value
         }
-    });
-    return element;
+    })
+    return element
 }
 
 interface IZipElementListOption {
@@ -697,12 +680,12 @@ export function zipElementList(
     payload: IElement[],
     options: IZipElementListOption = {},
 ): IElement[] {
-    const { extraPickAttrs, isClone = true } = options;
-    const elementList = isClone ? deepClone(payload) : payload;
-    const zipElementListData: IElement[] = [];
-    let e = 0;
+    const { extraPickAttrs, isClone = true } = options
+    const elementList = isClone ? deepClone(payload) : payload
+    const zipElementListData: IElement[] = []
+    let e = 0
     while (e < elementList.length) {
-        let element = elementList[e];
+        let element = elementList[e]
         // 上下文首字符（占位符）-列表首字符要保留避免是复选框
         if (
             e === 0 &&
@@ -710,61 +693,61 @@ export function zipElementList(
             !element.listId &&
             (!element.type || element.type === ElementType.TEXT)
         ) {
-            e++;
-            continue;
+            e++
+            continue
         } else if (element.type === ElementType.PARAGRAPH) {
-            zipElementListData.push(element);
-            e++;
-            continue;
+            zipElementListData.push(element)
+            e++
+            continue
         } else if (
             (element.titleId && !element.level) ||
             (element.listId && !element.listType)
         ) {
-            const valueList = [];
-            let valueListItem = pickElementAttr(element, { extraPickAttrs });
+            const valueList = []
+            let valueListItem = pickElementAttr(element, { extraPickAttrs })
             if (
                 elementList[e + 1] &&
                 elementList[e + 1]?.listId === element?.listId
             ) {
                 valueListItem = pickElementAttr(elementList[e + 1], {
                     extraPickAttrs,
-                });
+                })
             }
-            let combinedValueListItems = '';
+            let combinedValueListItems = ''
             while (elementList[e]) {
-                let zerosCount = 0;
+                let zerosCount = 0
                 while (e < elementList.length && elementList[e]) {
                     if (zerosCount <= 1) {
                         if (
                             elementList[e].value === ZERO &&
                             !(elementList[e].type === ElementType.TAB)
                         ) {
-                            zerosCount += 1;
+                            zerosCount += 1
                             if (zerosCount === 2) {
-                                e--;
-                                break;
+                                e--
+                                break
                             }
-                            combinedValueListItems += '\n';
+                            combinedValueListItems += '\n'
                         } else if (elementList[e].type === ElementType.TAB) {
-                            combinedValueListItems += '\t';
+                            combinedValueListItems += '\t'
                         } else {
-                            combinedValueListItems += elementList[e].value;
+                            combinedValueListItems += elementList[e].value
                         }
-                        e++;
+                        e++
                     } else {
-                        break;
+                        break
                     }
                 }
 
                 const valueListElement = {
                     ...valueListItem,
                     value: combinedValueListItems,
-                };
+                }
 
-                valueList.push(valueListElement);
+                valueList.push(valueListElement)
 
-                combinedValueListItems = '';
-                e++;
+                combinedValueListItems = ''
+                e++
                 if (e < elementList.length) {
                     if (
                         elementList[e + 1] &&
@@ -772,53 +755,53 @@ export function zipElementList(
                     ) {
                         valueListItem = pickElementAttr(elementList[e + 1], {
                             extraPickAttrs,
-                        });
+                        })
                     } else
                         valueListItem = pickElementAttr(elementList[e], {
                             extraPickAttrs,
-                        });
+                        })
                 }
             }
-            zipElementListData.push(...valueList);
+            zipElementListData.push(...valueList)
 
-            continue;
+            continue
         }
         // 优先处理虚拟元素，后表格、超链接、日期、控件特殊处理
         if (element.titleId && element.level) {
             // 标题处理
-            const titleId = element.titleId;
+            const titleId = element.titleId
             if (titleId) {
-                const level = element.level;
+                const level = element.level
                 const titleElement: IElement = {
                     type: ElementType.TITLE,
                     title: element.title,
                     value: '',
                     level,
-                };
-                const valueList: IElement[] = [];
-                while (e <= elementList.length) {
-                    const titleE = elementList[e];
-                    if (titleE === undefined || titleId !== titleE.titleId) {
-                        e--;
-                        break;
-                    }
-                    delete titleE.level;
-                    delete titleE.title;
-                    valueList.push(titleE);
-                    e++;
                 }
-                titleElement.valueList = zipElementList(valueList, options);
-                element = titleElement;
+                const valueList: IElement[] = []
+                while (e <= elementList.length) {
+                    const titleE = elementList[e]
+                    if (titleE === undefined || titleId !== titleE.titleId) {
+                        e--
+                        break
+                    }
+                    delete titleE.level
+                    delete titleE.title
+                    valueList.push(titleE)
+                    e++
+                }
+                titleElement.valueList = zipElementList(valueList, options)
+                element = titleElement
             }
             // Заголовки
         } else if (element.listId && element.listType) {
             // 列表处理
-            const listId = element.listId;
+            const listId = element.listId
             if (listId) {
-                const listType = element.listType;
-                const listStyle = element.listStyle;
-                const id = element.id || getUUID();
-                const listLevel = element.listLevel || 0;
+                const listType = element.listType
+                const listStyle = element.listStyle
+                const id = element.id || getUUID()
+                const listLevel = element.listLevel || 0
                 const listElement: IElement = {
                     type: ElementType.LIST,
                     value: '',
@@ -827,171 +810,171 @@ export function zipElementList(
                     listType,
                     listStyle,
                     listLevel,
-                };
-                const valueList: IElement[] = [];
-                while (e < elementList.length) {
-                    const listE = elementList[e];
-                    if (listId !== listE.listId) {
-                        e--;
-                        break;
-                    }
-                    delete listE.listType;
-                    delete listE.listStyle;
-                    valueList.push(listE);
-                    e++;
                 }
-                listElement.valueList = zipElementList(valueList, options);
-                element = listElement;
+                const valueList: IElement[] = []
+                while (e < elementList.length) {
+                    const listE = elementList[e]
+                    if (listId !== listE.listId) {
+                        e--
+                        break
+                    }
+                    delete listE.listType
+                    delete listE.listStyle
+                    valueList.push(listE)
+                    e++
+                }
+                listElement.valueList = zipElementList(valueList, options)
+                element = listElement
             }
         } else if (element.type === ElementType.TABLE) {
             // 分页表格先进行合并
             if (element.pagingId) {
-                let tableIndex = e + 1;
-                let combineCount = 0;
+                let tableIndex = e + 1
+                let combineCount = 0
                 while (tableIndex < elementList.length) {
-                    const nextElement = elementList[tableIndex];
+                    const nextElement = elementList[tableIndex]
                     if (nextElement.pagingId === element.pagingId) {
-                        element.height! += nextElement.height!;
-                        element.trList!.push(...nextElement.trList!);
-                        tableIndex++;
-                        combineCount++;
+                        element.height! += nextElement.height!
+                        element.trList!.push(...nextElement.trList!)
+                        tableIndex++
+                        combineCount++
                     } else {
-                        break;
+                        break
                     }
                 }
-                e += combineCount;
+                e += combineCount
             }
             if (element.trList) {
                 for (let t = 0; t < element.trList.length; t++) {
-                    const tr = element.trList[t];
-                    delete tr.id;
+                    const tr = element.trList[t]
+                    delete tr.id
                     for (let d = 0; d < tr.tdList.length; d++) {
-                        const td = tr.tdList[d];
+                        const td = tr.tdList[d]
                         const zipTd: ITd = {
                             colspan: td.colspan,
                             rowspan: td.rowspan,
                             value: zipElementList(td.value, options),
-                        };
+                        }
                         // 压缩单元格属性
                         TABLE_TD_ZIP_ATTR.forEach((attr) => {
-                            const value = td[attr] as never;
+                            const value = td[attr] as never
                             if (value !== undefined) {
-                                zipTd[attr] = value;
+                                zipTd[attr] = value
                             }
-                        });
-                        tr.tdList[d] = zipTd;
+                        })
+                        tr.tdList[d] = zipTd
                     }
                 }
             }
         } else if (element.hyperlinkId && element.url) {
             // 超链接处理
-            const hyperlinkId = element.hyperlinkId;
+            const hyperlinkId = element.hyperlinkId
             if (hyperlinkId) {
                 const hyperlinkElement: IElement = {
                     type: ElementType.HYPERLINK,
                     value: '',
                     url: element.url,
-                };
-                const valueList: IElement[] = [];
-                while (e < elementList.length) {
-                    const hyperlinkE = elementList[e];
-                    if (hyperlinkId !== hyperlinkE.hyperlinkId) {
-                        e--;
-                        break;
-                    }
-                    delete hyperlinkE.type;
-                    delete hyperlinkE.url;
-                    valueList.push(hyperlinkE);
-                    e++;
                 }
-                hyperlinkElement.valueList = zipElementList(valueList, options);
-                element = hyperlinkElement;
+                const valueList: IElement[] = []
+                while (e < elementList.length) {
+                    const hyperlinkE = elementList[e]
+                    if (hyperlinkId !== hyperlinkE.hyperlinkId) {
+                        e--
+                        break
+                    }
+                    delete hyperlinkE.type
+                    delete hyperlinkE.url
+                    valueList.push(hyperlinkE)
+                    e++
+                }
+                hyperlinkElement.valueList = zipElementList(valueList, options)
+                element = hyperlinkElement
             }
         } else if (element.hyperlinkId && !element.url) {
-            let value = '';
+            let value = ''
             while (elementList[e]) {
-                value += elementList[e].value;
-                e++;
+                value += elementList[e].value
+                e++
             }
             // Copy properties and attributes, and check for different attributes to split into elements
             const hyperLinkValueListElement = {
                 value,
-            };
-            zipElementListData.push(hyperLinkValueListElement);
-            continue;
+            }
+            zipElementListData.push(hyperLinkValueListElement)
+            continue
         } else if (element.type === ElementType.DATE) {
-            const dateId = element.dateId;
+            const dateId = element.dateId
             if (dateId) {
                 const dateElement: IElement = {
                     type: ElementType.DATE,
                     value: '',
                     dateFormat: element.dateFormat,
-                };
-                const valueList: IElement[] = [];
-                while (e < elementList.length) {
-                    const dateE = elementList[e];
-                    if (dateId !== dateE.dateId) {
-                        e--;
-                        break;
-                    }
-                    delete dateE.type;
-                    delete dateE.dateFormat;
-                    valueList.push(dateE);
-                    e++;
                 }
-                dateElement.valueList = zipElementList(valueList, options);
-                element = dateElement;
+                const valueList: IElement[] = []
+                while (e < elementList.length) {
+                    const dateE = elementList[e]
+                    if (dateId !== dateE.dateId) {
+                        e--
+                        break
+                    }
+                    delete dateE.type
+                    delete dateE.dateFormat
+                    valueList.push(dateE)
+                    e++
+                }
+                dateElement.valueList = zipElementList(valueList, options)
+                element = dateElement
             }
         } else if (element.controlId) {
             // 控件处理
-            const controlId = element.controlId;
+            const controlId = element.controlId
             if (controlId) {
                 // Update control default style based on prefix
                 const controlDefaultStyle = <IControlSelect>(
                     (<unknown>pickObject(element, CONTROL_STYLE_ATTR))
-                );
+                )
                 const control = {
                     ...element.control!,
                     ...controlDefaultStyle,
-                };
+                }
                 const controlElement: IElement = {
                     ...pickObject(element, EDITOR_ROW_ATTR),
                     type: ElementType.CONTROL,
                     value: '',
                     control,
                     controlId,
-                };
-                const valueList: IElement[] = [];
+                }
+                const valueList: IElement[] = []
                 while (e < elementList.length) {
-                    const controlE = elementList[e];
+                    const controlE = elementList[e]
                     if (controlId !== controlE.controlId) {
-                        e--;
-                        break;
+                        e--
+                        break
                     }
                     if (controlE.controlComponent === ControlComponent.VALUE) {
-                        delete controlE.control;
-                        delete controlE.controlId;
-                        valueList.push(controlE);
+                        delete controlE.control
+                        delete controlE.controlId
+                        valueList.push(controlE)
                     }
-                    e++;
+                    e++
                 }
                 controlElement.control!.value = zipElementList(
                     valueList,
                     options,
-                );
-                element = pickElementAttr(controlElement, { extraPickAttrs });
+                )
+                element = pickElementAttr(controlElement, { extraPickAttrs })
             }
         }
-        let nextIndex = e + 1;
-        let id: string | undefined;
+        let nextIndex = e + 1
+        let id: string | undefined
 
         if (element.id) {
-            id = element.id;
+            id = element.id
         } else if (
             element.valueList &&
             elementList[e - element.valueList[0]?.value?.length]?.value === ZERO
         ) {
-            id = getUUID();
+            id = getUUID()
         } else if (
             e > 0 &&
             elementList[e - 1].value !== ZERO &&
@@ -1002,56 +985,56 @@ export function zipElementList(
                 zipElementListData[zipElementListData.length - 1]?.id &&
                 element.value !== ZERO
                     ? zipElementListData[zipElementListData.length - 1]?.id
-                    : getUUID();
+                    : getUUID()
         } else {
-            id = getUUID();
+            id = getUUID()
         }
 
         // Initialize object with current element attributes
-        let rItem = pickElementAttr(element, { extraPickAttrs });
-        let combinedValue = '';
+        let rItem = pickElementAttr(element, { extraPickAttrs })
+        let combinedValue = ''
         if (rItem.value !== '\n' && element.type !== ElementType.SEPARATOR)
-            combinedValue = rItem.value;
+            combinedValue = rItem.value
 
         // Check if an element with the same id already exists
-        const existingElement = zipElementListData.find((el) => el.id === id);
+        const existingElement = zipElementListData.find((el) => el.id === id)
 
         // Combine consecutive elements with the same attributes
         while (nextIndex < elementList.length) {
             if (elementList[e - 1] && elementList[e - 1].value === ZERO) {
                 if (elementList[e]) {
-                    rItem = pickElementAttr(elementList[e], { extraPickAttrs });
-                    element.rowFlex = rItem.rowFlex;
+                    rItem = pickElementAttr(elementList[e], { extraPickAttrs })
+                    element.rowFlex = rItem.rowFlex
                 }
             }
 
-            const nextElement = elementList[nextIndex];
-            if (!nextElement) break;
+            const nextElement = elementList[nextIndex]
+            if (!nextElement) break
 
-            const nextRItem = pickElementAttr(nextElement, { extraPickAttrs });
+            const nextRItem = pickElementAttr(nextElement, { extraPickAttrs })
             if (
                 rItem &&
                 isSameElementExceptValue(rItem, nextRItem) &&
                 nextRItem.value !== '\n'
             ) {
-                combinedValue += nextRItem.value;
-                e++;
+                combinedValue += nextRItem.value
+                e++
             } else {
-                break;
+                break
             }
 
-            nextIndex++;
+            nextIndex++
         }
 
-        rItem.value = combinedValue;
+        rItem.value = combinedValue
         if (rItem?.type === ElementType.TAB) {
-            delete rItem.type;
+            delete rItem.type
         }
         if (existingElement) {
-            delete rItem.rowFlex;
-            existingElement.r?.push(rItem);
+            delete rItem.rowFlex
+            existingElement.r?.push(rItem)
         } else {
-            delete rItem.rowFlex;
+            delete rItem.rowFlex
             const newElement = {
                 type: ElementType.PARAGRAPH,
                 id,
@@ -1060,57 +1043,57 @@ export function zipElementList(
                 value: '',
                 spacing: element.spacing,
                 rowFlex: element.rowFlex,
-            };
+            }
 
-            zipElementListData.push(newElement);
+            zipElementListData.push(newElement)
         }
-        e++;
+        e++
     }
-    return zipElementListData;
+    return zipElementListData
 }
 
 export function convertTextAlignToRowFlex(node: HTMLElement) {
-    const textAlign = window.getComputedStyle(node).textAlign;
+    const textAlign = window.getComputedStyle(node).textAlign
     switch (textAlign) {
         case 'left':
         case 'start':
-            return RowFlex.LEFT;
+            return RowFlex.LEFT
         case 'center':
-            return RowFlex.CENTER;
+            return RowFlex.CENTER
         case 'right':
         case 'end':
-            return RowFlex.RIGHT;
+            return RowFlex.RIGHT
         case 'justify':
-            return RowFlex.ALIGNMENT;
+            return RowFlex.ALIGNMENT
         case 'justify-all':
-            return RowFlex.JUSTIFY;
+            return RowFlex.JUSTIFY
         default:
-            return RowFlex.LEFT;
+            return RowFlex.LEFT
     }
 }
 
 export function convertRowFlexToTextAlign(rowFlex: RowFlex) {
-    return rowFlex === RowFlex.ALIGNMENT ? 'justify' : rowFlex;
+    return rowFlex === RowFlex.ALIGNMENT ? 'justify' : rowFlex
 }
 
 export function convertRowFlexToJustifyContent(rowFlex: RowFlex) {
     switch (rowFlex) {
         case RowFlex.LEFT:
-            return 'flex-start';
+            return 'flex-start'
         case RowFlex.CENTER:
-            return 'center';
+            return 'center'
         case RowFlex.RIGHT:
-            return 'flex-end';
+            return 'flex-end'
         case RowFlex.ALIGNMENT:
         case RowFlex.JUSTIFY:
-            return 'space-between';
+            return 'space-between'
         default:
-            return 'flex-start';
+            return 'flex-start'
     }
 }
 
 export function isTextLikeElement(element: IElement): boolean {
-    return !element.type || TEXTLIKE_ELEMENT_TYPE.includes(element.type);
+    return !element.type || TEXTLIKE_ELEMENT_TYPE.includes(element.type)
 }
 
 export function isTextElement(element: IElement): boolean {
@@ -1129,16 +1112,16 @@ export function getAnchorElement(
     elementList: IElement[],
     anchorIndex: number,
 ): IElement | null {
-    const anchorElement = elementList[anchorIndex];
-    if (!anchorElement) return null;
-    const anchorNextElement = elementList[anchorIndex + 1];
+    const anchorElement = elementList[anchorIndex]
+    if (!anchorElement) return null
+    const anchorNextElement = elementList[anchorIndex + 1]
     // 非列表元素 && 当前元素是换行符 && 下一个元素不是换行符 则以下一个元素作为参考元素
     return !anchorElement.listId &&
         anchorElement.value === ZERO &&
         anchorNextElement &&
         anchorNextElement.value !== ZERO
         ? anchorNextElement
-        : anchorElement;
+        : anchorElement
 }
 
 export interface IFormatElementContextOption {
@@ -1152,24 +1135,24 @@ export function formatElementContext(
     anchorIndex: number,
     options?: IFormatElementContextOption,
 ) {
-    let copyElement = getAnchorElement(sourceElementList, anchorIndex);
-    if (!copyElement) return;
-    const { isBreakWhenWrap = false, editorOptions } = options || {};
-    const { mode } = editorOptions || {};
+    let copyElement = getAnchorElement(sourceElementList, anchorIndex)
+    if (!copyElement) return
+    const { isBreakWhenWrap = false, editorOptions } = options || {}
+    const { mode } = editorOptions || {}
     // 非设计模式时：标题元素禁用时不复制标题属性
     if (mode !== EditorMode.DESIGN && copyElement.title?.disabled) {
-        copyElement = omitObject(copyElement, TITLE_CONTEXT_ATTR);
+        copyElement = omitObject(copyElement, TITLE_CONTEXT_ATTR)
     }
     // 是否已经换行
-    let isBreakWarped = false;
+    let isBreakWarped = false
     for (let e = 0; e < formatElementList.length; e++) {
-        const targetElement = formatElementList[e];
+        const targetElement = formatElementList[e]
         if (
             isBreakWhenWrap &&
             !copyElement.listId &&
             START_LINE_BREAK_REG.test(targetElement.value)
         ) {
-            isBreakWarped = true;
+            isBreakWarped = true
         }
         // 1. 即使换行停止也要处理表格上下文信息
         // 2. 定位元素非列表，无需处理粘贴列表的上下文，仅处理表格及行上下文信息
@@ -1177,14 +1160,14 @@ export function formatElementContext(
             isBreakWarped ||
             (!copyElement.listId && targetElement.type === ElementType.LIST)
         ) {
-            const cloneAttr = [...TABLE_CONTEXT_ATTR, ...EDITOR_ROW_ATTR];
-            cloneProperty<IElement>(cloneAttr, copyElement!, targetElement);
+            const cloneAttr = [...TABLE_CONTEXT_ATTR, ...EDITOR_ROW_ATTR]
+            cloneProperty<IElement>(cloneAttr, copyElement!, targetElement)
             targetElement.valueList?.forEach((valueItem) => {
-                cloneProperty<IElement>(cloneAttr, copyElement!, valueItem);
-            });
+                cloneProperty<IElement>(cloneAttr, copyElement!, valueItem)
+            })
             if (targetElement.value === ZERO && !targetElement.id)
-                targetElement.id = getUUID();
-            continue;
+                targetElement.id = getUUID()
+            continue
         }
         if (targetElement.valueList?.length) {
             formatElementContext(
@@ -1192,37 +1175,37 @@ export function formatElementContext(
                 targetElement.valueList,
                 anchorIndex,
                 options,
-            );
+            )
         } else if (targetElement.r?.length) {
             formatElementContext(
                 sourceElementList,
                 targetElement.r,
                 anchorIndex,
                 options,
-            );
+            )
         }
         // 非块类元素，需处理行属性
-        const cloneAttr = [...EDITOR_ELEMENT_CONTEXT_ATTR];
+        const cloneAttr = [...EDITOR_ELEMENT_CONTEXT_ATTR]
         if (!getIsBlockElement(targetElement)) {
-            cloneAttr.push(...EDITOR_ROW_ATTR);
+            cloneAttr.push(...EDITOR_ROW_ATTR)
         }
         if (copyElement.listId)
-            cloneProperty<IElement>(cloneAttr, copyElement, targetElement);
+            cloneProperty<IElement>(cloneAttr, copyElement, targetElement)
         if (copyElement.tableId) {
-            cloneProperty<IElement>(cloneAttr, copyElement, targetElement);
+            cloneProperty<IElement>(cloneAttr, copyElement, targetElement)
         }
         if (!targetElement.id) {
-            targetElement.id = copyElement.id || getUUID();
+            targetElement.id = copyElement.id || getUUID()
         }
         if (copyElement?.isPlaceholder) {
-            targetElement.isPlaceholder = copyElement.isPlaceholder;
+            targetElement.isPlaceholder = copyElement.isPlaceholder
         }
         if (copyElement?.isDisabled) {
-            targetElement.isDisabled = copyElement.isDisabled;
+            targetElement.isDisabled = copyElement.isDisabled
         }
         if (!(targetElement.type === ElementType.PARAGRAPH)) {
-            targetElement.spacing = copyElement.spacing;
-            targetElement.rowFlex = copyElement.rowFlex;
+            targetElement.spacing = copyElement.spacing
+            targetElement.rowFlex = copyElement.rowFlex
         }
     }
 }
@@ -1231,74 +1214,74 @@ export function convertElementToDom(
     element: IElement,
     options: DeepRequired<IEditorOption>,
 ): HTMLElement {
-    let tagName: keyof HTMLElementTagNameMap = 'span';
+    let tagName: keyof HTMLElementTagNameMap = 'span'
     if (element.type === ElementType.SUPERSCRIPT) {
-        tagName = 'sup';
+        tagName = 'sup'
     } else if (element.type === ElementType.SUBSCRIPT) {
-        tagName = 'sub';
+        tagName = 'sub'
     }
-    const dom = document.createElement(tagName);
-    dom.style.fontFamily = element.font || options.defaultFont;
+    const dom = document.createElement(tagName)
+    dom.style.fontFamily = element.font || options.defaultFont
     if (element.rowFlex) {
-        dom.style.textAlign = convertRowFlexToTextAlign(element.rowFlex);
+        dom.style.textAlign = convertRowFlexToTextAlign(element.rowFlex)
     }
     if (element.color) {
-        dom.style.color = element.color;
+        dom.style.color = element.color
     }
     if (element.bold) {
-        dom.style.fontWeight = '600';
+        dom.style.fontWeight = '600'
     }
     if (element.italic) {
-        dom.style.fontStyle = 'italic';
+        dom.style.fontStyle = 'italic'
     }
-    dom.style.fontSize = `${element.size || options.defaultSize}px`;
+    dom.style.fontSize = `${element.size || options.defaultSize}px`
     if (element.highlight) {
-        dom.style.backgroundColor = element.highlight;
+        dom.style.backgroundColor = element.highlight
     }
     if (element.underline) {
-        dom.style.textDecoration = 'underline';
+        dom.style.textDecoration = 'underline'
     }
     if (element.strikeout) {
-        dom.style.textDecoration += ' line-through';
+        dom.style.textDecoration += ' line-through'
     }
-    dom.innerText = element.value.replace(new RegExp(`${ZERO}`, 'g'), '\n');
-    return dom;
+    dom.innerText = element.value.replace(new RegExp(`${ZERO}`, 'g'), '\n')
+    return dom
 }
 
 export function splitListElement(
     elementList: IElement[],
 ): Map<number, IElement[]> {
-    let curListIndex = 0;
-    const listElementListMap: Map<number, IElement[]> = new Map();
+    let curListIndex = 0
+    const listElementListMap: Map<number, IElement[]> = new Map()
     for (let e = 0; e < elementList.length; e++) {
-        const element = elementList[e];
+        const element = elementList[e]
         // 移除列表首行换行字符-如果是复选框直接忽略
         if (e === 0) {
-            if (element.checkbox) continue;
-            element.value = element.value.replace(START_LINE_BREAK_REG, '');
+            if (element.checkbox) continue
+            element.value = element.value.replace(START_LINE_BREAK_REG, '')
         }
         if (element.listWrap) {
-            const listElementList = listElementListMap.get(curListIndex) || [];
-            listElementList.push(element);
-            listElementListMap.set(curListIndex, listElementList);
+            const listElementList = listElementListMap.get(curListIndex) || []
+            listElementList.push(element)
+            listElementListMap.set(curListIndex, listElementList)
         } else {
-            const valueList = element.value.split('\n');
+            const valueList = element.value.split('\n')
             for (let c = 0; c < valueList.length; c++) {
                 if (c > 0) {
-                    curListIndex += 1;
+                    curListIndex += 1
                 }
-                const value = valueList[c];
+                const value = valueList[c]
                 const listElementList =
-                    listElementListMap.get(curListIndex) || [];
+                    listElementListMap.get(curListIndex) || []
                 listElementList.push({
                     ...element,
                     value,
-                });
-                listElementListMap.set(curListIndex, listElementList);
+                })
+                listElementListMap.set(curListIndex, listElementList)
             }
         }
     }
-    return listElementListMap;
+    return listElementListMap
 }
 
 export interface IElementListGroupRowFlex {
@@ -1309,16 +1292,16 @@ export interface IElementListGroupRowFlex {
 export function groupElementListByRowFlex(
     elementList: IElement[],
 ): IElementListGroupRowFlex[] {
-    const elementListGroupList: IElementListGroupRowFlex[] = [];
-    if (!elementList.length) return elementListGroupList;
-    let currentRowFlex: RowFlex | null = elementList[0]?.rowFlex || null;
+    const elementListGroupList: IElementListGroupRowFlex[] = []
+    if (!elementList.length) return elementListGroupList
+    let currentRowFlex: RowFlex | null = elementList[0]?.rowFlex || null
     elementListGroupList.push({
         rowFlex: currentRowFlex,
         data: [elementList[0]],
-    });
+    })
     for (let e = 1; e < elementList.length; e++) {
-        const element = elementList[e];
-        const rowFlex = element.rowFlex || null;
+        const element = elementList[e]
+        const rowFlex = element.rowFlex || null
         // 行布局相同&非块元素时追加数据，否则新增分组
         if (
             currentRowFlex === rowFlex &&
@@ -1326,22 +1309,22 @@ export function groupElementListByRowFlex(
             !getIsBlockElement(elementList[e - 1])
         ) {
             const lastElementListGroup =
-                elementListGroupList[elementListGroupList.length - 1];
-            lastElementListGroup.data.push(element);
+                elementListGroupList[elementListGroupList.length - 1]
+            lastElementListGroup.data.push(element)
         } else {
             elementListGroupList.push({
                 rowFlex,
                 data: [element],
-            });
-            currentRowFlex = rowFlex;
+            })
+            currentRowFlex = rowFlex
         }
     }
     // 压缩数据
     for (let g = 0; g < elementListGroupList.length; g++) {
-        const elementListGroup = elementListGroupList[g];
-        elementListGroup.data = zipElementList(elementListGroup.data);
+        const elementListGroup = elementListGroupList[g]
+        elementListGroup.data = zipElementList(elementListGroup.data)
     }
-    return elementListGroupList;
+    return elementListGroupList
 }
 
 export function createDomFromElementList(
@@ -1349,256 +1332,256 @@ export function createDomFromElementList(
     options: DeepRequired<IEditorOption>,
 ) {
     function buildDom(payload: IElement[]): HTMLDivElement {
-        const clipboardDom = document.createElement('div');
+        const clipboardDom = document.createElement('div')
         for (let e = 0; e < payload.length; e++) {
-            const element = payload[e];
+            const element = payload[e]
             // 构造表格
             if (element.type === ElementType.TABLE) {
                 const tableDom: HTMLTableElement =
-                    document.createElement('table');
-                tableDom.setAttribute('cellSpacing', '0');
-                tableDom.setAttribute('cellpadding', '0');
-                tableDom.setAttribute('border', '0');
-                const borderStyle = '1px solid #000000';
+                    document.createElement('table')
+                tableDom.setAttribute('cellSpacing', '0')
+                tableDom.setAttribute('cellpadding', '0')
+                tableDom.setAttribute('border', '0')
+                const borderStyle = '1px solid #000000'
                 // 表格边框
                 if (
                     !element.borderType ||
                     element.borderType === TableBorder.ALL
                 ) {
-                    tableDom.style.borderTop = borderStyle;
-                    tableDom.style.borderLeft = borderStyle;
+                    tableDom.style.borderTop = borderStyle
+                    tableDom.style.borderLeft = borderStyle
                 } else if (element.borderType === TableBorder.EXTERNAL) {
-                    tableDom.style.border = borderStyle;
+                    tableDom.style.border = borderStyle
                 }
-                tableDom.style.width = `${element.width}px`;
+                tableDom.style.width = `${element.width}px`
                 // colgroup
-                const colgroupDom = document.createElement('colgroup');
+                const colgroupDom = document.createElement('colgroup')
                 for (let c = 0; c < element.colgroup!.length; c++) {
-                    const colgroup = element.colgroup![c];
-                    const colDom = document.createElement('col');
-                    colDom.setAttribute('width', `${colgroup.width}`);
-                    colgroupDom.append(colDom);
+                    const colgroup = element.colgroup![c]
+                    const colDom = document.createElement('col')
+                    colDom.setAttribute('width', `${colgroup.width}`)
+                    colgroupDom.append(colDom)
                 }
-                tableDom.append(colgroupDom);
+                tableDom.append(colgroupDom)
                 // tr
-                const trList = element.trList!;
+                const trList = element.trList!
                 for (let t = 0; t < trList.length; t++) {
-                    const trDom = document.createElement('tr');
-                    const tr = trList[t];
-                    trDom.style.height = `${tr.height}px`;
+                    const trDom = document.createElement('tr')
+                    const tr = trList[t]
+                    trDom.style.height = `${tr.height}px`
                     for (let d = 0; d < tr.tdList.length; d++) {
-                        const tdDom = document.createElement('td');
+                        const tdDom = document.createElement('td')
                         if (
                             !element.borderType ||
                             element.borderType === TableBorder.ALL
                         ) {
                             tdDom.style.borderBottom = tdDom.style.borderRight =
-                                '1px solid';
+                                '1px solid'
                         }
-                        const td = tr.tdList[d];
-                        tdDom.colSpan = td.colspan;
-                        tdDom.rowSpan = td.rowspan;
-                        tdDom.style.verticalAlign = td.verticalAlign || 'top';
+                        const td = tr.tdList[d]
+                        tdDom.colSpan = td.colspan
+                        tdDom.rowSpan = td.rowspan
+                        tdDom.style.verticalAlign = td.verticalAlign || 'top'
                         // 单元格边框
                         if (td.borderTypes?.includes(TdBorder.TOP)) {
-                            tdDom.style.borderTop = borderStyle;
+                            tdDom.style.borderTop = borderStyle
                         }
                         if (td.borderTypes?.includes(TdBorder.RIGHT)) {
-                            tdDom.style.borderRight = borderStyle;
+                            tdDom.style.borderRight = borderStyle
                         }
                         if (td.borderTypes?.includes(TdBorder.BOTTOM)) {
-                            tdDom.style.borderBottom = borderStyle;
+                            tdDom.style.borderBottom = borderStyle
                         }
                         if (td.borderTypes?.includes(TdBorder.LEFT)) {
-                            tdDom.style.borderLeft = borderStyle;
+                            tdDom.style.borderLeft = borderStyle
                         }
                         const childDom = createDomFromElementList(
                             td.value!,
                             options,
-                        );
-                        tdDom.innerHTML = childDom.innerHTML;
+                        )
+                        tdDom.innerHTML = childDom.innerHTML
                         if (td.backgroundColor) {
-                            tdDom.style.backgroundColor = td.backgroundColor;
+                            tdDom.style.backgroundColor = td.backgroundColor
                         }
-                        trDom.append(tdDom);
+                        trDom.append(tdDom)
                     }
-                    tableDom.append(trDom);
+                    tableDom.append(trDom)
                 }
-                clipboardDom.append(tableDom);
+                clipboardDom.append(tableDom)
             } else if (element.type === ElementType.HYPERLINK) {
-                const a = document.createElement('a');
-                a.innerText = element.valueList!.map((v) => v.value).join('');
+                const a = document.createElement('a')
+                a.innerText = element.valueList!.map((v) => v.value).join('')
                 if (element.url) {
-                    a.href = element.url;
+                    a.href = element.url
                 }
-                clipboardDom.append(a);
+                clipboardDom.append(a)
             } else if (element.type === ElementType.TITLE) {
                 const h = document.createElement(
                     `h${titleOrderNumberMapping[element.level!]}`,
-                );
-                const childDom = buildDom(element.valueList!);
-                h.innerHTML = childDom.innerHTML;
-                clipboardDom.append(h);
+                )
+                const childDom = buildDom(element.valueList!)
+                h.innerHTML = childDom.innerHTML
+                clipboardDom.append(h)
             } else if (element.type === ElementType.LIST) {
                 const list = document.createElement(
                     listTypeElementMapping[element.listType!],
-                );
+                )
                 if (element.listStyle) {
                     list.style.listStyleType =
-                        listStyleCSSMapping[element.listStyle];
+                        listStyleCSSMapping[element.listStyle]
                 }
                 // 按照换行符拆分
-                const zipList = zipElementList(element.valueList!);
-                const listElementListMap = splitListElement(zipList);
+                const zipList = zipElementList(element.valueList!)
+                const listElementListMap = splitListElement(zipList)
                 listElementListMap.forEach((listElementList) => {
-                    const li = document.createElement('li');
-                    const childDom = buildDom(listElementList);
-                    li.innerHTML = childDom.innerHTML;
-                    list.append(li);
-                });
-                clipboardDom.append(list);
+                    const li = document.createElement('li')
+                    const childDom = buildDom(listElementList)
+                    li.innerHTML = childDom.innerHTML
+                    list.append(li)
+                })
+                clipboardDom.append(list)
             } else if (element.type === ElementType.IMAGE) {
-                const img = document.createElement('img');
+                const img = document.createElement('img')
                 if (element.value) {
-                    img.src = element.value;
-                    img.width = element.width!;
-                    img.height = element.height!;
+                    img.src = element.value
+                    img.width = element.width!
+                    img.height = element.height!
                 }
-                clipboardDom.append(img);
+                clipboardDom.append(img)
             } else if (element.type === ElementType.SEPARATOR) {
-                const hr = document.createElement('hr');
-                clipboardDom.append(hr);
+                const hr = document.createElement('hr')
+                clipboardDom.append(hr)
             } else if (element.type === ElementType.CHECKBOX) {
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
+                const checkbox = document.createElement('input')
+                checkbox.type = 'checkbox'
                 if (element.checkbox?.value) {
-                    checkbox.setAttribute('checked', 'true');
+                    checkbox.setAttribute('checked', 'true')
                 }
-                clipboardDom.append(checkbox);
+                clipboardDom.append(checkbox)
             } else if (element.type === ElementType.RADIO) {
-                const radio = document.createElement('input');
-                radio.type = 'radio';
+                const radio = document.createElement('input')
+                radio.type = 'radio'
                 if (element.radio?.value) {
-                    radio.setAttribute('checked', 'true');
+                    radio.setAttribute('checked', 'true')
                 }
-                clipboardDom.append(radio);
+                clipboardDom.append(radio)
             } else if (element.type === ElementType.TAB) {
-                const tab = document.createElement('span');
-                tab.innerHTML = `${NON_BREAKING_SPACE}${NON_BREAKING_SPACE}`;
-                clipboardDom.append(tab);
+                const tab = document.createElement('span')
+                tab.innerHTML = `${NON_BREAKING_SPACE}${NON_BREAKING_SPACE}`
+                clipboardDom.append(tab)
             } else if (element.type === ElementType.CONTROL) {
-                const controlElement = document.createElement('span');
-                const childDom = buildDom(element.control?.value || []);
-                controlElement.innerHTML = childDom.innerHTML;
-                clipboardDom.append(controlElement);
+                const controlElement = document.createElement('span')
+                const childDom = buildDom(element.control?.value || [])
+                controlElement.innerHTML = childDom.innerHTML
+                clipboardDom.append(controlElement)
             } else if (
                 !element.type ||
                 element.type === ElementType.LATEX ||
                 TEXTLIKE_ELEMENT_TYPE.includes(element.type)
             ) {
-                let text = '';
+                let text = ''
                 if (element.type === ElementType.DATE) {
                     text =
-                        element.valueList?.map((v) => v.value).join('') || '';
+                        element.valueList?.map((v) => v.value).join('') || ''
                 } else {
-                    text = element.value;
+                    text = element.value
                 }
-                if (!text) continue;
-                const dom = convertElementToDom(element, options);
+                if (!text) continue
+                const dom = convertElementToDom(element, options)
                 // 前一个元素是标题，移除首行换行符
                 if (payload[e - 1]?.type === ElementType.TITLE) {
-                    text = text.replace(/^\n/, '');
+                    text = text.replace(/^\n/, '')
                 }
-                dom.innerText = text.replace(new RegExp(`${ZERO}`, 'g'), '\n');
-                clipboardDom.append(dom);
+                dom.innerText = text.replace(new RegExp(`${ZERO}`, 'g'), '\n')
+                clipboardDom.append(dom)
             }
         }
-        return clipboardDom;
+        return clipboardDom
     }
 
     // 按行布局分类创建dom
-    const clipboardDom = document.createElement('div');
-    const groupElementList = groupElementListByRowFlex(elementList);
+    const clipboardDom = document.createElement('div')
+    const groupElementList = groupElementListByRowFlex(elementList)
     for (let g = 0; g < groupElementList.length; g++) {
-        const elementGroupRowFlex = groupElementList[g];
+        const elementGroupRowFlex = groupElementList[g]
         // 行布局样式设置
         const isDefaultRowFlex =
             !elementGroupRowFlex.rowFlex ||
-            elementGroupRowFlex.rowFlex === RowFlex.LEFT;
+            elementGroupRowFlex.rowFlex === RowFlex.LEFT
         // 块元素使用flex否则使用text-align
-        const rowFlexDom = document.createElement('div');
+        const rowFlexDom = document.createElement('div')
         if (!isDefaultRowFlex) {
-            const firstElement = elementGroupRowFlex.data[0];
+            const firstElement = elementGroupRowFlex.data[0]
             if (getIsBlockElement(firstElement)) {
-                rowFlexDom.style.display = 'flex';
+                rowFlexDom.style.display = 'flex'
                 rowFlexDom.style.justifyContent =
-                    convertRowFlexToJustifyContent(firstElement.rowFlex!);
+                    convertRowFlexToJustifyContent(firstElement.rowFlex!)
             } else {
                 rowFlexDom.style.textAlign = convertRowFlexToTextAlign(
                     elementGroupRowFlex.rowFlex!,
-                );
+                )
             }
         }
         // 布局内容
-        rowFlexDom.innerHTML = buildDom(elementGroupRowFlex.data).innerHTML;
+        rowFlexDom.innerHTML = buildDom(elementGroupRowFlex.data).innerHTML
         // 未设置行布局时无需行布局容器
         if (!isDefaultRowFlex) {
-            clipboardDom.append(rowFlexDom);
+            clipboardDom.append(rowFlexDom)
         } else {
             rowFlexDom.childNodes.forEach((child) => {
-                clipboardDom.append(child.cloneNode(true));
-            });
+                clipboardDom.append(child.cloneNode(true))
+            })
         }
     }
-    return clipboardDom;
+    return clipboardDom
 }
 
 export function convertTextNodeToElement(
     textNode: Element | Node,
 ): IElement | null {
-    if (!textNode || textNode.nodeType !== 3) return null;
-    const parentNode = <HTMLElement>textNode.parentNode;
+    if (!textNode || textNode.nodeType !== 3) return null
+    const parentNode = <HTMLElement>textNode.parentNode
     const anchorNode =
         parentNode.nodeName === 'FONT'
             ? <HTMLElement>parentNode.parentNode
-            : parentNode;
-    const rowFlex = convertTextAlignToRowFlex(anchorNode);
-    const value = textNode.textContent;
-    const style = window.getComputedStyle(anchorNode);
-    if (!value || anchorNode.nodeName === 'STYLE') return null;
+            : parentNode
+    const rowFlex = convertTextAlignToRowFlex(anchorNode)
+    const value = textNode.textContent
+    const style = window.getComputedStyle(anchorNode)
+    if (!value || anchorNode.nodeName === 'STYLE') return null
     const element: IElement = {
         value,
         color: style.color,
         bold: Number(style.fontWeight) > 500,
         italic: style.fontStyle.includes('italic'),
         size: Math.floor(parseFloat(style.fontSize)),
-    };
+    }
     // 元素类型-默认文本
     if (anchorNode.nodeName === 'SUB' || style.verticalAlign === 'sub') {
-        element.type = ElementType.SUBSCRIPT;
+        element.type = ElementType.SUBSCRIPT
     } else if (
         anchorNode.nodeName === 'SUP' ||
         style.verticalAlign === 'super'
     ) {
-        element.type = ElementType.SUPERSCRIPT;
+        element.type = ElementType.SUPERSCRIPT
     }
     // 行对齐
     if (rowFlex !== RowFlex.LEFT) {
-        element.rowFlex = rowFlex;
+        element.rowFlex = rowFlex
     }
     // 高亮色
     if (style.backgroundColor !== 'rgba(0, 0, 0, 0)') {
-        element.highlight = style.backgroundColor;
+        element.highlight = style.backgroundColor
     }
     // 下划线
     if (style.textDecorationLine.includes('underline')) {
-        element.underline = true;
+        element.underline = true
     }
     // 删除线
     if (style.textDecorationLine.includes('line-through')) {
-        element.strikeout = true;
+        element.strikeout = true
     }
-    return element;
+    return element
 }
 
 interface IGetElementListByHTMLOption {
@@ -1609,26 +1592,26 @@ export function getElementListByHTML(
     htmlText: string,
     options: IGetElementListByHTMLOption,
 ): IElement[] {
-    const elementList: IElement[] = [];
+    const elementList: IElement[] = []
 
     function findTextNode(dom: Element | Node) {
         if (dom.nodeType === 3) {
-            const element = convertTextNodeToElement(dom);
+            const element = convertTextNodeToElement(dom)
             if (element) {
-                elementList.push(element);
+                elementList.push(element)
             }
         } else if (dom.nodeType === 1) {
-            const childNodes = dom.childNodes;
+            const childNodes = dom.childNodes
             for (let n = 0; n < childNodes.length; n++) {
-                const node = childNodes[n];
+                const node = childNodes[n]
                 // br元素与display:block元素需换行
                 if (node.nodeName === 'BR') {
                     elementList.push({
                         value: '\n',
-                    });
+                    })
                 } else if (node.nodeName === 'A') {
-                    const aElement = node as HTMLLinkElement;
-                    const value = aElement.innerText;
+                    const aElement = node as HTMLLinkElement
+                    const value = aElement.innerText
                     if (value) {
                         elementList.push({
                             type: ElementType.HYPERLINK,
@@ -1639,129 +1622,129 @@ export function getElementListByHTML(
                                 },
                             ],
                             url: aElement.href,
-                        });
+                        })
                     }
                 } else if (/H[1-6]/.test(node.nodeName)) {
-                    const hElement = node as HTMLTitleElement;
+                    const hElement = node as HTMLTitleElement
                     const valueList = getElementListByHTML(
                         replaceHTMLElementTag(hElement, 'div').outerHTML,
                         options,
-                    );
+                    )
                     elementList.push({
                         value: '',
                         type: ElementType.TITLE,
                         level: titleNodeNameMapping[node.nodeName],
                         valueList,
-                    });
+                    })
                     if (
                         node.nextSibling &&
                         !INLINE_NODE_NAME.includes(node.nextSibling.nodeName)
                     ) {
                         elementList.push({
                             value: '\n',
-                        });
+                        })
                     }
                 } else if (node.nodeName === 'UL' || node.nodeName === 'OL') {
                     const listNode = node as
                         | HTMLOListElement
-                        | HTMLUListElement;
+                        | HTMLUListElement
                     const listElement: IElement = {
                         value: '',
                         type: ElementType.LIST,
                         valueList: [],
-                    };
+                    }
                     if (node.nodeName === 'OL') {
-                        listElement.listType = ListType.OL;
+                        listElement.listType = ListType.OL
                     } else {
-                        listElement.listType = ListType.UL;
+                        listElement.listType = ListType.UL
                         listElement.listStyle = <ListStyle>(
                             (<unknown>listNode.style.listStyleType)
-                        );
+                        )
                     }
                     listNode.querySelectorAll('li').forEach((li) => {
                         const liValueList = getElementListByHTML(
                             li.innerHTML,
                             options,
-                        );
+                        )
                         liValueList.forEach((list) => {
                             if (list.value === '\n') {
-                                list.listWrap = true;
+                                list.listWrap = true
                             }
-                        });
+                        })
                         liValueList.unshift({
                             value: '\n',
-                        });
-                        listElement.valueList!.push(...liValueList);
-                    });
-                    elementList.push(listElement);
+                        })
+                        listElement.valueList!.push(...liValueList)
+                    })
+                    elementList.push(listElement)
                 } else if (node.nodeName === 'HR') {
                     elementList.push({
                         value: '\n',
                         type: ElementType.SEPARATOR,
-                    });
+                    })
                 } else if (node.nodeName === 'IMG') {
-                    const { src, width, height } = node as HTMLImageElement;
+                    const { src, width, height } = node as HTMLImageElement
                     if (src && width && height) {
                         elementList.push({
                             width,
                             height,
                             value: src,
                             type: ElementType.IMAGE,
-                        });
+                        })
                     }
                 } else if (node.nodeName === 'TABLE') {
-                    const tableElement = node as HTMLTableElement;
+                    const tableElement = node as HTMLTableElement
                     const element: IElement = {
                         type: ElementType.TABLE,
                         value: '\n',
                         colgroup: [],
                         trList: [],
-                    };
+                    }
                     // 基础数据
                     tableElement.querySelectorAll('tr').forEach((trElement) => {
                         const trHeightStr = window
                             .getComputedStyle(trElement)
-                            .height.replace('px', '');
+                            .height.replace('px', '')
                         const tr: ITr = {
                             height: Number(trHeightStr),
                             tdList: [],
-                        };
+                        }
                         trElement
                             .querySelectorAll('th,td')
                             .forEach((tdElement) => {
                                 const tableCell = <HTMLTableCellElement>(
                                     tdElement
-                                );
+                                )
                                 const valueList = getElementListByHTML(
                                     tableCell.innerHTML,
                                     options,
-                                );
+                                )
                                 const td: ITd = {
                                     colspan: tableCell.colSpan,
                                     rowspan: tableCell.rowSpan,
                                     value: valueList,
-                                };
+                                }
                                 if (tableCell.style.backgroundColor) {
                                     td.backgroundColor =
-                                        tableCell.style.backgroundColor;
+                                        tableCell.style.backgroundColor
                                 }
-                                tr.tdList.push(td);
-                            });
-                        element.trList!.push(tr);
-                    });
+                                tr.tdList.push(td)
+                            })
+                        element.trList!.push(tr)
+                    })
                     if (element.trList!.length) {
                         // 列选项数据
                         const tdCount = element.trList![0].tdList.reduce(
                             (pre, cur) => pre + cur.colspan,
                             0,
-                        );
-                        const width = Math.ceil(options.innerWidth / tdCount);
+                        )
+                        const width = Math.ceil(options.innerWidth / tdCount)
                         for (let i = 0; i < tdCount; i++) {
                             element.colgroup!.push({
                                 width,
-                            });
+                            })
                         }
-                        elementList.push(element);
+                        elementList.push(element)
                     }
                 } else if (
                     node.nodeName === 'INPUT' &&
@@ -1773,7 +1756,7 @@ export function getElementListByHTML(
                         checkbox: {
                             value: (<HTMLInputElement>node).checked,
                         },
-                    });
+                    })
                 } else if (
                     node.nodeName === 'INPUT' &&
                     (<HTMLInputElement>node).type === ControlComponent.RADIO
@@ -1784,17 +1767,17 @@ export function getElementListByHTML(
                         radio: {
                             value: (<HTMLInputElement>node).checked,
                         },
-                    });
+                    })
                 } else {
-                    findTextNode(node);
+                    findTextNode(node)
                     if (node.nodeType === 1 && n !== childNodes.length - 1) {
                         const display = window.getComputedStyle(
                             node as Element,
-                        ).display;
+                        ).display
                         if (display === 'block') {
                             elementList.push({
                                 value: '\n',
-                            });
+                            })
                         }
                     }
                 }
@@ -1803,96 +1786,96 @@ export function getElementListByHTML(
     }
 
     // 追加dom
-    const clipboardDom = document.createElement('div');
-    clipboardDom.innerHTML = htmlText;
-    document.body.appendChild(clipboardDom);
-    const deleteNodes: ChildNode[] = [];
+    const clipboardDom = document.createElement('div')
+    clipboardDom.innerHTML = htmlText
+    document.body.appendChild(clipboardDom)
+    const deleteNodes: ChildNode[] = []
     clipboardDom.childNodes.forEach((child) => {
         if (child.nodeType !== 1 && !child.textContent?.trim()) {
-            deleteNodes.push(child);
+            deleteNodes.push(child)
         }
-    });
-    deleteNodes.forEach((node) => node.remove());
+    })
+    deleteNodes.forEach((node) => node.remove())
     // 搜索文本节点
-    findTextNode(clipboardDom);
+    findTextNode(clipboardDom)
     // 移除dom
-    clipboardDom.remove();
-    return elementList;
+    clipboardDom.remove()
+    return elementList
 }
 
 export function getTextFromElementList(elementList: IElement[]) {
     function buildText(payload: IElement[]): string {
-        let text = '';
+        let text = ''
         for (let e = 0; e < payload.length; e++) {
-            const element = payload[e];
+            const element = payload[e]
             // 构造表格
             if (element.type === ElementType.TABLE) {
-                text += `\n`;
-                const trList = element.trList!;
+                text += `\n`
+                const trList = element.trList!
                 for (let t = 0; t < trList.length; t++) {
-                    const tr = trList[t];
+                    const tr = trList[t]
                     for (let d = 0; d < tr.tdList.length; d++) {
-                        const td = tr.tdList[d];
-                        const tdText = buildText(zipElementList(td.value!));
-                        const isFirst = d === 0;
-                        const isLast = tr.tdList.length - 1 === d;
-                        text += `${!isFirst ? `  ` : ``}${tdText}${isLast ? `\n` : ``}`;
+                        const td = tr.tdList[d]
+                        const tdText = buildText(zipElementList(td.value!))
+                        const isFirst = d === 0
+                        const isLast = tr.tdList.length - 1 === d
+                        text += `${!isFirst ? `  ` : ``}${tdText}${isLast ? `\n` : ``}`
                     }
                 }
             } else if (element.type === ElementType.TAB) {
-                text += `\t`;
+                text += `\t`
             } else if (element.type === ElementType.HYPERLINK) {
-                text += element.valueList!.map((v) => v.value).join('');
+                text += element.valueList!.map((v) => v.value).join('')
             } else if (element.type === ElementType.TITLE) {
-                text += `${buildText(zipElementList(element.valueList!))}`;
+                text += `${buildText(zipElementList(element.valueList!))}`
             } else if (element.type === ElementType.LIST) {
                 // 按照换行符拆分
-                const zipList = zipElementList(element.valueList!);
-                const listElementListMap = splitListElement(zipList);
+                const zipList = zipElementList(element.valueList!)
+                const listElementListMap = splitListElement(zipList)
                 // 无序列表前缀
-                let ulListStyleText = '';
+                let ulListStyleText = ''
                 if (element.listType === ListType.UL) {
                     ulListStyleText =
-                        ulStyleMapping[<UlStyle>(<unknown>element.listStyle)];
+                        ulStyleMapping[<UlStyle>(<unknown>element.listStyle)]
                 }
                 listElementListMap.forEach((listElementList, listIndex) => {
-                    const isLast = listElementListMap.size - 1 === listIndex;
+                    const isLast = listElementListMap.size - 1 === listIndex
                     text += `\n${ulListStyleText || `${listIndex + 1}.`}${buildText(
                         listElementList,
-                    )}${isLast ? `\n` : ``}`;
-                });
+                    )}${isLast ? `\n` : ``}`
+                })
             } else if (element.type === ElementType.CHECKBOX) {
-                text += element.checkbox?.value ? `☑` : `□`;
+                text += element.checkbox?.value ? `☑` : `□`
             } else if (element.type === ElementType.RADIO) {
-                text += element.radio?.value ? `☉` : `○`;
+                text += element.radio?.value ? `☉` : `○`
             } else if (
                 !element.type ||
                 element.type === ElementType.LATEX ||
                 TEXTLIKE_ELEMENT_TYPE.includes(element.type)
             ) {
-                let textLike = '';
+                let textLike = ''
                 if (element.type === ElementType.CONTROL) {
-                    textLike = element.control!.value?.[0]?.value || '';
+                    textLike = element.control!.value?.[0]?.value || ''
                 } else if (element.type === ElementType.DATE) {
                     textLike =
-                        element.valueList?.map((v) => v.value).join('') || '';
+                        element.valueList?.map((v) => v.value).join('') || ''
                 } else {
-                    textLike = element.value;
+                    textLike = element.value
                 }
-                text += textLike.replace(new RegExp(`${ZERO}`, 'g'), '\n');
+                text += textLike.replace(new RegExp(`${ZERO}`, 'g'), '\n')
             }
         }
-        return text;
+        return text
     }
 
-    return buildText(zipElementList(elementList));
+    return buildText(zipElementList(elementList))
 }
 
 export function getSlimCloneElementList(elementList: IElement[]) {
     return deepCloneOmitKeys<IElement[], IRowElement>(elementList, [
         'metrics',
         'style',
-    ]);
+    ])
 }
 
 export function getIsBlockElement(element?: IElement) {
@@ -1900,31 +1883,31 @@ export function getIsBlockElement(element?: IElement) {
         !!element?.type &&
         (BLOCK_ELEMENT_TYPE.includes(element.type) ||
             element.imgDisplay === ImageDisplay.INLINE)
-    );
+    )
 }
 
 export function replaceHTMLElementTag(
     oldDom: HTMLElement,
     tagName: keyof HTMLElementTagNameMap,
 ): HTMLElement {
-    const newDom = document.createElement(tagName);
+    const newDom = document.createElement(tagName)
     for (let i = 0; i < oldDom.attributes.length; i++) {
-        const attr = oldDom.attributes[i];
-        newDom.setAttribute(attr.name, attr.value);
+        const attr = oldDom.attributes[i]
+        newDom.setAttribute(attr.name, attr.value)
     }
-    newDom.innerHTML = oldDom.innerHTML;
-    return newDom;
+    newDom.innerHTML = oldDom.innerHTML
+    return newDom
 }
 
 export function pickSurroundElementList(elementList: IElement[]) {
-    const surroundElementList = [];
+    const surroundElementList = []
     for (let e = 0; e < elementList.length; e++) {
-        const element = elementList[e];
+        const element = elementList[e]
         if (element.imgDisplay === ImageDisplay.SURROUND) {
-            surroundElementList.push(element);
+            surroundElementList.push(element)
         }
     }
-    return surroundElementList;
+    return surroundElementList
 }
 
 export function deleteSurroundElementList(
@@ -1932,9 +1915,9 @@ export function deleteSurroundElementList(
     pageNo: number,
 ) {
     for (let s = elementList.length - 1; s >= 0; s--) {
-        const surroundElement = elementList[s];
+        const surroundElement = elementList[s]
         if (surroundElement.imgFloatPosition?.pageNo === pageNo) {
-            elementList.splice(s, 1);
+            elementList.splice(s, 1)
         }
     }
 }
@@ -1942,5 +1925,5 @@ export function deleteSurroundElementList(
 export function isParagraph(
     element: IElement,
 ): element is IElement & IParagraph {
-    return 'r' in element && Array.isArray((element as IParagraph).r);
+    return 'r' in element && Array.isArray((element as IParagraph).r)
 }
