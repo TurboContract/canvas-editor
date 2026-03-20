@@ -84,11 +84,11 @@ export function formatElementList(
     const startElement = elementList[0];
     // 非首字符零宽节点文本元素则补偿-列表元素内部会补偿此处忽略
     if (
-        isForceCompensation ||
-        (isHandleFirstElement &&
-            startElement?.type !== ElementType.LIST &&
+
+            startElement?.type !== ElementType.LIST &&(isForceCompensation ||
+      (isHandleFirstElement &&
             ((startElement?.type && startElement.type !== ElementType.TEXT) ||
-                !START_LINE_BREAK_REG.test(startElement?.value)))
+                !START_LINE_BREAK_REG.test(startElement?.value))))
     ) {
         elementList.unshift({
             value: ZERO,
