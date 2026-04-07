@@ -5,12 +5,12 @@ import {
     ListType,
     PageMode,
     TitleLevel,
-} from '..';
-import { RowFlex } from '../dataset/enum/Row';
-import { IControl } from './Control';
-import { IEditorResult } from './Editor';
-import { IPositionContext } from './Position';
-import { ITextDecoration } from './Text';
+} from '..'
+import { RowFlex } from '../dataset/enum/Row'
+import { IControl } from './Control'
+import { IEditorResult } from './Editor'
+import { IPositionContext } from './Position'
+import { ITextDecoration } from './Text'
 
 export interface IRangeStyle {
     type: ElementType | null;

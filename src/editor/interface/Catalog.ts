@@ -1,4 +1,4 @@
-import { TitleLevel } from '../dataset/enum/Title';
+import { TitleLevel } from '../dataset/enum/Title'
 
 export interface ICatalogItem {
     id: string;

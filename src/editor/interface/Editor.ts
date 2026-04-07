@@ -1,33 +1,33 @@
-import { IElement, LocationPosition } from '..';
+import { IElement, LocationPosition } from '..'
 import {
     EditorMode,
     PageMode,
     PaperDirection,
     RenderMode,
     WordBreak,
-} from '../dataset/enum/Editor';
-import { IBackgroundOption } from './Background';
-import { ICheckboxOption } from './Checkbox';
-import { IRadioOption } from './Radio';
-import { IControlOption } from './Control';
-import { ICursorOption } from './Cursor';
-import { IFooter } from './Footer';
-import { IGroup } from './Group';
-import { IHeader } from './Header';
-import { ILineBreakOption } from './LineBreak';
-import { IMargin } from './Margin';
-import { IPageBreak } from './PageBreak';
-import { IPageNumber } from './PageNumber';
-import { IPlaceholder } from './Placeholder';
-import { ITitleOption } from './Title';
-import { IWatermark } from './Watermark';
-import { IZoneOption } from './Zone';
-import { ISeparatorOption } from './Separator';
-import { ITableOption } from './table/Table';
-import { ILineNumberOption } from './LineNumber';
-import { IPageBorderOption } from './PageBorder';
-import { ILabelOption } from './Label';
-import { IGraffitiOption } from './Graffiti';
+} from '../dataset/enum/Editor'
+import { IBackgroundOption } from './Background'
+import { ICheckboxOption } from './Checkbox'
+import { IRadioOption } from './Radio'
+import { IControlOption } from './Control'
+import { ICursorOption } from './Cursor'
+import { IFooter } from './Footer'
+import { IGroup } from './Group'
+import { IHeader } from './Header'
+import { ILineBreakOption } from './LineBreak'
+import { IMargin } from './Margin'
+import { IPageBreak } from './PageBreak'
+import { IPageNumber } from './PageNumber'
+import { IPlaceholder } from './Placeholder'
+import { ITitleOption } from './Title'
+import { IWatermark } from './Watermark'
+import { IZoneOption } from './Zone'
+import { ISeparatorOption } from './Separator'
+import { ITableOption } from './table/Table'
+import { ILineNumberOption } from './LineNumber'
+import { IPageBorderOption } from './PageBorder'
+import { ILabelOption } from './Label'
+import { IGraffitiOption } from './Graffiti'
 
 export interface IEditorData {
     header?: IElement[];

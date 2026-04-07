@@ -1,4 +1,4 @@
-import { IControlOption } from '../../interface/Control';
+import { IControlOption } from '../../interface/Control'
 
 export const defaultControlOption: Readonly<Required<IControlOption>> = {
     placeholderColor: '#9c9b9b',
@@ -8,4 +8,4 @@ export const defaultControlOption: Readonly<Required<IControlOption>> = {
     borderWidth: 1,
     borderColor: '#000000',
     activeBackgroundColor: '',
-};
+}

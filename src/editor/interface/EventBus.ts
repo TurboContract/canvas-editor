@@ -14,7 +14,7 @@ import {
     IZoneChange,
     ISelectionChange,
     IParagraphIndentChange,
-} from './Listener';
+} from './Listener'
 
 export interface EventBusMap {
     rangeStyleChange: IRangeStyleChange;

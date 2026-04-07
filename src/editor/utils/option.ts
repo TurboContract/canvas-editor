@@ -1,55 +1,55 @@
-import { defaultBackground } from '../dataset/constant/Background';
-import { defaultCheckboxOption } from '../dataset/constant/Checkbox';
-import { LETTER_CLASS } from '../dataset/constant/Common';
-import { defaultControlOption } from '../dataset/constant/Control';
-import { defaultCursorOption } from '../dataset/constant/Cursor';
-import { defaultFooterOption } from '../dataset/constant/Footer';
-import { defaultGroupOption } from '../dataset/constant/Group';
-import { defaultHeaderOption } from '../dataset/constant/Header';
-import { defaultLineBreak } from '../dataset/constant/LineBreak';
-import { defaultPageBreakOption } from '../dataset/constant/PageBreak';
-import { defaultPageNumberOption } from '../dataset/constant/PageNumber';
-import { defaultPlaceholderOption } from '../dataset/constant/Placeholder';
-import { defaultRadioOption } from '../dataset/constant/Radio';
-import { defaultSeparatorOption } from '../dataset/constant/Separator';
-import { defaultLabelOption } from '../dataset/constant/Label';
-import { defaultGraffitiOption } from '../dataset/constant/Graffiti';
-import { defaultTableOption } from '../dataset/constant/Table';
-import { defaultTitleOption } from '../dataset/constant/Title';
-import { defaultWatermarkOption } from '../dataset/constant/Watermark';
-import { defaultZoneOption } from '../dataset/constant/Zone';
-import { defaultLineNumberOption } from '../dataset/constant/LineNumber';
-import { IBackgroundOption } from '../interface/Background';
-import { ICheckboxOption } from '../interface/Checkbox';
-import { DeepRequired } from '../interface/Common';
-import { IControlOption } from '../interface/Control';
-import { ICursorOption } from '../interface/Cursor';
-import { IEditorOption } from '../interface/Editor';
-import { IFooter } from '../interface/Footer';
-import { IGroup } from '../interface/Group';
-import { IHeader } from '../interface/Header';
-import { ILineBreakOption } from '../interface/LineBreak';
-import { IPageBreak } from '../interface/PageBreak';
-import { IPageNumber } from '../interface/PageNumber';
-import { IPlaceholder } from '../interface/Placeholder';
-import { IRadioOption } from '../interface/Radio';
-import { ISeparatorOption } from '../interface/Separator';
-import { ILabelOption } from '../interface/Label';
-import { IGraffitiOption } from '../interface/Graffiti';
-import { ITableOption } from '../interface/table/Table';
-import { ITitleOption } from '../interface/Title';
-import { IWatermark } from '../interface/Watermark';
-import { IZoneOption } from '../interface/Zone';
-import { ILineNumberOption } from '../interface/LineNumber';
-import { IPageBorderOption } from '../interface/PageBorder';
-import { defaultPageBorderOption } from '../dataset/constant/PageBorder';
+import { defaultBackground } from '../dataset/constant/Background'
+import { defaultCheckboxOption } from '../dataset/constant/Checkbox'
+import { LETTER_CLASS } from '../dataset/constant/Common'
+import { defaultControlOption } from '../dataset/constant/Control'
+import { defaultCursorOption } from '../dataset/constant/Cursor'
+import { defaultFooterOption } from '../dataset/constant/Footer'
+import { defaultGroupOption } from '../dataset/constant/Group'
+import { defaultHeaderOption } from '../dataset/constant/Header'
+import { defaultLineBreak } from '../dataset/constant/LineBreak'
+import { defaultPageBreakOption } from '../dataset/constant/PageBreak'
+import { defaultPageNumberOption } from '../dataset/constant/PageNumber'
+import { defaultPlaceholderOption } from '../dataset/constant/Placeholder'
+import { defaultRadioOption } from '../dataset/constant/Radio'
+import { defaultSeparatorOption } from '../dataset/constant/Separator'
+import { defaultLabelOption } from '../dataset/constant/Label'
+import { defaultGraffitiOption } from '../dataset/constant/Graffiti'
+import { defaultTableOption } from '../dataset/constant/Table'
+import { defaultTitleOption } from '../dataset/constant/Title'
+import { defaultWatermarkOption } from '../dataset/constant/Watermark'
+import { defaultZoneOption } from '../dataset/constant/Zone'
+import { defaultLineNumberOption } from '../dataset/constant/LineNumber'
+import { IBackgroundOption } from '../interface/Background'
+import { ICheckboxOption } from '../interface/Checkbox'
+import { DeepRequired } from '../interface/Common'
+import { IControlOption } from '../interface/Control'
+import { ICursorOption } from '../interface/Cursor'
+import { IEditorOption } from '../interface/Editor'
+import { IFooter } from '../interface/Footer'
+import { IGroup } from '../interface/Group'
+import { IHeader } from '../interface/Header'
+import { ILineBreakOption } from '../interface/LineBreak'
+import { IPageBreak } from '../interface/PageBreak'
+import { IPageNumber } from '../interface/PageNumber'
+import { IPlaceholder } from '../interface/Placeholder'
+import { IRadioOption } from '../interface/Radio'
+import { ISeparatorOption } from '../interface/Separator'
+import { ILabelOption } from '../interface/Label'
+import { IGraffitiOption } from '../interface/Graffiti'
+import { ITableOption } from '../interface/table/Table'
+import { ITitleOption } from '../interface/Title'
+import { IWatermark } from '../interface/Watermark'
+import { IZoneOption } from '../interface/Zone'
+import { ILineNumberOption } from '../interface/LineNumber'
+import { IPageBorderOption } from '../interface/PageBorder'
+import { defaultPageBorderOption } from '../dataset/constant/PageBorder'
 import {
     EditorMode,
     PageMode,
     PaperDirection,
     RenderMode,
     WordBreak,
-} from '../dataset/enum/Editor';
+} from '../dataset/enum/Editor'
 
 export function mergeOption(
     options: IEditorOption = {},
@@ -57,87 +57,87 @@ export function mergeOption(
     const tableOptions: Required<ITableOption> = {
         ...defaultTableOption,
         ...options.table,
-    };
+    }
     const headerOptions: Required<IHeader> = {
         ...defaultHeaderOption,
         ...options.header,
-    };
+    }
     const footerOptions: Required<IFooter> = {
         ...defaultFooterOption,
         ...options.footer,
-    };
+    }
     const pageNumberOptions: Required<IPageNumber> = {
         ...defaultPageNumberOption,
         ...options.pageNumber,
-    };
+    }
     const waterMarkOptions: Required<IWatermark> = {
         ...defaultWatermarkOption,
         ...options.watermark,
-    };
+    }
     const controlOptions: Required<IControlOption> = {
         ...defaultControlOption,
         ...options.control,
-    };
+    }
     const checkboxOptions: Required<ICheckboxOption> = {
         ...defaultCheckboxOption,
         ...options.checkbox,
-    };
+    }
     const radioOptions: Required<IRadioOption> = {
         ...defaultRadioOption,
         ...options.radio,
-    };
+    }
     const cursorOptions: Required<ICursorOption> = {
         ...defaultCursorOption,
         ...options.cursor,
-    };
+    }
     const titleOptions: Required<ITitleOption> = {
         ...defaultTitleOption,
         ...options.title,
-    };
+    }
     const placeholderOptions: Required<IPlaceholder> = {
         ...defaultPlaceholderOption,
         ...options.placeholder,
-    };
+    }
     const groupOptions: Required<IGroup> = {
         ...defaultGroupOption,
         ...options.group,
-    };
+    }
     const pageBreakOptions: Required<IPageBreak> = {
         ...defaultPageBreakOption,
         ...options.pageBreak,
-    };
+    }
     const zoneOptions: Required<IZoneOption> = {
         ...defaultZoneOption,
         ...options.zone,
-    };
+    }
     const backgroundOptions: Required<IBackgroundOption> = {
         ...defaultBackground,
         ...options.background,
-    };
+    }
     const lineBreakOptions: Required<ILineBreakOption> = {
         ...defaultLineBreak,
         ...options.lineBreak,
-    };
+    }
     const separatorOptions: Required<ISeparatorOption> = {
         ...defaultSeparatorOption,
         ...options.separator,
-    };
+    }
     const labelOptions: Required<ILabelOption> = {
         ...defaultLabelOption,
         ...options.label,
-    };
+    }
     const graffitiOptions: Required<IGraffitiOption> = {
         ...defaultGraffitiOption,
         ...options.graffiti,
-    };
+    }
     const lineNumberOptions: Required<ILineNumberOption> = {
         ...defaultLineNumberOption,
         ...options.lineNumber,
-    };
+    }
     const pageBorderOptions: Required<IPageBorderOption> = {
         ...defaultPageBorderOption,
         ...options.pageBorder,
-    };
+    }
 
     return {
         mode: EditorMode.EDIT,
@@ -203,5 +203,5 @@ export function mergeOption(
         lineNumber: lineNumberOptions,
         pageBorder: pageBorderOptions,
         isTableFormulaEditing: false,
-    };
+    }
 }

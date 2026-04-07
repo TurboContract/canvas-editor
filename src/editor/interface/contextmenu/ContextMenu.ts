@@ -1,8 +1,8 @@
-import { Command } from '../../core/command/Command';
-import { EditorZone } from '../../dataset/enum/Editor';
-import { DeepRequired } from '../Common';
-import { IEditorOption } from '../Editor';
-import { IElement } from '../Element';
+import { Command } from '../../core/command/Command'
+import { EditorZone } from '../../dataset/enum/Editor'
+import { DeepRequired } from '../Common'
+import { IEditorOption } from '../Editor'
+import { IElement } from '../Element'
 
 export interface IContextMenuContext {
     startElement: IElement | null;

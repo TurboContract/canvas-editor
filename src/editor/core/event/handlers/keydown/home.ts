@@ -59,7 +59,7 @@ export function home(evt: KeyboardEvent, host: CanvasEvent) {
 
   if (anchorStart > anchorEnd) {
     // eslint-disable-next-line @typescript-eslint/no-extra-semi
-    ;[anchorStart, anchorEnd] = [anchorEnd, anchorStart]
+    [anchorStart, anchorEnd] = [anchorEnd, anchorStart]
   }
 
   rangeManager.setRange(anchorStart, anchorEnd)

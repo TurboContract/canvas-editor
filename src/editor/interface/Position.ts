@@ -1,8 +1,8 @@
-import { IElement, ImageDisplay, IRange } from '..';
-import { EditorZone } from '../dataset/enum/Editor';
-import { IElementFillRect, IElementPosition } from './Element';
-import { IRow, IRowElement } from './Row';
-import { ITd } from './table/Td';
+import { IElement, ImageDisplay, IRange } from '..'
+import { EditorZone } from '../dataset/enum/Editor'
+import { IElementFillRect, IElementPosition } from './Element'
+import { IRow, IRowElement } from './Row'
+import { ITd } from './table/Td'
 
 export interface ICurrentPosition {
     index: number;

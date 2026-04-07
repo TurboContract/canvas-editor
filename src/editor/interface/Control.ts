@@ -1,11 +1,11 @@
-import { LocationPosition } from '../dataset/enum/Common';
-import { ControlType, ControlIndentation } from '../dataset/enum/Control';
-import { EditorZone } from '../dataset/enum/Editor';
-import { MoveDirection } from '../dataset/enum/Observer';
-import { IDrawOption } from './Draw';
-import { IElement } from './Element';
-import { IPositionContext } from './Position';
-import { IRange } from './Range';
+import { LocationPosition } from '../dataset/enum/Common'
+import { ControlType, ControlIndentation } from '../dataset/enum/Control'
+import { EditorZone } from '../dataset/enum/Editor'
+import { MoveDirection } from '../dataset/enum/Observer'
+import { IDrawOption } from './Draw'
+import { IElement } from './Element'
+import { IPositionContext } from './Position'
+import { IRange } from './Range'
 
 export interface IValueSet {
     value: string;

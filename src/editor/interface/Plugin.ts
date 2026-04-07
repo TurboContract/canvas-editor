@@ -1,4 +1,4 @@
-import Editor from '..';
+import Editor from '..'
 
 export type PluginFunction<Options> = (
     editor: Editor,

@@ -1,4 +1,4 @@
-import { LineNumberType } from '../dataset/enum/LineNumber';
+import { LineNumberType } from '../dataset/enum/LineNumber'
 
 export interface ILineNumberOption {
     size?: number;

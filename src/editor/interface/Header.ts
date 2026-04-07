@@ -1,4 +1,4 @@
-import { MaxHeightRatio } from '../dataset/enum/Common';
+import { MaxHeightRatio } from '../dataset/enum/Common'
 
 export interface IHeader {
     top?: number;

@@ -1,10 +1,10 @@
-import { ElementType, IEditorOption, IElement } from './editor';
+import { ElementType, IEditorOption, IElement } from './editor'
 
 // 模拟颜色字
 
 // 模拟高亮字
 
-const elementList: IElement[] = [];
+const elementList: IElement[] = []
 
 // elementList.push({
 //   type: ElementType.TABLE,
@@ -48,7 +48,7 @@ elementList.push({
             id: '1',
         },
     ],
-});
+})
 elementList.push({
     type: ElementType.PARAGRAPH,
     value: '',
@@ -63,8 +63,8 @@ elementList.push({
         // { value: 'And this is the second part.', size: 20, bold: true, id: '2' }
         { value: '2', size: 20, bold: true, id: '2' },
     ],
-});
-export const data: IElement[] = elementList;
+})
+export const data: IElement[] = elementList
 
 interface IComment {
     id: string;
@@ -82,7 +82,7 @@ export const commentList: IComment[] = [
         rangeText: '血细胞比容',
         createdDate: '2023-08-20 23:10:55',
     },
-];
+]
 
 export const options: IEditorOption = {
     margins: [100, 120, 100, 120],
@@ -100,4 +100,4 @@ export const options: IEditorOption = {
         tipDisabled: false,
     },
     maskMargin: [60, 0, 30, 0], // 菜单栏高度60，底部工具栏30为遮盖层
-};
+}

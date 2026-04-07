@@ -1,15 +1,16 @@
-import { INTERNAL_CONTEXT_MENU_KEY } from '../../../dataset/constant/ContextMenu';
-import { EditorMode } from '../../../dataset/enum/Editor';
-import { VerticalAlign } from '../../../dataset/enum/VerticalAlign';
+import { INTERNAL_CONTEXT_MENU_KEY } from '../../../dataset/constant/ContextMenu'
+import { EditorMode } from '../../../dataset/enum/Editor'
+import { VerticalAlign } from '../../../dataset/enum/VerticalAlign'
+import { TextOrientation } from '../../../dataset/enum/table/TextOrientation'
 import {
     TableBorder,
     TdBorder,
     TdSlash,
-} from '../../../dataset/enum/table/Table';
-import { IRegisterContextMenu } from '../../../interface/contextmenu/ContextMenu';
-import { Command } from '../../command/Command';
-import store from '@src/store';
-import { setIsTableFormulaEditing } from '@src/store/actions/editor';
+} from '../../../dataset/enum/table/Table'
+import { IRegisterContextMenu } from '../../../interface/contextmenu/ContextMenu'
+import { Command } from '../../command/Command'
+import store from '@src/store'
+import { setIsTableFormulaEditing } from '@src/store/actions/editor'
 const {
     TABLE: {
         BORDER,
@@ -27,6 +28,10 @@ const {
         VERTICAL_ALIGN_TOP,
         VERTICAL_ALIGN_MIDDLE,
         VERTICAL_ALIGN_BOTTOM,
+        TEXT_DIRECTION,
+        TEXT_DIRECTION_HORIZONTAL,
+        TEXT_DIRECTION_ROTATE_90,
+        TEXT_DIRECTION_ROTATE_270,
         INSERT_ROW_COL,
         INSERT_TOP_ROW,
         INSERT_BOTTOM_ROW,
@@ -43,7 +48,7 @@ const {
         DELETE_FORMULA_IN_CELL,
         CELL,
     },
-} = INTERNAL_CONTEXT_MENU_KEY;
+} = INTERNAL_CONTEXT_MENU_KEY
 
 export const tableMenus: IRegisterContextMenu[] = [
     {
@@ -58,7 +63,7 @@ export const tableMenus: IRegisterContextMenu[] = [
                 !payload.isReadonly &&
                 payload.isInTable &&
                 payload.options.mode !== EditorMode.FORM
-            );
+            )
         },
         childMenus: [
             {
@@ -67,7 +72,7 @@ export const tableMenus: IRegisterContextMenu[] = [
                 icon: 'border-all',
                 when: () => true,
                 callback: (command: Command) => {
-                    command.executeTableBorderType(TableBorder.ALL);
+                    command.executeTableBorderType(TableBorder.ALL)
                 },
             },
             {
@@ -76,7 +81,7 @@ export const tableMenus: IRegisterContextMenu[] = [
                 icon: 'border-empty',
                 when: () => true,
                 callback: (command: Command) => {
-                    command.executeTableBorderType(TableBorder.EMPTY);
+                    command.executeTableBorderType(TableBorder.EMPTY)
                 },
             },
             {
@@ -85,7 +90,7 @@ export const tableMenus: IRegisterContextMenu[] = [
                 icon: 'border-external',
                 when: () => true,
                 callback: (command: Command) => {
-                    command.executeTableBorderType(TableBorder.EXTERNAL);
+                    command.executeTableBorderType(TableBorder.EXTERNAL)
                 },
             },
             {
@@ -100,7 +105,7 @@ export const tableMenus: IRegisterContextMenu[] = [
                         icon: 'border-td-top',
                         when: () => true,
                         callback: (command: Command) => {
-                            command.executeTableTdBorderType(TdBorder.TOP);
+                            command.executeTableTdBorderType(TdBorder.TOP)
                         },
                     },
                     {
@@ -109,7 +114,7 @@ export const tableMenus: IRegisterContextMenu[] = [
                         icon: 'border-td-right',
                         when: () => true,
                         callback: (command: Command) => {
-                            command.executeTableTdBorderType(TdBorder.RIGHT);
+                            command.executeTableTdBorderType(TdBorder.RIGHT)
                         },
                     },
                     {
@@ -118,7 +123,7 @@ export const tableMenus: IRegisterContextMenu[] = [
                         icon: 'border-td-bottom',
                         when: () => true,
                         callback: (command: Command) => {
-                            command.executeTableTdBorderType(TdBorder.BOTTOM);
+                            command.executeTableTdBorderType(TdBorder.BOTTOM)
                         },
                     },
                     {
@@ -127,7 +132,7 @@ export const tableMenus: IRegisterContextMenu[] = [
                         icon: 'border-td-left',
                         when: () => true,
                         callback: (command: Command) => {
-                            command.executeTableTdBorderType(TdBorder.LEFT);
+                            command.executeTableTdBorderType(TdBorder.LEFT)
                         },
                     },
                     {
@@ -136,7 +141,7 @@ export const tableMenus: IRegisterContextMenu[] = [
                         icon: 'border-td-forward',
                         when: () => true,
                         callback: (command: Command) => {
-                            command.executeTableTdSlashType(TdSlash.FORWARD);
+                            command.executeTableTdSlashType(TdSlash.FORWARD)
                         },
                     },
                     {
@@ -145,7 +150,7 @@ export const tableMenus: IRegisterContextMenu[] = [
                         icon: 'border-td-back',
                         when: () => true,
                         callback: (command: Command) => {
-                            command.executeTableTdSlashType(TdSlash.BACK);
+                            command.executeTableTdSlashType(TdSlash.BACK)
                         },
                     },
                 ],
@@ -161,7 +166,7 @@ export const tableMenus: IRegisterContextMenu[] = [
                 !payload.isReadonly &&
                 payload.isInTable &&
                 payload.options.mode !== EditorMode.FORM
-            );
+            )
         },
         childMenus: [
             {
@@ -170,7 +175,7 @@ export const tableMenus: IRegisterContextMenu[] = [
                 icon: 'vertical-align-top',
                 when: () => true,
                 callback: (command: Command) => {
-                    command.executeTableTdVerticalAlign(VerticalAlign.TOP);
+                    command.executeTableTdVerticalAlign(VerticalAlign.TOP)
                 },
             },
             {
@@ -179,7 +184,7 @@ export const tableMenus: IRegisterContextMenu[] = [
                 icon: 'vertical-align-middle',
                 when: () => true,
                 callback: (command: Command) => {
-                    command.executeTableTdVerticalAlign(VerticalAlign.MIDDLE);
+                    command.executeTableTdVerticalAlign(VerticalAlign.MIDDLE)
                 },
             },
             {
@@ -188,7 +193,54 @@ export const tableMenus: IRegisterContextMenu[] = [
                 icon: 'vertical-align-bottom',
                 when: () => true,
                 callback: (command: Command) => {
-                    command.executeTableTdVerticalAlign(VerticalAlign.BOTTOM);
+                    command.executeTableTdVerticalAlign(VerticalAlign.BOTTOM)
+                },
+            },
+        ],
+    },
+    {
+        key: TEXT_DIRECTION,
+        i18nPath: 'contextmenu.table.textDirection',
+        icon: 'tabletext-orientation',
+        when: (payload) => {
+            return (
+                !payload.isReadonly &&
+                payload.isInTable &&
+                payload.options.mode !== EditorMode.FORM
+            )
+        },
+        childMenus: [
+            {
+                key: TEXT_DIRECTION_HORIZONTAL,
+                i18nPath: 'contextmenu.table.textDirectionHorizontal',
+                // icon: 'text-direction-horizontal',
+                when: () => true,
+                callback: (command: Command) => {
+                    command.executeTableTdTextOrientation(
+                        TextOrientation.HORIZONTAL,
+                    )
+                },
+            },
+            {
+                key: TEXT_DIRECTION_ROTATE_90,
+                i18nPath: 'contextmenu.table.textDirectionRotate90',
+                // icon: 'text-direction-down',
+                when: () => true,
+                callback: (command: Command) => {
+                    command.executeTableTdTextOrientation(
+                        TextOrientation.VERTICAL_TOP_TO_BOTTOM,
+                    )
+                },
+            },
+            {
+                key: TEXT_DIRECTION_ROTATE_270,
+                i18nPath: 'contextmenu.table.textDirectionRotate270',
+                // icon: 'text-direction-up',
+                when: () => true,
+                callback: (command: Command) => {
+                    command.executeTableTdTextOrientation(
+                        TextOrientation.VERTICAL_BOTTOM_TO_TOP,
+                    )
                 },
             },
         ],
@@ -202,7 +254,7 @@ export const tableMenus: IRegisterContextMenu[] = [
                 !payload.isReadonly &&
                 payload.isInTable &&
                 payload.options.mode !== EditorMode.FORM
-            );
+            )
         },
         childMenus: [
             {
@@ -211,7 +263,7 @@ export const tableMenus: IRegisterContextMenu[] = [
                 icon: 'insert-top-row',
                 when: () => true,
                 callback: (command: Command) => {
-                    command.executeInsertTableTopRow();
+                    command.executeInsertTableTopRow()
                 },
             },
             {
@@ -220,7 +272,7 @@ export const tableMenus: IRegisterContextMenu[] = [
                 icon: 'insert-bottom-row',
                 when: () => true,
                 callback: (command: Command) => {
-                    command.executeInsertTableBottomRow();
+                    command.executeInsertTableBottomRow()
                 },
             },
             {
@@ -229,7 +281,7 @@ export const tableMenus: IRegisterContextMenu[] = [
                 icon: 'insert-left-col',
                 when: () => true,
                 callback: (command: Command) => {
-                    command.executeInsertTableLeftCol();
+                    command.executeInsertTableLeftCol()
                 },
             },
             {
@@ -238,7 +290,7 @@ export const tableMenus: IRegisterContextMenu[] = [
                 icon: 'insert-right-col',
                 when: () => true,
                 callback: (command: Command) => {
-                    command.executeInsertTableRightCol();
+                    command.executeInsertTableRightCol()
                 },
             },
         ],
@@ -252,7 +304,7 @@ export const tableMenus: IRegisterContextMenu[] = [
                 !payload.isReadonly &&
                 payload.isInTable &&
                 payload.options.mode !== EditorMode.FORM
-            );
+            )
         },
         childMenus: [
             {
@@ -261,7 +313,7 @@ export const tableMenus: IRegisterContextMenu[] = [
                 icon: 'delete-row',
                 when: () => true,
                 callback: (command: Command) => {
-                    command.executeDeleteTableRow();
+                    command.executeDeleteTableRow()
                 },
             },
             {
@@ -270,7 +322,7 @@ export const tableMenus: IRegisterContextMenu[] = [
                 icon: 'delete-col',
                 when: () => true,
                 callback: (command: Command) => {
-                    command.executeDeleteTableCol();
+                    command.executeDeleteTableCol()
                 },
             },
             {
@@ -279,7 +331,7 @@ export const tableMenus: IRegisterContextMenu[] = [
                 icon: 'delete-table',
                 when: () => true,
                 callback: (command: Command) => {
-                    command.executeDeleteTable();
+                    command.executeDeleteTable()
                 },
             },
         ],
@@ -293,10 +345,10 @@ export const tableMenus: IRegisterContextMenu[] = [
                 !payload.isReadonly &&
                 payload.isCrossRowCol &&
                 payload.options.mode !== EditorMode.FORM
-            );
+            )
         },
         callback: (command: Command) => {
-            command.executeMergeTableCell();
+            command.executeMergeTableCell()
         },
     },
     {
@@ -308,10 +360,10 @@ export const tableMenus: IRegisterContextMenu[] = [
                 !payload.isReadonly &&
                 payload.isInTable &&
                 payload.options.mode !== EditorMode.FORM
-            );
+            )
         },
         callback: (command: Command) => {
-            command.executeCancelMergeTableCell();
+            command.executeCancelMergeTableCell()
         },
     },
     {
@@ -319,7 +371,7 @@ export const tableMenus: IRegisterContextMenu[] = [
         i18nPath: 'contextmenu.table.cell',
         icon: 'merge-cell',
         when: (payload) => {
-            return !payload.isReadonly && payload.isInTable;
+            return !payload.isReadonly && payload.isInTable
         },
         childMenus: [
             {
@@ -327,13 +379,11 @@ export const tableMenus: IRegisterContextMenu[] = [
                 i18nPath: 'contextmenu.table.insertFormulaInCell',
                 icon: 'merge-cell',
                 when: (payload) => {
-                    return !Boolean(
-                        payload.tableElement.r[0].trList[payload.trIndex]
-                            .tdList[payload.tdIndex].formula,
-                    );
+                    return !payload.tableElement.r[0].trList[payload.trIndex]
+                            .tdList[payload.tdIndex].formula
                 },
-                callback: (command: Command) => {
-                    store.dispatch(setIsTableFormulaEditing(true));
+                callback: () => {
+                    store.dispatch(setIsTableFormulaEditing(true))
                 },
             },
             {
@@ -344,10 +394,10 @@ export const tableMenus: IRegisterContextMenu[] = [
                     return Boolean(
                         payload.tableElement.r[0].trList[payload.trIndex]
                             .tdList[payload.tdIndex].formula,
-                    );
+                    )
                 },
                 callback: (command: Command) => {
-                    command.executeEditCellFormula();
+                    command.executeEditCellFormula()
                 },
             },
             {
@@ -358,12 +408,12 @@ export const tableMenus: IRegisterContextMenu[] = [
                     return Boolean(
                         payload.tableElement.r[0].trList[payload.trIndex]
                             .tdList[payload.tdIndex].formula,
-                    );
+                    )
                 },
                 callback: (command: Command) => {
-                    command.executeDeleteCellFormula();
+                    command.executeDeleteCellFormula()
                 },
             },
         ],
     },
-];
+]

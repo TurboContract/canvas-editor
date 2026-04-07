@@ -1,7 +1,9 @@
-import { ImageDisplay } from '../dataset/enum/Common';
-import { EditorMode, EditorZone } from '../dataset/enum/Editor';
-import { IElement, IElementPosition } from './Element';
-import { IRow } from './Row';
+import { ImageDisplay } from '../dataset/enum/Common'
+import { EditorMode, EditorZone } from '../dataset/enum/Editor'
+import { RowFlex } from '../dataset/enum/Row'
+import { TextOrientation } from '../dataset/enum/table/TextOrientation'
+import { IElement, IElementPosition } from './Element'
+import { IRow } from './Row'
 
 export interface IDrawOption {
     curIndex?: number;
@@ -78,4 +80,7 @@ export interface IComputeRowListPayload {
     pageHeight?: number;
     mainOuterHeight?: number;
     surroundElementList?: IElement[];
+    /** Вертикальный текст в ячейке: общий rowFlex ячейки */
+    tdTextOrientation?: TextOrientation;
+    tdRowFlex?: RowFlex;
 }

@@ -1,5 +1,5 @@
-import { IElement } from './Element';
-import { RangeRect } from './Range';
+import { IElement } from './Element'
+import { RangeRect } from './Range'
 
 export interface IPasteOption {
     isPlainText: boolean;

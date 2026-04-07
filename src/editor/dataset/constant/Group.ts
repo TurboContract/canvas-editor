@@ -1,4 +1,4 @@
-import { IGroup } from '../../interface/Group';
+import { IGroup } from '../../interface/Group'
 
 export const defaultGroupOption: Readonly<Required<IGroup>> = {
     opacity: 0.1,
@@ -6,4 +6,4 @@ export const defaultGroupOption: Readonly<Required<IGroup>> = {
     activeOpacity: 0.5,
     activeBackgroundColor: '#E99D00',
     disabled: false,
-};
+}

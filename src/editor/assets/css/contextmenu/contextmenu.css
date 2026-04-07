@@ -147,6 +147,24 @@
   background-image: url(../../../assets/images/vertical-align-bottom.svg);
 }
 
+.ce-contextmenu-text-direction-horizontal {
+  background-image: url(../../../assets/images/arrow-right.svg);
+  transform: rotate(0deg);
+  transform-origin: center;
+}
+
+.ce-contextmenu-text-direction-down {
+  background-image: url(../../../assets/images/arrow-right.svg);
+  transform: rotate(90deg);
+  transform-origin: center;
+}
+
+.ce-contextmenu-text-direction-up {
+  background-image: url(../../../assets/images/arrow-right.svg);
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
+
 .ce-contextmenu-border-all {
   background-image: url(../../../assets/images/table-border-all.svg);
 }
@@ -185,4 +203,9 @@
 
 .ce-contextmenu-border-td-back {
   background-image: url(../../../assets/images/table-border-td-back.svg);
+}
+
+.ce-contextmenu-tabletext-orientation {
+  /* SVG лежит в `src/assets/images`, а не в `src/editor/assets/images` */
+  background-image: url(../../../../assets/images/tabletext-orientation.svg);
 }

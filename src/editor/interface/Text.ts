@@ -1,4 +1,4 @@
-import { TextDecorationStyle } from '../dataset/enum/Text';
+import { TextDecorationStyle } from '../dataset/enum/Text'
 
 export interface ITextMetrics {
     width: number;

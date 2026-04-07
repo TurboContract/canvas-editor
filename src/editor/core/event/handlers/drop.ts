@@ -1,27 +1,27 @@
-import { IOverrideResult } from '../../override/Override';
-import { CanvasEvent } from '../CanvasEvent';
-import { pasteImage } from './paste';
+import { IOverrideResult } from '../../override/Override'
+import { CanvasEvent } from '../CanvasEvent'
+import { pasteImage } from './paste'
 
 export function drop(evt: DragEvent, host: CanvasEvent) {
-    const draw = host.getDraw();
+    const draw = host.getDraw()
     // 自定义拖放事件
-    const { drop } = draw.getOverride();
+    const { drop } = draw.getOverride()
     if (drop) {
-        const overrideResult = drop(evt);
+        const overrideResult = drop(evt)
         // 默认阻止默认事件
-        if ((<IOverrideResult>overrideResult)?.preventDefault !== false) return;
+        if ((<IOverrideResult>overrideResult)?.preventDefault !== false) return
     }
-    evt.preventDefault();
-    const data = evt.dataTransfer?.getData('text');
+    evt.preventDefault()
+    const data = evt.dataTransfer?.getData('text')
     if (data) {
-        host.input(data);
+        host.input(data)
     } else {
-        const files = evt.dataTransfer?.files;
-        if (!files) return;
+        const files = evt.dataTransfer?.files
+        if (!files) return
         for (let i = 0; i < files.length; i++) {
-            const file = files[i];
+            const file = files[i]
             if (file.type.startsWith('image')) {
-                pasteImage(host, file);
+                pasteImage(host, file)
             }
         }
     }

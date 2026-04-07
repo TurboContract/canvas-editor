@@ -1,6 +1,6 @@
-import { commentList, data, options } from './mock';
-import './style.css';
-import prism from 'prismjs';
+import { commentList, data, options } from './mock'
+import './style.css'
+import prism from 'prismjs'
 import Editor, {
     BlockType,
     Command,
@@ -20,19 +20,19 @@ import Editor, {
     TextDecorationStyle,
     TitleLevel,
     splitText,
-} from './editor';
-import { Dialog } from './components/dialog/Dialog';
-import { formatPrismToken } from './utils/prism';
-import { Signature } from './components/signature/Signature';
-import { debounce, nextTick, scrollIntoView } from './utils';
+} from './editor'
+import { Dialog } from './components/dialog/Dialog'
+import { formatPrismToken } from './utils/prism'
+import { Signature } from './components/signature/Signature'
+import { debounce, nextTick, scrollIntoView } from './utils'
 
 window.onload = function () {
     const isApple =
         typeof navigator !== 'undefined' &&
-        /Mac OS X/.test(navigator.userAgent);
+        /Mac OS X/.test(navigator.userAgent)
 
     // 1. 初始化编辑器
-    const container = document.querySelector<HTMLDivElement>('.editor')!;
+    const container = document.querySelector<HTMLDivElement>('.editor')!
     const instance = new Editor(
         container,
         {
@@ -53,416 +53,416 @@ window.onload = function () {
         },
         options,
     );
-    `实例: ${instance}`;
+    `实例: ${instance}`
     // cypress使用
-    Reflect.set(window, 'editor', instance);
+    Reflect.set(window, 'editor', instance)
     // 菜单弹窗销毁
     window.addEventListener(
         'click',
         (evt) => {
-            const visibleDom = document.querySelector('.visible');
-            if (!visibleDom || visibleDom.contains(<Node>evt.target)) return;
-            visibleDom.classList.remove('visible');
+            const visibleDom = document.querySelector('.visible')
+            if (!visibleDom || visibleDom.contains(<Node>evt.target)) return
+            visibleDom.classList.remove('visible')
         },
         {
             capture: true,
         },
-    );
+    )
     // 2. | 撤销 | 重做 | 格式刷 | 清除格式 |
-    const undoDom = document.querySelector<HTMLDivElement>('.menu-item__undo')!;
-    undoDom.title = `撤销(${isApple ? '⌘' : 'Ctrl'}+Z)`;
+    const undoDom = document.querySelector<HTMLDivElement>('.menu-item__undo')!
+    undoDom.title = `撤销(${isApple ? '⌘' : 'Ctrl'}+Z)`
     undoDom.onclick = function () {
-        ('undo');
-        instance.command.executeUndo();
-    };
+        ('undo')
+        instance.command.executeUndo()
+    }
 
-    const redoDom = document.querySelector<HTMLDivElement>('.menu-item__redo')!;
-    redoDom.title = `重做(${isApple ? '⌘' : 'Ctrl'}+Y)`;
+    const redoDom = document.querySelector<HTMLDivElement>('.menu-item__redo')!
+    redoDom.title = `重做(${isApple ? '⌘' : 'Ctrl'}+Y)`
     redoDom.onclick = function () {
-        ('redo');
-        instance.command.executeRedo();
-    };
+        ('redo')
+        instance.command.executeRedo()
+    }
 
     const painterDom = document.querySelector<HTMLDivElement>(
         '.menu-item__painter',
-    )!;
+    )!
 
-    let isFirstClick = true;
-    let painterTimeout: number;
+    let isFirstClick = true
+    let painterTimeout: number
     painterDom.onclick = function () {
         if (isFirstClick) {
-            isFirstClick = false;
+            isFirstClick = false
             painterTimeout = window.setTimeout(() => {
-                ('painter-click');
-                isFirstClick = true;
+                ('painter-click')
+                isFirstClick = true
                 instance.command.executePainter({
                     isDblclick: false,
-                });
-            }, 200);
+                })
+            }, 200)
         } else {
-            window.clearTimeout(painterTimeout);
+            window.clearTimeout(painterTimeout)
         }
-    };
+    }
 
     painterDom.ondblclick = function () {
-        ('painter-dblclick');
-        isFirstClick = true;
-        window.clearTimeout(painterTimeout);
+        ('painter-dblclick')
+        isFirstClick = true
+        window.clearTimeout(painterTimeout)
         instance.command.executePainter({
             isDblclick: true,
-        });
-    };
+        })
+    }
 
     document.querySelector<HTMLDivElement>('.menu-item__format')!.onclick =
         function () {
-            ('format');
-            instance.command.executeFormat();
-        };
+            ('format')
+            instance.command.executeFormat()
+        }
 
     // 3. | 字体 | 字体变大 | 字体变小 | 加粗 | 斜体 | 下划线 | 删除线 | 上标 | 下标 | 字体颜色 | 背景色 |
-    const fontDom = document.querySelector<HTMLDivElement>('.menu-item__font')!;
-    const fontSelectDom = fontDom.querySelector<HTMLDivElement>('.select')!;
-    const fontOptionDom = fontDom.querySelector<HTMLDivElement>('.options')!;
+    const fontDom = document.querySelector<HTMLDivElement>('.menu-item__font')!
+    const fontSelectDom = fontDom.querySelector<HTMLDivElement>('.select')!
+    const fontOptionDom = fontDom.querySelector<HTMLDivElement>('.options')!
     fontDom.onclick = function () {
-        ('font');
-        fontOptionDom.classList.toggle('visible');
-    };
+        ('font')
+        fontOptionDom.classList.toggle('visible')
+    }
     fontOptionDom.onclick = function (evt) {
-        const li = evt.target as HTMLLIElement;
-        instance.command.executeFont(li.dataset.family!);
-    };
+        const li = evt.target as HTMLLIElement
+        instance.command.executeFont(li.dataset.family!)
+    }
 
     const sizeSetDom =
-        document.querySelector<HTMLDivElement>('.menu-item__size')!;
-    const sizeSelectDom = sizeSetDom.querySelector<HTMLDivElement>('.select')!;
-    const sizeOptionDom = sizeSetDom.querySelector<HTMLDivElement>('.options')!;
-    sizeSetDom.title = `设置字号`;
+        document.querySelector<HTMLDivElement>('.menu-item__size')!
+    const sizeSelectDom = sizeSetDom.querySelector<HTMLDivElement>('.select')!
+    const sizeOptionDom = sizeSetDom.querySelector<HTMLDivElement>('.options')!
+    sizeSetDom.title = `设置字号`
     sizeSetDom.onclick = function () {
-        ('size');
-        sizeOptionDom.classList.toggle('visible');
-    };
+        ('size')
+        sizeOptionDom.classList.toggle('visible')
+    }
     sizeOptionDom.onclick = function (evt) {
-        const li = evt.target as HTMLLIElement;
-        instance.command.executeSize(Number(li.dataset.size!));
-    };
+        const li = evt.target as HTMLLIElement
+        instance.command.executeSize(Number(li.dataset.size!))
+    }
 
     const sizeAddDom = document.querySelector<HTMLDivElement>(
         '.menu-item__size-add',
-    )!;
-    sizeAddDom.title = `增大字号(${isApple ? '⌘' : 'Ctrl'}+[)`;
+    )!
+    sizeAddDom.title = `增大字号(${isApple ? '⌘' : 'Ctrl'}+[)`
     sizeAddDom.onclick = function () {
-        ('size-add');
-        instance.command.executeSizeAdd();
-    };
+        ('size-add')
+        instance.command.executeSizeAdd()
+    }
 
     const sizeMinusDom = document.querySelector<HTMLDivElement>(
         '.menu-item__size-minus',
-    )!;
-    sizeMinusDom.title = `减小字号(${isApple ? '⌘' : 'Ctrl'}+])`;
+    )!
+    sizeMinusDom.title = `减小字号(${isApple ? '⌘' : 'Ctrl'}+])`
     sizeMinusDom.onclick = function () {
-        ('size-minus');
-        instance.command.executeSizeMinus();
-    };
+        ('size-minus')
+        instance.command.executeSizeMinus()
+    }
 
-    const boldDom = document.querySelector<HTMLDivElement>('.menu-item__bold')!;
-    boldDom.title = `加粗(${isApple ? '⌘' : 'Ctrl'}+B)`;
+    const boldDom = document.querySelector<HTMLDivElement>('.menu-item__bold')!
+    boldDom.title = `加粗(${isApple ? '⌘' : 'Ctrl'}+B)`
     boldDom.onclick = function () {
-        ('bold');
-        instance.command.executeBold();
-    };
+        ('bold')
+        instance.command.executeBold()
+    }
 
     const italicDom =
-        document.querySelector<HTMLDivElement>('.menu-item__italic')!;
-    italicDom.title = `斜体(${isApple ? '⌘' : 'Ctrl'}+I)`;
+        document.querySelector<HTMLDivElement>('.menu-item__italic')!
+    italicDom.title = `斜体(${isApple ? '⌘' : 'Ctrl'}+I)`
     italicDom.onclick = function () {
-        ('italic');
-        instance.command.executeItalic();
-    };
+        ('italic')
+        instance.command.executeItalic()
+    }
 
     const underlineDom = document.querySelector<HTMLDivElement>(
         '.menu-item__underline',
-    )!;
-    underlineDom.title = `下划线(${isApple ? '⌘' : 'Ctrl'}+U)`;
+    )!
+    underlineDom.title = `下划线(${isApple ? '⌘' : 'Ctrl'}+U)`
     const underlineOptionDom =
-        underlineDom.querySelector<HTMLDivElement>('.options')!;
+        underlineDom.querySelector<HTMLDivElement>('.options')!
     underlineDom.querySelector<HTMLSpanElement>('.select')!.onclick =
         function () {
-            underlineOptionDom.classList.toggle('visible');
-        };
+            underlineOptionDom.classList.toggle('visible')
+        }
     underlineDom.querySelector<HTMLElement>('i')!.onclick = function () {
-        ('underline');
-        instance.command.executeUnderline();
-        underlineOptionDom.classList.remove('visible');
-    };
+        ('underline')
+        instance.command.executeUnderline()
+        underlineOptionDom.classList.remove('visible')
+    }
     underlineDom.querySelector<HTMLUListElement>('ul')!.onmousedown = function (
         evt,
     ) {
-        const li = evt.target as HTMLLIElement;
-        const decorationStyle = <TextDecorationStyle>li.dataset.decorationStyle;
+        const li = evt.target as HTMLLIElement
+        const decorationStyle = <TextDecorationStyle>li.dataset.decorationStyle
         instance.command.executeUnderline({
             style: decorationStyle,
-        });
-        underlineOptionDom.classList.remove('visible');
-    };
+        })
+        underlineOptionDom.classList.remove('visible')
+    }
 
     const strikeoutDom = document.querySelector<HTMLDivElement>(
         '.menu-item__strikeout',
-    )!;
+    )!
     strikeoutDom.onclick = function () {
-        ('strikeout');
-        instance.command.executeStrikeout();
-    };
+        ('strikeout')
+        instance.command.executeStrikeout()
+    }
 
     const superscriptDom = document.querySelector<HTMLDivElement>(
         '.menu-item__superscript',
-    )!;
-    superscriptDom.title = `上标(${isApple ? '⌘' : 'Ctrl'}+Shift+,)`;
+    )!
+    superscriptDom.title = `上标(${isApple ? '⌘' : 'Ctrl'}+Shift+,)`
     superscriptDom.onclick = function () {
-        ('superscript');
-        instance.command.executeSuperscript();
-    };
+        ('superscript')
+        instance.command.executeSuperscript()
+    }
 
     const subscriptDom = document.querySelector<HTMLDivElement>(
         '.menu-item__subscript',
-    )!;
-    subscriptDom.title = `下标(${isApple ? '⌘' : 'Ctrl'}+Shift+.)`;
+    )!
+    subscriptDom.title = `下标(${isApple ? '⌘' : 'Ctrl'}+Shift+.)`
     subscriptDom.onclick = function () {
-        ('subscript');
-        instance.command.executeSubscript();
-    };
+        ('subscript')
+        instance.command.executeSubscript()
+    }
 
-    const colorControlDom = document.querySelector<HTMLInputElement>('#color')!;
+    const colorControlDom = document.querySelector<HTMLInputElement>('#color')!
     colorControlDom.oninput = function () {
-        instance.command.executeColor(colorControlDom.value);
-    };
+        instance.command.executeColor(colorControlDom.value)
+    }
     const colorDom =
-        document.querySelector<HTMLDivElement>('.menu-item__color')!;
-    const colorSpanDom = colorDom.querySelector('span')!;
+        document.querySelector<HTMLDivElement>('.menu-item__color')!
+    const colorSpanDom = colorDom.querySelector('span')!
     colorDom.onclick = function () {
-        ('color');
-        colorControlDom.click();
-    };
+        ('color')
+        colorControlDom.click()
+    }
 
     const highlightControlDom =
-        document.querySelector<HTMLInputElement>('#highlight')!;
+        document.querySelector<HTMLInputElement>('#highlight')!
     highlightControlDom.oninput = function () {
-        instance.command.executeHighlight(highlightControlDom.value);
-    };
+        instance.command.executeHighlight(highlightControlDom.value)
+    }
     const highlightDom = document.querySelector<HTMLDivElement>(
         '.menu-item__highlight',
-    )!;
-    const highlightSpanDom = highlightDom.querySelector('span')!;
+    )!
+    const highlightSpanDom = highlightDom.querySelector('span')!
     highlightDom.onclick = function () {
-        ('highlight');
-        highlightControlDom?.click();
-    };
+        ('highlight')
+        highlightControlDom?.click()
+    }
 
     const titleDom =
-        document.querySelector<HTMLDivElement>('.menu-item__title')!;
-    const titleSelectDom = titleDom.querySelector<HTMLDivElement>('.select')!;
-    const titleOptionDom = titleDom.querySelector<HTMLDivElement>('.options')!;
+        document.querySelector<HTMLDivElement>('.menu-item__title')!
+    const titleSelectDom = titleDom.querySelector<HTMLDivElement>('.select')!
+    const titleOptionDom = titleDom.querySelector<HTMLDivElement>('.options')!
     titleOptionDom.querySelectorAll('li').forEach((li, index) => {
-        li.title = `Ctrl+${isApple ? 'Option' : 'Alt'}+${index}`;
-    });
+        li.title = `Ctrl+${isApple ? 'Option' : 'Alt'}+${index}`
+    })
 
     titleDom.onclick = function () {
-        ('title');
-        titleOptionDom.classList.toggle('visible');
-    };
+        ('title')
+        titleOptionDom.classList.toggle('visible')
+    }
     titleOptionDom.onclick = function (evt) {
-        const li = evt.target as HTMLLIElement;
-        const level = <TitleLevel>li.dataset.level;
-        instance.command.executeTitle(level || null);
-    };
+        const li = evt.target as HTMLLIElement
+        const level = <TitleLevel>li.dataset.level
+        instance.command.executeTitle(level || null)
+    }
 
-    const leftDom = document.querySelector<HTMLDivElement>('.menu-item__left')!;
-    leftDom.title = `左对齐(${isApple ? '⌘' : 'Ctrl'}+L)`;
+    const leftDom = document.querySelector<HTMLDivElement>('.menu-item__left')!
+    leftDom.title = `左对齐(${isApple ? '⌘' : 'Ctrl'}+L)`
     leftDom.onclick = function () {
-        ('left');
-        instance.command.executeRowFlex(RowFlex.LEFT);
-    };
+        ('left')
+        instance.command.executeRowFlex(RowFlex.LEFT)
+    }
 
     const centerDom =
-        document.querySelector<HTMLDivElement>('.menu-item__center')!;
-    centerDom.title = `居中对齐(${isApple ? '⌘' : 'Ctrl'}+E)`;
+        document.querySelector<HTMLDivElement>('.menu-item__center')!
+    centerDom.title = `居中对齐(${isApple ? '⌘' : 'Ctrl'}+E)`
     centerDom.onclick = function () {
-        ('center');
-        instance.command.executeRowFlex(RowFlex.CENTER);
-    };
+        ('center')
+        instance.command.executeRowFlex(RowFlex.CENTER)
+    }
 
     const rightDom =
-        document.querySelector<HTMLDivElement>('.menu-item__right')!;
-    rightDom.title = `右对齐(${isApple ? '⌘' : 'Ctrl'}+R)`;
+        document.querySelector<HTMLDivElement>('.menu-item__right')!
+    rightDom.title = `右对齐(${isApple ? '⌘' : 'Ctrl'}+R)`
     rightDom.onclick = function () {
-        ('right');
-        instance.command.executeRowFlex(RowFlex.RIGHT);
-    };
+        ('right')
+        instance.command.executeRowFlex(RowFlex.RIGHT)
+    }
 
     const footnoteDom = document.querySelector<HTMLDivElement>(
         '.menu-item__footnote',
-    )!;
-    footnoteDom.title = `Сноска(${isApple ? '⌘' : 'Ctrl'}+N)`;
+    )!
+    footnoteDom.title = `Сноска(${isApple ? '⌘' : 'Ctrl'}+N)`
     footnoteDom.onclick = function () {
-        ('footnote');
-        instance.command.executeFootnote();
-    };
+        ('footnote')
+        instance.command.executeFootnote()
+    }
 
     const alignmentDom = document.querySelector<HTMLDivElement>(
         '.menu-item__alignment',
-    )!;
-    alignmentDom.title = `两端对齐(${isApple ? '⌘' : 'Ctrl'}+J)`;
+    )!
+    alignmentDom.title = `两端对齐(${isApple ? '⌘' : 'Ctrl'}+J)`
     alignmentDom.onclick = function () {
-        ('alignment');
-        instance.command.executeRowFlex(RowFlex.ALIGNMENT);
-    };
+        ('alignment')
+        instance.command.executeRowFlex(RowFlex.ALIGNMENT)
+    }
 
     const justifyDom = document.querySelector<HTMLDivElement>(
         '.menu-item__justify',
-    )!;
-    justifyDom.title = `分散对齐(${isApple ? '⌘' : 'Ctrl'}+Shift+J)`;
+    )!
+    justifyDom.title = `分散对齐(${isApple ? '⌘' : 'Ctrl'}+Shift+J)`
     justifyDom.onclick = function () {
-        ('justify');
-        instance.command.executeRowFlex(RowFlex.JUSTIFY);
-    };
+        ('justify')
+        instance.command.executeRowFlex(RowFlex.JUSTIFY)
+    }
 
     const rowMarginDom = document.querySelector<HTMLDivElement>(
         '.menu-item__row-margin',
-    )!;
+    )!
     const rowOptionDom =
-        rowMarginDom.querySelector<HTMLDivElement>('.options')!;
+        rowMarginDom.querySelector<HTMLDivElement>('.options')!
     rowMarginDom.onclick = function () {
-        ('row-margin');
-        rowOptionDom.classList.toggle('visible');
-    };
+        ('row-margin')
+        rowOptionDom.classList.toggle('visible')
+    }
     rowOptionDom.onclick = function (evt) {
-        const li = evt.target as HTMLLIElement;
-        instance.command.executeRowMargin(Number(li.dataset.rowmargin!));
-    };
+        const li = evt.target as HTMLLIElement
+        instance.command.executeRowMargin(Number(li.dataset.rowmargin!))
+    }
 
-    const listDom = document.querySelector<HTMLDivElement>('.menu-item__list')!;
-    listDom.title = `列表(${isApple ? '⌘' : 'Ctrl'}+Shift+U)`;
-    const listOptionDom = listDom.querySelector<HTMLDivElement>('.options')!;
+    const listDom = document.querySelector<HTMLDivElement>('.menu-item__list')!
+    listDom.title = `列表(${isApple ? '⌘' : 'Ctrl'}+Shift+U)`
+    const listOptionDom = listDom.querySelector<HTMLDivElement>('.options')!
     listDom.onclick = function () {
-        ('list');
-        listOptionDom.classList.toggle('visible');
-    };
+        ('list')
+        listOptionDom.classList.toggle('visible')
+    }
     listOptionDom.onclick = function (evt) {
-        const li = evt.target as HTMLLIElement;
-        const listType = <ListType>li.dataset.listType || null;
-        const listStyle = <ListStyle>(<unknown>li.dataset.listStyle);
-        instance.command.executeList(listType, listStyle);
-    };
+        const li = evt.target as HTMLLIElement
+        const listType = <ListType>li.dataset.listType || null
+        const listStyle = <ListStyle>(<unknown>li.dataset.listStyle)
+        instance.command.executeList(listType, listStyle)
+    }
 
     // 4. | 表格 | 图片 | 超链接 | 分割线 | 水印 | 代码块 | 分隔符 | 控件 | 复选框 | LaTeX | 日期选择器
     const tableDom =
-        document.querySelector<HTMLDivElement>('.menu-item__table')!;
+        document.querySelector<HTMLDivElement>('.menu-item__table')!
     const tablePanelContainer = document.querySelector<HTMLDivElement>(
         '.menu-item__table__collapse',
-    )!;
-    const tableClose = document.querySelector<HTMLDivElement>('.table-close')!;
-    const tableTitle = document.querySelector<HTMLDivElement>('.table-select')!;
-    const tablePanel = document.querySelector<HTMLDivElement>('.table-panel')!;
+    )!
+    const tableClose = document.querySelector<HTMLDivElement>('.table-close')!
+    const tableTitle = document.querySelector<HTMLDivElement>('.table-select')!
+    const tablePanel = document.querySelector<HTMLDivElement>('.table-panel')!
     // 绘制行列
-    const tableCellList: HTMLDivElement[][] = [];
+    const tableCellList: HTMLDivElement[][] = []
     for (let i = 0; i < 10; i++) {
-        const tr = document.createElement('tr');
-        tr.classList.add('table-row');
-        const trCellList: HTMLDivElement[] = [];
+        const tr = document.createElement('tr')
+        tr.classList.add('table-row')
+        const trCellList: HTMLDivElement[] = []
         for (let j = 0; j < 10; j++) {
-            const td = document.createElement('td');
-            td.classList.add('table-cel');
-            tr.append(td);
-            trCellList.push(td);
+            const td = document.createElement('td')
+            td.classList.add('table-cel')
+            tr.append(td)
+            trCellList.push(td)
         }
-        tablePanel.append(tr);
-        tableCellList.push(trCellList);
+        tablePanel.append(tr)
+        tableCellList.push(trCellList)
     }
-    let colIndex = 0;
-    let rowIndex = 0;
+    let colIndex = 0
+    let rowIndex = 0
     // 移除所有格选择
     function removeAllTableCellSelect() {
         tableCellList.forEach((tr) => {
-            tr.forEach((td) => td.classList.remove('active'));
-        });
+            tr.forEach((td) => td.classList.remove('active'))
+        })
     }
     // 设置标题内容
     function setTableTitle(payload: string) {
-        tableTitle.innerText = payload;
+        tableTitle.innerText = payload
     }
     // 恢复初始状态
     function recoveryTable() {
         // 还原选择样式、标题、选择行列
-        removeAllTableCellSelect();
-        setTableTitle('插入');
-        colIndex = 0;
-        rowIndex = 0;
+        removeAllTableCellSelect()
+        setTableTitle('插入')
+        colIndex = 0
+        rowIndex = 0
         // 隐藏panel
-        tablePanelContainer.style.display = 'none';
+        tablePanelContainer.style.display = 'none'
     }
     tableDom.onclick = function () {
-        ('table');
-        tablePanelContainer!.style.display = 'block';
-    };
+        ('table')
+        tablePanelContainer!.style.display = 'block'
+    }
     tablePanel.onmousemove = function (evt) {
-        const celSize = 16;
-        const rowMarginTop = 10;
-        const celMarginRight = 6;
-        const { offsetX, offsetY } = evt;
+        const celSize = 16
+        const rowMarginTop = 10
+        const celMarginRight = 6
+        const { offsetX, offsetY } = evt
         // 移除所有选择
-        removeAllTableCellSelect();
-        colIndex = Math.ceil(offsetX / (celSize + celMarginRight)) || 1;
-        rowIndex = Math.ceil(offsetY / (celSize + rowMarginTop)) || 1;
+        removeAllTableCellSelect()
+        colIndex = Math.ceil(offsetX / (celSize + celMarginRight)) || 1
+        rowIndex = Math.ceil(offsetY / (celSize + rowMarginTop)) || 1
         // 改变选择样式
         tableCellList.forEach((tr, trIndex) => {
             tr.forEach((td, tdIndex) => {
                 if (tdIndex < colIndex && trIndex < rowIndex) {
-                    td.classList.add('active');
+                    td.classList.add('active')
                 }
-            });
-        });
+            })
+        })
         // 改变表格标题
-        setTableTitle(`${rowIndex}×${colIndex}`);
-    };
+        setTableTitle(`${rowIndex}×${colIndex}`)
+    }
     tableClose.onclick = function () {
-        recoveryTable();
-    };
+        recoveryTable()
+    }
     tablePanel.onclick = function () {
         // 应用选择
-        instance.command.executeInsertTable(rowIndex, colIndex);
-        recoveryTable();
-    };
+        instance.command.executeInsertTable(rowIndex, colIndex)
+        recoveryTable()
+    }
 
     const imageDom =
-        document.querySelector<HTMLDivElement>('.menu-item__image')!;
-    const imageFileDom = document.querySelector<HTMLInputElement>('#image')!;
+        document.querySelector<HTMLDivElement>('.menu-item__image')!
+    const imageFileDom = document.querySelector<HTMLInputElement>('#image')!
     imageDom.onclick = function () {
-        imageFileDom.click();
-    };
+        imageFileDom.click()
+    }
     imageFileDom.onchange = function () {
-        const file = imageFileDom.files![0]!;
-        const fileReader = new FileReader();
-        fileReader.readAsDataURL(file);
+        const file = imageFileDom.files![0]!
+        const fileReader = new FileReader()
+        fileReader.readAsDataURL(file)
         fileReader.onload = function () {
             // 计算宽高
-            const image = new Image();
-            const value = fileReader.result as string;
-            image.src = value;
+            const image = new Image()
+            const value = fileReader.result as string
+            image.src = value
             image.onload = function () {
                 instance.command.executeImage({
                     value,
                     width: image.width,
                     height: image.height,
-                });
-                imageFileDom.value = '';
-            };
-        };
-    };
+                })
+                imageFileDom.value = ''
+            }
+        }
+    }
 
     const hyperlinkDom = document.querySelector<HTMLDivElement>(
         '.menu-item__hyperlink',
-    )!;
+    )!
     hyperlinkDom.onclick = function () {
-        ('hyperlink');
+        ('hyperlink')
         new Dialog({
             title: '超链接',
             data: [
@@ -483,10 +483,10 @@ window.onload = function () {
                 },
             ],
             onConfirm: (payload) => {
-                const name = payload.find((p) => p.name === 'name')?.value;
-                if (!name) return;
-                const url = payload.find((p) => p.name === 'url')?.value;
-                if (!url) return;
+                const name = payload.find((p) => p.name === 'name')?.value
+                if (!name) return
+                const url = payload.find((p) => p.name === 'url')?.value
+                if (!url) return
                 instance.command.executeHyperlink({
                     type: ElementType.HYPERLINK,
                     value: '',
@@ -495,54 +495,54 @@ window.onload = function () {
                         value: n,
                         size: 16,
                     })),
-                });
+                })
             },
-        });
-    };
+        })
+    }
 
     const separatorDom = document.querySelector<HTMLDivElement>(
         '.menu-item__separator',
-    )!;
+    )!
     const separatorOptionDom =
-        separatorDom.querySelector<HTMLDivElement>('.options')!;
+        separatorDom.querySelector<HTMLDivElement>('.options')!
     separatorDom.onclick = function () {
-        ('separator');
-        separatorOptionDom.classList.toggle('visible');
-    };
+        ('separator')
+        separatorOptionDom.classList.toggle('visible')
+    }
     separatorOptionDom.onmousedown = function (evt) {
-        let payload: number[] = [];
-        const li = evt.target as HTMLLIElement;
-        const separatorDash = li.dataset.separator?.split(',').map(Number);
+        let payload: number[] = []
+        const li = evt.target as HTMLLIElement
+        const separatorDash = li.dataset.separator?.split(',').map(Number)
         if (separatorDash) {
-            const isSingleLine = separatorDash.every((d) => d === 0);
+            const isSingleLine = separatorDash.every((d) => d === 0)
             if (!isSingleLine) {
-                payload = separatorDash;
+                payload = separatorDash
             }
         }
-        instance.command.executeSeparator(payload);
-    };
+        instance.command.executeSeparator(payload)
+    }
 
     const pageBreakDom = document.querySelector<HTMLDivElement>(
         '.menu-item__page-break',
-    )!;
+    )!
     pageBreakDom.onclick = function () {
-        ('pageBreak');
-        instance.command.executePageBreak();
-    };
+        ('pageBreak')
+        instance.command.executePageBreak()
+    }
 
     const watermarkDom = document.querySelector<HTMLDivElement>(
         '.menu-item__watermark',
-    )!;
+    )!
     const watermarkOptionDom =
-        watermarkDom.querySelector<HTMLDivElement>('.options')!;
+        watermarkDom.querySelector<HTMLDivElement>('.options')!
     watermarkDom.onclick = function () {
-        ('watermark');
-        watermarkOptionDom.classList.toggle('visible');
-    };
+        ('watermark')
+        watermarkOptionDom.classList.toggle('visible')
+    }
     watermarkOptionDom.onmousedown = function (evt) {
-        const li = evt.target as HTMLLIElement;
-        const menu = li.dataset.menu!;
-        watermarkOptionDom.classList.toggle('visible');
+        const li = evt.target as HTMLLIElement
+        const menu = li.dataset.menu!
+        watermarkOptionDom.classList.toggle('visible')
         if (menu === 'add') {
             new Dialog({
                 title: '水印',
@@ -570,32 +570,32 @@ window.onload = function () {
                     },
                 ],
                 onConfirm: (payload) => {
-                    const nullableIndex = payload.findIndex((p) => !p.value);
-                    if (~nullableIndex) return;
+                    const nullableIndex = payload.findIndex((p) => !p.value)
+                    if (~nullableIndex) return
                     const watermark = payload.reduce(
                         (pre, cur) => {
-                            pre[cur.name] = cur.value;
-                            return pre;
+                            pre[cur.name] = cur.value
+                            return pre
                         },
                         <any>{},
-                    );
+                    )
                     instance.command.executeAddWatermark({
                         data: watermark.data,
                         color: watermark.color,
                         size: Number(watermark.size),
-                    });
+                    })
                 },
-            });
+            })
         } else {
-            instance.command.executeDeleteWatermark();
+            instance.command.executeDeleteWatermark()
         }
-    };
+    }
 
     const codeblockDom = document.querySelector<HTMLDivElement>(
         '.menu-item__codeblock',
-    )!;
+    )!
     codeblockDom.onclick = function () {
-        ('codeblock');
+        ('codeblock')
         new Dialog({
             title: '代码块',
             data: [
@@ -610,55 +610,55 @@ window.onload = function () {
             onConfirm: (payload) => {
                 const codeblock = payload.find(
                     (p) => p.name === 'codeblock',
-                )?.value;
-                if (!codeblock) return;
+                )?.value
+                if (!codeblock) return
                 const tokenList = prism.tokenize(
                     codeblock,
                     prism.languages.javascript,
-                );
-                const formatTokenList = formatPrismToken(tokenList);
-                const elementList: IElement[] = [];
+                )
+                const formatTokenList = formatPrismToken(tokenList)
+                const elementList: IElement[] = []
                 for (let i = 0; i < formatTokenList.length; i++) {
-                    const formatToken = formatTokenList[i];
-                    const tokenStringList = splitText(formatToken.content);
+                    const formatToken = formatTokenList[i]
+                    const tokenStringList = splitText(formatToken.content)
                     for (let j = 0; j < tokenStringList.length; j++) {
-                        const value = tokenStringList[j];
+                        const value = tokenStringList[j]
                         const element: IElement = {
                             value,
-                        };
+                        }
                         if (formatToken.color) {
-                            element.color = formatToken.color;
+                            element.color = formatToken.color
                         }
                         if (formatToken.bold) {
-                            element.bold = true;
+                            element.bold = true
                         }
                         if (formatToken.italic) {
-                            element.italic = true;
+                            element.italic = true
                         }
-                        elementList.push(element);
+                        elementList.push(element)
                     }
                 }
                 elementList.unshift({
                     value: '\n',
-                });
-                instance.command.executeInsertElementList(elementList);
+                })
+                instance.command.executeInsertElementList(elementList)
             },
-        });
-    };
+        })
+    }
 
     const controlDom = document.querySelector<HTMLDivElement>(
         '.menu-item__control',
-    )!;
+    )!
     const controlOptionDom =
-        controlDom.querySelector<HTMLDivElement>('.options')!;
+        controlDom.querySelector<HTMLDivElement>('.options')!
     controlDom.onclick = function () {
-        ('control');
-        controlOptionDom.classList.toggle('visible');
-    };
+        ('control')
+        controlOptionDom.classList.toggle('visible')
+    }
     controlOptionDom.onmousedown = function (evt) {
-        controlOptionDom.classList.toggle('visible');
-        const li = evt.target as HTMLLIElement;
-        const type = <ControlType>li.dataset.control;
+        controlOptionDom.classList.toggle('visible')
+        const li = evt.target as HTMLLIElement
+        const type = <ControlType>li.dataset.control
         switch (type) {
             case ControlType.TEXT:
                 new Dialog({
@@ -681,11 +681,11 @@ window.onload = function () {
                     onConfirm: (payload) => {
                         const placeholder = payload.find(
                             (p) => p.name === 'placeholder',
-                        )?.value;
-                        if (!placeholder) return;
+                        )?.value
+                        if (!placeholder) return
                         const value =
                             payload.find((p) => p.name === 'value')?.value ||
-                            '';
+                            ''
                         instance.command.executeInsertElementList([
                             {
                                 type: ElementType.CONTROL,
@@ -702,10 +702,10 @@ window.onload = function () {
                                     placeholder,
                                 },
                             },
-                        ]);
+                        ])
                     },
-                });
-                break;
+                })
+                break
             case ControlType.SELECT:
                 new Dialog({
                     title: '列举控件',
@@ -735,15 +735,15 @@ window.onload = function () {
                     onConfirm: (payload) => {
                         const placeholder = payload.find(
                             (p) => p.name === 'placeholder',
-                        )?.value;
-                        if (!placeholder) return;
+                        )?.value
+                        if (!placeholder) return
                         const valueSets = payload.find(
                             (p) => p.name === 'valueSets',
-                        )?.value;
-                        if (!valueSets) return;
+                        )?.value
+                        if (!valueSets) return
                         const code = payload.find(
                             (p) => p.name === 'code',
-                        )?.value;
+                        )?.value
                         instance.command.executeInsertElementList([
                             {
                                 type: ElementType.CONTROL,
@@ -756,10 +756,10 @@ window.onload = function () {
                                     valueSets: JSON.parse(valueSets),
                                 },
                             },
-                        ]);
+                        ])
                     },
-                });
-                break;
+                })
+                break
             case ControlType.CHECKBOX:
                 new Dialog({
                     title: '复选框控件',
@@ -782,11 +782,11 @@ window.onload = function () {
                     onConfirm: (payload) => {
                         const valueSets = payload.find(
                             (p) => p.name === 'valueSets',
-                        )?.value;
-                        if (!valueSets) return;
+                        )?.value
+                        if (!valueSets) return
                         const code = payload.find(
                             (p) => p.name === 'code',
-                        )?.value;
+                        )?.value
                         instance.command.executeInsertElementList([
                             {
                                 type: ElementType.CONTROL,
@@ -798,10 +798,10 @@ window.onload = function () {
                                     valueSets: JSON.parse(valueSets),
                                 },
                             },
-                        ]);
+                        ])
                     },
-                });
-                break;
+                })
+                break
             case ControlType.RADIO:
                 new Dialog({
                     title: '单选框控件',
@@ -824,11 +824,11 @@ window.onload = function () {
                     onConfirm: (payload) => {
                         const valueSets = payload.find(
                             (p) => p.name === 'valueSets',
-                        )?.value;
-                        if (!valueSets) return;
+                        )?.value
+                        if (!valueSets) return
                         const code = payload.find(
                             (p) => p.name === 'code',
-                        )?.value;
+                        )?.value
                         instance.command.executeInsertElementList([
                             {
                                 type: ElementType.CONTROL,
@@ -840,10 +840,10 @@ window.onload = function () {
                                     valueSets: JSON.parse(valueSets),
                                 },
                             },
-                        ]);
+                        ])
                     },
-                });
-                break;
+                })
+                break
             case ControlType.DATE:
                 new Dialog({
                     title: '日期控件',
@@ -882,14 +882,14 @@ window.onload = function () {
                     onConfirm: (payload) => {
                         const placeholder = payload.find(
                             (p) => p.name === 'placeholder',
-                        )?.value;
-                        if (!placeholder) return;
+                        )?.value
+                        if (!placeholder) return
                         const value =
                             payload.find((p) => p.name === 'value')?.value ||
-                            '';
+                            ''
                         const dateFormat =
                             payload.find((p) => p.name === 'dateFormat')
-                                ?.value || '';
+                                ?.value || ''
                         instance.command.executeInsertElementList([
                             {
                                 type: ElementType.CONTROL,
@@ -907,20 +907,20 @@ window.onload = function () {
                                     placeholder,
                                 },
                             },
-                        ]);
+                        ])
                     },
-                });
-                break;
+                })
+                break
             default:
-                break;
+                break
         }
-    };
+    }
 
     const checkboxDom = document.querySelector<HTMLDivElement>(
         '.menu-item__checkbox',
-    )!;
+    )!
     checkboxDom.onclick = function () {
-        ('checkbox');
+        ('checkbox')
         instance.command.executeInsertElementList([
             {
                 type: ElementType.CHECKBOX,
@@ -929,13 +929,13 @@ window.onload = function () {
                 },
                 value: '',
             },
-        ]);
-    };
+        ])
+    }
 
     const radioDom =
-        document.querySelector<HTMLDivElement>('.menu-item__radio')!;
+        document.querySelector<HTMLDivElement>('.menu-item__radio')!
     radioDom.onclick = function () {
-        ('radio');
+        ('radio')
         instance.command.executeInsertElementList([
             {
                 type: ElementType.RADIO,
@@ -944,13 +944,13 @@ window.onload = function () {
                 },
                 value: '',
             },
-        ]);
-    };
+        ])
+    }
 
     const latexDom =
-        document.querySelector<HTMLDivElement>('.menu-item__latex')!;
+        document.querySelector<HTMLDivElement>('.menu-item__latex')!
     latexDom.onclick = function () {
-        ('LaTeX');
+        ('LaTeX')
         new Dialog({
             title: 'LaTeX',
             data: [
@@ -962,54 +962,54 @@ window.onload = function () {
                 },
             ],
             onConfirm: (payload) => {
-                const value = payload.find((p) => p.name === 'value')?.value;
-                if (!value) return;
+                const value = payload.find((p) => p.name === 'value')?.value
+                if (!value) return
                 instance.command.executeInsertElementList([
                     {
                         type: ElementType.LATEX,
                         value,
                     },
-                ]);
+                ])
             },
-        });
-    };
+        })
+    }
 
-    const dateDom = document.querySelector<HTMLDivElement>('.menu-item__date')!;
-    const dateDomOptionDom = dateDom.querySelector<HTMLDivElement>('.options')!;
+    const dateDom = document.querySelector<HTMLDivElement>('.menu-item__date')!
+    const dateDomOptionDom = dateDom.querySelector<HTMLDivElement>('.options')!
     dateDom.onclick = function () {
-        ('date');
-        dateDomOptionDom.classList.toggle('visible');
+        ('date')
+        dateDomOptionDom.classList.toggle('visible')
         // 定位调整
-        const bodyRect = document.body.getBoundingClientRect();
-        const dateDomOptionRect = dateDomOptionDom.getBoundingClientRect();
+        const bodyRect = document.body.getBoundingClientRect()
+        const dateDomOptionRect = dateDomOptionDom.getBoundingClientRect()
         if (dateDomOptionRect.left + dateDomOptionRect.width > bodyRect.width) {
-            dateDomOptionDom.style.right = '0px';
-            dateDomOptionDom.style.left = 'unset';
+            dateDomOptionDom.style.right = '0px'
+            dateDomOptionDom.style.left = 'unset'
         } else {
-            dateDomOptionDom.style.right = 'unset';
-            dateDomOptionDom.style.left = '0px';
+            dateDomOptionDom.style.right = 'unset'
+            dateDomOptionDom.style.left = '0px'
         }
         // 当前日期
-        const date = new Date();
-        const year = date.getFullYear().toString();
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const day = date.getDate().toString().padStart(2, '0');
-        const hour = date.getHours().toString().padStart(2, '0');
-        const minute = date.getMinutes().toString().padStart(2, '0');
-        const second = date.getSeconds().toString().padStart(2, '0');
-        const dateString = `${year}-${month}-${day}`;
-        const dateTimeString = `${dateString} ${hour}:${minute}:${second}`;
+        const date = new Date()
+        const year = date.getFullYear().toString()
+        const month = (date.getMonth() + 1).toString().padStart(2, '0')
+        const day = date.getDate().toString().padStart(2, '0')
+        const hour = date.getHours().toString().padStart(2, '0')
+        const minute = date.getMinutes().toString().padStart(2, '0')
+        const second = date.getSeconds().toString().padStart(2, '0')
+        const dateString = `${year}-${month}-${day}`
+        const dateTimeString = `${dateString} ${hour}:${minute}:${second}`
         dateDomOptionDom.querySelector<HTMLLIElement>(
             'li:first-child',
-        )!.innerText = dateString;
+        )!.innerText = dateString
         dateDomOptionDom.querySelector<HTMLLIElement>(
             'li:last-child',
-        )!.innerText = dateTimeString;
-    };
+        )!.innerText = dateTimeString
+    }
     dateDomOptionDom.onmousedown = function (evt) {
-        const li = evt.target as HTMLLIElement;
-        const dateFormat = li.dataset.format!;
-        dateDomOptionDom.classList.toggle('visible');
+        const li = evt.target as HTMLLIElement
+        const dateFormat = li.dataset.format!
+        dateDomOptionDom.classList.toggle('visible')
         instance.command.executeInsertElementList([
             {
                 type: ElementType.DATE,
@@ -1021,13 +1021,13 @@ window.onload = function () {
                     },
                 ],
             },
-        ]);
-    };
+        ])
+    }
 
     const blockDom =
-        document.querySelector<HTMLDivElement>('.menu-item__block')!;
+        document.querySelector<HTMLDivElement>('.menu-item__block')!
     blockDom.onclick = function () {
-        ('block');
+        ('block')
         new Dialog({
             title: '内容块',
             data: [
@@ -1078,131 +1078,131 @@ window.onload = function () {
                 },
             ],
             onConfirm: (payload) => {
-                const type = payload.find((p) => p.name === 'type')?.value;
-                if (!type) return;
-                const width = payload.find((p) => p.name === 'width')?.value;
-                const height = payload.find((p) => p.name === 'height')?.value;
-                if (!height) return;
+                const type = payload.find((p) => p.name === 'type')?.value
+                if (!type) return
+                const width = payload.find((p) => p.name === 'width')?.value
+                const height = payload.find((p) => p.name === 'height')?.value
+                if (!height) return
                 // 地址或HTML代码至少存在一项
-                const src = payload.find((p) => p.name === 'src')?.value;
-                const srcdoc = payload.find((p) => p.name === 'srcdoc')?.value;
+                const src = payload.find((p) => p.name === 'src')?.value
+                const srcdoc = payload.find((p) => p.name === 'srcdoc')?.value
                 const block: IBlock = {
                     type: <BlockType>type,
-                };
+                }
                 if (block.type === BlockType.IFRAME) {
-                    if (!src && !srcdoc) return;
+                    if (!src && !srcdoc) return
                     block.iframeBlock = {
                         src,
                         srcdoc,
-                    };
+                    }
                 } else if (block.type === BlockType.VIDEO) {
-                    if (!src) return;
+                    if (!src) return
                     block.videoBlock = {
                         src,
-                    };
+                    }
                 }
                 const blockElement: IElement = {
                     type: ElementType.BLOCK,
                     value: '',
                     height: Number(height),
                     block,
-                };
-                if (width) {
-                    blockElement.width = Number(width);
                 }
-                instance.command.executeInsertElementList([blockElement]);
+                if (width) {
+                    blockElement.width = Number(width)
+                }
+                instance.command.executeInsertElementList([blockElement])
             },
-        });
-    };
+        })
+    }
 
     // 5. | 搜索&替换 | 打印 |
     const searchCollapseDom = document.querySelector<HTMLDivElement>(
         '.menu-item__search__collapse',
-    )!;
+    )!
     const searchInputDom = document.querySelector<HTMLInputElement>(
         '.menu-item__search__collapse__search input',
-    )!;
+    )!
     const replaceInputDom = document.querySelector<HTMLInputElement>(
         '.menu-item__search__collapse__replace input',
-    )!;
+    )!
     const searchDom =
-        document.querySelector<HTMLDivElement>('.menu-item__search')!;
-    searchDom.title = `搜索与替换(${isApple ? '⌘' : 'Ctrl'}+F)`;
+        document.querySelector<HTMLDivElement>('.menu-item__search')!
+    searchDom.title = `搜索与替换(${isApple ? '⌘' : 'Ctrl'}+F)`
     const searchResultDom =
-        searchCollapseDom.querySelector<HTMLLabelElement>('.search-result')!;
+        searchCollapseDom.querySelector<HTMLLabelElement>('.search-result')!
     function setSearchResult() {
-        const result = instance.command.getSearchNavigateInfo();
+        const result = instance.command.getSearchNavigateInfo()
         if (result) {
-            const { index, count } = result;
-            searchResultDom.innerText = `${index}/${count}`;
+            const { index, count } = result
+            searchResultDom.innerText = `${index}/${count}`
         } else {
-            searchResultDom.innerText = '';
+            searchResultDom.innerText = ''
         }
     }
     searchDom.onclick = function () {
-        ('search');
-        searchCollapseDom.style.display = 'block';
-        const bodyRect = document.body.getBoundingClientRect();
-        const searchRect = searchDom.getBoundingClientRect();
-        const searchCollapseRect = searchCollapseDom.getBoundingClientRect();
+        ('search')
+        searchCollapseDom.style.display = 'block'
+        const bodyRect = document.body.getBoundingClientRect()
+        const searchRect = searchDom.getBoundingClientRect()
+        const searchCollapseRect = searchCollapseDom.getBoundingClientRect()
         if (searchRect.left + searchCollapseRect.width > bodyRect.width) {
-            searchCollapseDom.style.right = '0px';
-            searchCollapseDom.style.left = 'unset';
+            searchCollapseDom.style.right = '0px'
+            searchCollapseDom.style.left = 'unset'
         } else {
-            searchCollapseDom.style.right = 'unset';
+            searchCollapseDom.style.right = 'unset'
         }
-        searchInputDom.focus();
-    };
+        searchInputDom.focus()
+    }
     searchCollapseDom.querySelector<HTMLSpanElement>('span')!.onclick =
         function () {
-            searchCollapseDom.style.display = 'none';
-            searchInputDom.value = '';
-            replaceInputDom.value = '';
-            instance.command.executeSearch(null);
-            setSearchResult();
-        };
+            searchCollapseDom.style.display = 'none'
+            searchInputDom.value = ''
+            replaceInputDom.value = ''
+            instance.command.executeSearch(null)
+            setSearchResult()
+        }
     searchInputDom.oninput = function () {
-        instance.command.executeSearch(searchInputDom.value || null);
-        setSearchResult();
-    };
+        instance.command.executeSearch(searchInputDom.value || null)
+        setSearchResult()
+    }
     searchInputDom.onkeydown = function (evt) {
         if (evt.key === 'Enter') {
-            instance.command.executeSearch(searchInputDom.value || null);
-            setSearchResult();
+            instance.command.executeSearch(searchInputDom.value || null)
+            setSearchResult()
         }
-    };
+    }
     searchCollapseDom.querySelector<HTMLButtonElement>('button')!.onclick =
         function () {
-            const searchValue = searchInputDom.value;
-            const replaceValue = replaceInputDom.value;
+            const searchValue = searchInputDom.value
+            const replaceValue = replaceInputDom.value
             if (searchValue && replaceValue && searchValue !== replaceValue) {
-                instance.command.executeReplace(replaceValue);
+                instance.command.executeReplace(replaceValue)
             }
-        };
+        }
     searchCollapseDom.querySelector<HTMLDivElement>('.arrow-left')!.onclick =
         function () {
-            instance.command.executeSearchNavigatePre();
-            setSearchResult();
-        };
+            instance.command.executeSearchNavigatePre()
+            setSearchResult()
+        }
     searchCollapseDom.querySelector<HTMLDivElement>('.arrow-right')!.onclick =
         function () {
-            instance.command.executeSearchNavigateNext();
-            setSearchResult();
-        };
+            instance.command.executeSearchNavigateNext()
+            setSearchResult()
+        }
 
     const printDom =
-        document.querySelector<HTMLDivElement>('.menu-item__print')!;
-    printDom.title = `打印(${isApple ? '⌘' : 'Ctrl'}+P)`;
+        document.querySelector<HTMLDivElement>('.menu-item__print')!
+    printDom.title = `打印(${isApple ? '⌘' : 'Ctrl'}+P)`
     printDom.onclick = function () {
-        ('print');
-        instance.command.executePrint();
-    };
+        ('print')
+        instance.command.executePrint()
+    }
 
     // 6. 目录显隐 | 页面模式 | 纸张缩放 | 纸张大小 | 纸张方向 | 页边距 | 全屏 | 设置
     const editorOptionDom =
-        document.querySelector<HTMLDivElement>('.editor-option')!;
+        document.querySelector<HTMLDivElement>('.editor-option')!
     editorOptionDom.onclick = function () {
-        const options = instance.command.getOptions();
+        const options = instance.command.getOptions()
         new Dialog({
             title: '编辑器配置',
             data: [
@@ -1219,147 +1219,147 @@ window.onload = function () {
             onConfirm: (payload) => {
                 const newOptionValue = payload.find(
                     (p) => p.name === 'option',
-                )?.value;
-                if (!newOptionValue) return;
-                const newOption = JSON.parse(newOptionValue);
-                instance.command.executeUpdateOptions(newOption);
+                )?.value
+                if (!newOptionValue) return
+                const newOption = JSON.parse(newOptionValue)
+                instance.command.executeUpdateOptions(newOption)
             },
-        });
-    };
+        })
+    }
 
     async function updateCatalog() {
-        const catalog = await instance.command.getCatalog();
+        const catalog = await instance.command.getCatalog()
         const catalogMainDom =
-            document.querySelector<HTMLDivElement>('.catalog__main')!;
-        catalogMainDom.innerHTML = '';
+            document.querySelector<HTMLDivElement>('.catalog__main')!
+        catalogMainDom.innerHTML = ''
         if (catalog) {
             const appendCatalog = (
                 parent: HTMLDivElement,
                 catalogItems: ICatalogItem[],
             ) => {
                 for (let c = 0; c < catalogItems.length; c++) {
-                    const catalogItem = catalogItems[c];
-                    const catalogItemDom = document.createElement('div');
-                    catalogItemDom.classList.add('catalog-item');
+                    const catalogItem = catalogItems[c]
+                    const catalogItemDom = document.createElement('div')
+                    catalogItemDom.classList.add('catalog-item')
                     // 渲染
-                    const catalogItemContentDom = document.createElement('div');
+                    const catalogItemContentDom = document.createElement('div')
                     catalogItemContentDom.classList.add(
                         'catalog-item__content',
-                    );
+                    )
                     const catalogItemContentSpanDom =
-                        document.createElement('span');
-                    catalogItemContentSpanDom.innerText = catalogItem.name;
-                    catalogItemContentDom.append(catalogItemContentSpanDom);
+                        document.createElement('span')
+                    catalogItemContentSpanDom.innerText = catalogItem.name
+                    catalogItemContentDom.append(catalogItemContentSpanDom)
                     // 定位
                     catalogItemContentDom.onclick = () => {
-                        instance.command.executeLocationCatalog(catalogItem.id);
-                    };
-                    catalogItemDom.append(catalogItemContentDom);
+                        instance.command.executeLocationCatalog(catalogItem.id)
+                    }
+                    catalogItemDom.append(catalogItemContentDom)
                     if (
                         catalogItem.subCatalog &&
                         catalogItem.subCatalog.length
                     ) {
-                        appendCatalog(catalogItemDom, catalogItem.subCatalog);
+                        appendCatalog(catalogItemDom, catalogItem.subCatalog)
                     }
                     // 追加
-                    parent.append(catalogItemDom);
+                    parent.append(catalogItemDom)
                 }
-            };
-            appendCatalog(catalogMainDom, catalog);
+            }
+            appendCatalog(catalogMainDom, catalog)
         }
     }
-    let isCatalogShow = true;
-    const catalogDom = document.querySelector<HTMLElement>('.catalog')!;
+    let isCatalogShow = true
+    const catalogDom = document.querySelector<HTMLElement>('.catalog')!
     const catalogModeDom =
-        document.querySelector<HTMLDivElement>('.catalog-mode')!;
+        document.querySelector<HTMLDivElement>('.catalog-mode')!
     const catalogHeaderCloseDom = document.querySelector<HTMLDivElement>(
         '.catalog__header__close',
-    )!;
+    )!
     const switchCatalog = () => {
-        isCatalogShow = !isCatalogShow;
+        isCatalogShow = !isCatalogShow
         if (isCatalogShow) {
-            catalogDom.style.display = 'block';
-            updateCatalog();
+            catalogDom.style.display = 'block'
+            updateCatalog()
         } else {
-            catalogDom.style.display = 'none';
+            catalogDom.style.display = 'none'
         }
-    };
-    catalogModeDom.onclick = switchCatalog;
-    catalogHeaderCloseDom.onclick = switchCatalog;
+    }
+    catalogModeDom.onclick = switchCatalog
+    catalogHeaderCloseDom.onclick = switchCatalog
 
-    const pageModeDom = document.querySelector<HTMLDivElement>('.page-mode')!;
+    const pageModeDom = document.querySelector<HTMLDivElement>('.page-mode')!
     const pageModeOptionsDom =
-        pageModeDom.querySelector<HTMLDivElement>('.options')!;
+        pageModeDom.querySelector<HTMLDivElement>('.options')!
     pageModeDom.onclick = function () {
-        pageModeOptionsDom.classList.toggle('visible');
-    };
+        pageModeOptionsDom.classList.toggle('visible')
+    }
     pageModeOptionsDom.onclick = function (evt) {
-        const li = evt.target as HTMLLIElement;
-        instance.command.executePageMode(<PageMode>li.dataset.pageMode!);
-    };
+        const li = evt.target as HTMLLIElement
+        instance.command.executePageMode(<PageMode>li.dataset.pageMode!)
+    }
 
     document.querySelector<HTMLDivElement>('.page-scale-percentage')!.onclick =
         function () {
-            ('page-scale-recovery');
-            instance.command.executePageScaleRecovery();
-        };
+            ('page-scale-recovery')
+            instance.command.executePageScaleRecovery()
+        }
 
     document.querySelector<HTMLDivElement>('.page-scale-minus')!.onclick =
         function () {
-            ('page-scale-minus');
-            instance.command.executePageScaleMinus();
-        };
+            ('page-scale-minus')
+            instance.command.executePageScaleMinus()
+        }
 
     document.querySelector<HTMLDivElement>('.page-scale-add')!.onclick =
         function () {
-            ('page-scale-add');
-            instance.command.executePageScaleAdd();
-        };
+            ('page-scale-add')
+            instance.command.executePageScaleAdd()
+        }
 
     // 纸张大小
-    const paperSizeDom = document.querySelector<HTMLDivElement>('.paper-size')!;
+    const paperSizeDom = document.querySelector<HTMLDivElement>('.paper-size')!
     const paperSizeDomOptionsDom =
-        paperSizeDom.querySelector<HTMLDivElement>('.options')!;
+        paperSizeDom.querySelector<HTMLDivElement>('.options')!
     paperSizeDom.onclick = function () {
-        paperSizeDomOptionsDom.classList.toggle('visible');
-    };
+        paperSizeDomOptionsDom.classList.toggle('visible')
+    }
     paperSizeDomOptionsDom.onclick = function (evt) {
-        const li = evt.target as HTMLLIElement;
-        const paperType = li.dataset.paperSize!;
-        const [width, height] = paperType.split('*').map(Number);
-        instance.command.executePaperSize(width, height);
+        const li = evt.target as HTMLLIElement
+        const paperType = li.dataset.paperSize!
+        const [width, height] = paperType.split('*').map(Number)
+        instance.command.executePaperSize(width, height)
         // 纸张状态回显
         paperSizeDomOptionsDom
             .querySelectorAll('li')
-            .forEach((child) => child.classList.remove('active'));
-        li.classList.add('active');
-    };
+            .forEach((child) => child.classList.remove('active'))
+        li.classList.add('active')
+    }
 
     // 纸张方向
     const paperDirectionDom =
-        document.querySelector<HTMLDivElement>('.paper-direction')!;
+        document.querySelector<HTMLDivElement>('.paper-direction')!
     const paperDirectionDomOptionsDom =
-        paperDirectionDom.querySelector<HTMLDivElement>('.options')!;
+        paperDirectionDom.querySelector<HTMLDivElement>('.options')!
     paperDirectionDom.onclick = function () {
-        paperDirectionDomOptionsDom.classList.toggle('visible');
-    };
+        paperDirectionDomOptionsDom.classList.toggle('visible')
+    }
     paperDirectionDomOptionsDom.onclick = function (evt) {
-        const li = evt.target as HTMLLIElement;
-        const paperDirection = li.dataset.paperDirection!;
-        instance.command.executePaperDirection(<PaperDirection>paperDirection);
+        const li = evt.target as HTMLLIElement
+        const paperDirection = li.dataset.paperDirection!
+        instance.command.executePaperDirection(<PaperDirection>paperDirection)
         // 纸张方向状态回显
         paperDirectionDomOptionsDom
             .querySelectorAll('li')
-            .forEach((child) => child.classList.remove('active'));
-        li.classList.add('active');
-    };
+            .forEach((child) => child.classList.remove('active'))
+        li.classList.add('active')
+    }
 
     // 页面边距
     const paperMarginDom =
-        document.querySelector<HTMLDivElement>('.paper-margin')!;
+        document.querySelector<HTMLDivElement>('.paper-margin')!
     paperMarginDom.onclick = function () {
         const [topMargin, rightMargin, bottomMargin, leftMargin] =
-            instance.command.getPaperMargin();
+            instance.command.getPaperMargin()
         new Dialog({
             title: '页边距',
             data: [
@@ -1397,48 +1397,48 @@ window.onload = function () {
                 },
             ],
             onConfirm: (payload) => {
-                const top = payload.find((p) => p.name === 'top')?.value;
-                if (!top) return;
-                const bottom = payload.find((p) => p.name === 'bottom')?.value;
-                if (!bottom) return;
-                const left = payload.find((p) => p.name === 'left')?.value;
-                if (!left) return;
-                const right = payload.find((p) => p.name === 'right')?.value;
-                if (!right) return;
+                const top = payload.find((p) => p.name === 'top')?.value
+                if (!top) return
+                const bottom = payload.find((p) => p.name === 'bottom')?.value
+                if (!bottom) return
+                const left = payload.find((p) => p.name === 'left')?.value
+                if (!left) return
+                const right = payload.find((p) => p.name === 'right')?.value
+                if (!right) return
                 instance.command.executeSetPaperMargin([
                     Number(top),
                     Number(right),
                     Number(bottom),
                     Number(left),
-                ]);
+                ])
             },
-        });
-    };
+        })
+    }
 
     // 全屏
     const fullscreenDom =
-        document.querySelector<HTMLDivElement>('.fullscreen')!;
-    fullscreenDom.onclick = toggleFullscreen;
+        document.querySelector<HTMLDivElement>('.fullscreen')!
+    fullscreenDom.onclick = toggleFullscreen
     window.addEventListener('keydown', (evt) => {
         if (evt.key === 'F11') {
-            toggleFullscreen();
-            evt.preventDefault();
+            toggleFullscreen()
+            evt.preventDefault()
         }
-    });
+    })
     document.addEventListener('fullscreenchange', () => {
-        fullscreenDom.classList.toggle('exist');
-    });
+        fullscreenDom.classList.toggle('exist')
+    })
     function toggleFullscreen() {
-        ('fullscreen');
+        ('fullscreen')
         if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
+            document.documentElement.requestFullscreen()
         } else {
-            document.exitFullscreen();
+            document.exitFullscreen()
         }
     }
 
     // 7. 编辑器使用模式
-    let modeIndex = 0;
+    let modeIndex = 0
     const modeList = [
         {
             mode: EditorMode.EDIT,
@@ -1464,81 +1464,81 @@ window.onload = function () {
             mode: EditorMode.DESIGN,
             name: '设计模式',
         },
-    ];
-    const modeElement = document.querySelector<HTMLDivElement>('.editor-mode')!;
+    ]
+    const modeElement = document.querySelector<HTMLDivElement>('.editor-mode')!
     modeElement.onclick = function () {
         // 模式选择循环
-        modeIndex === modeList.length - 1 ? (modeIndex = 0) : modeIndex++;
+        modeIndex === modeList.length - 1 ? (modeIndex = 0) : modeIndex++
         // 设置模式
-        const { name, mode } = modeList[modeIndex];
-        modeElement.innerText = name;
-        instance.command.executeMode(mode);
+        const { name, mode } = modeList[modeIndex]
+        modeElement.innerText = name
+        instance.command.executeMode(mode)
         // 设置菜单栏权限视觉反馈
-        const isReadonly = mode === EditorMode.READONLY;
-        const enableMenuList = ['search', 'print'];
+        const isReadonly = mode === EditorMode.READONLY
+        const enableMenuList = ['search', 'print']
         document
             .querySelectorAll<HTMLDivElement>('.menu-item>div')
             .forEach((dom) => {
-                const menu = dom.dataset.menu;
+                const menu = dom.dataset.menu
                 isReadonly && (!menu || !enableMenuList.includes(menu))
                     ? dom.classList.add('disable')
-                    : dom.classList.remove('disable');
-            });
-    };
+                    : dom.classList.remove('disable')
+            })
+    }
 
     // 模拟批注
-    const commentDom = document.querySelector<HTMLDivElement>('.comment')!;
+    const commentDom = document.querySelector<HTMLDivElement>('.comment')!
     async function updateComment() {
-        const groupIds = await instance.command.getGroupIds();
+        const groupIds = await instance.command.getGroupIds()
         for (const comment of commentList) {
             const activeCommentDom = commentDom.querySelector<HTMLDivElement>(
                 `.comment-item[data-id='${comment.id}']`,
-            );
+            )
             // 编辑器是否存在对应成组id
             if (groupIds.includes(comment.id)) {
                 // 当前dom是否存在-不存在则追加
                 if (!activeCommentDom) {
-                    const commentItem = document.createElement('div');
-                    commentItem.classList.add('comment-item');
-                    commentItem.setAttribute('data-id', comment.id);
+                    const commentItem = document.createElement('div')
+                    commentItem.classList.add('comment-item')
+                    commentItem.setAttribute('data-id', comment.id)
                     commentItem.onclick = () => {
-                        instance.command.executeLocationGroup(comment.id);
-                    };
-                    commentDom.append(commentItem);
+                        instance.command.executeLocationGroup(comment.id)
+                    }
+                    commentDom.append(commentItem)
                     // 选区信息
-                    const commentItemTitle = document.createElement('div');
-                    commentItemTitle.classList.add('comment-item__title');
-                    commentItemTitle.append(document.createElement('span'));
+                    const commentItemTitle = document.createElement('div')
+                    commentItemTitle.classList.add('comment-item__title')
+                    commentItemTitle.append(document.createElement('span'))
                     const commentItemTitleContent =
-                        document.createElement('span');
-                    commentItemTitleContent.innerText = comment.rangeText;
-                    commentItemTitle.append(commentItemTitleContent);
-                    const closeDom = document.createElement('i');
+                        document.createElement('span')
+                    commentItemTitleContent.innerText = comment.rangeText
+                    commentItemTitle.append(commentItemTitleContent)
+                    const closeDom = document.createElement('i')
                     closeDom.onclick = () => {
-                        instance.command.executeDeleteGroup(comment.id);
-                    };
-                    commentItemTitle.append(closeDom);
-                    commentItem.append(commentItemTitle);
+                        instance.command.executeDeleteGroup(comment.id)
+                    }
+                    commentItemTitle.append(closeDom)
+                    commentItem.append(commentItemTitle)
                     // 基础信息
-                    const commentItemInfo = document.createElement('div');
-                    commentItemInfo.classList.add('comment-item__info');
-                    const commentItemInfoName = document.createElement('span');
-                    commentItemInfoName.innerText = comment.userName;
-                    const commentItemInfoDate = document.createElement('span');
-                    commentItemInfoDate.innerText = comment.createdDate;
-                    commentItemInfo.append(commentItemInfoName);
-                    commentItemInfo.append(commentItemInfoDate);
-                    commentItem.append(commentItemInfo);
+                    const commentItemInfo = document.createElement('div')
+                    commentItemInfo.classList.add('comment-item__info')
+                    const commentItemInfoName = document.createElement('span')
+                    commentItemInfoName.innerText = comment.userName
+                    const commentItemInfoDate = document.createElement('span')
+                    commentItemInfoDate.innerText = comment.createdDate
+                    commentItemInfo.append(commentItemInfoName)
+                    commentItemInfo.append(commentItemInfoDate)
+                    commentItem.append(commentItemInfo)
                     // 详细评论
-                    const commentItemContent = document.createElement('div');
-                    commentItemContent.classList.add('comment-item__content');
-                    commentItemContent.innerText = comment.content;
-                    commentItem.append(commentItemContent);
-                    commentDom.append(commentItem);
+                    const commentItemContent = document.createElement('div')
+                    commentItemContent.classList.add('comment-item__content')
+                    commentItemContent.innerText = comment.content
+                    commentItem.append(commentItemContent)
+                    commentDom.append(commentItem)
                 }
             } else {
                 // 编辑器内不存在对应成组id则dom则移除
-                activeCommentDom?.remove();
+                activeCommentDom?.remove()
             }
         }
     }
@@ -1547,198 +1547,198 @@ window.onload = function () {
         // 控件类型
         payload.type === ElementType.SUBSCRIPT
             ? subscriptDom.classList.add('active')
-            : subscriptDom.classList.remove('active');
+            : subscriptDom.classList.remove('active')
         payload.type === ElementType.SUPERSCRIPT
             ? superscriptDom.classList.add('active')
-            : superscriptDom.classList.remove('active');
+            : superscriptDom.classList.remove('active')
         payload.type === ElementType.SEPARATOR
             ? separatorDom.classList.add('active')
-            : separatorDom.classList.remove('active');
+            : separatorDom.classList.remove('active')
         separatorOptionDom
             .querySelectorAll('li')
-            .forEach((li) => li.classList.remove('active'));
+            .forEach((li) => li.classList.remove('active'))
         if (payload.type === ElementType.SEPARATOR) {
-            const separator = payload.dashArray.join(',') || '0,0';
+            const separator = payload.dashArray.join(',') || '0,0'
             const curSeparatorDom =
                 separatorOptionDom.querySelector<HTMLLIElement>(
                     `[data-separator='${separator}']`,
-                )!;
+                )!
             if (curSeparatorDom) {
-                curSeparatorDom.classList.add('active');
+                curSeparatorDom.classList.add('active')
             }
         }
 
         // 富文本
         fontOptionDom
             .querySelectorAll<HTMLLIElement>('li')
-            .forEach((li) => li.classList.remove('active'));
+            .forEach((li) => li.classList.remove('active'))
         const curFontDom = fontOptionDom.querySelector<HTMLLIElement>(
             `[data-family='${payload.font}']`,
-        );
+        )
         if (curFontDom) {
-            fontSelectDom.innerText = curFontDom.innerText;
-            fontSelectDom.style.fontFamily = payload.font;
-            curFontDom.classList.add('active');
+            fontSelectDom.innerText = curFontDom.innerText
+            fontSelectDom.style.fontFamily = payload.font
+            curFontDom.classList.add('active')
         }
         sizeOptionDom
             .querySelectorAll<HTMLLIElement>('li')
-            .forEach((li) => li.classList.remove('active'));
+            .forEach((li) => li.classList.remove('active'))
         const curSizeDom = sizeOptionDom.querySelector<HTMLLIElement>(
             `[data-size='${payload.size}']`,
-        );
+        )
         if (curSizeDom) {
-            sizeSelectDom.innerText = curSizeDom.innerText;
-            curSizeDom.classList.add('active');
+            sizeSelectDom.innerText = curSizeDom.innerText
+            curSizeDom.classList.add('active')
         } else {
-            sizeSelectDom.innerText = `${payload.size}`;
+            sizeSelectDom.innerText = `${payload.size}`
         }
         payload.bold
             ? boldDom.classList.add('active')
-            : boldDom.classList.remove('active');
+            : boldDom.classList.remove('active')
         payload.italic
             ? italicDom.classList.add('active')
-            : italicDom.classList.remove('active');
+            : italicDom.classList.remove('active')
         payload.underline
             ? underlineDom.classList.add('active')
-            : underlineDom.classList.remove('active');
+            : underlineDom.classList.remove('active')
         payload.strikeout
             ? strikeoutDom.classList.add('active')
-            : strikeoutDom.classList.remove('active');
+            : strikeoutDom.classList.remove('active')
         if (payload.color) {
-            colorDom.classList.add('active');
-            colorControlDom.value = payload.color;
-            colorSpanDom.style.backgroundColor = payload.color;
+            colorDom.classList.add('active')
+            colorControlDom.value = payload.color
+            colorSpanDom.style.backgroundColor = payload.color
         } else {
-            colorDom.classList.remove('active');
-            colorControlDom.value = '#000000';
-            colorSpanDom.style.backgroundColor = '#000000';
+            colorDom.classList.remove('active')
+            colorControlDom.value = '#000000'
+            colorSpanDom.style.backgroundColor = '#000000'
         }
         if (payload.highlight) {
-            highlightDom.classList.add('active');
-            highlightControlDom.value = payload.highlight;
-            highlightSpanDom.style.backgroundColor = payload.highlight;
+            highlightDom.classList.add('active')
+            highlightControlDom.value = payload.highlight
+            highlightSpanDom.style.backgroundColor = payload.highlight
         } else {
-            highlightDom.classList.remove('active');
-            highlightControlDom.value = '#ffff00';
-            highlightSpanDom.style.backgroundColor = '#ffff00';
+            highlightDom.classList.remove('active')
+            highlightControlDom.value = '#ffff00'
+            highlightSpanDom.style.backgroundColor = '#ffff00'
         }
 
         // 行布局
-        leftDom.classList.remove('active');
-        centerDom.classList.remove('active');
-        rightDom.classList.remove('active');
-        alignmentDom.classList.remove('active');
-        justifyDom.classList.remove('active');
+        leftDom.classList.remove('active')
+        centerDom.classList.remove('active')
+        rightDom.classList.remove('active')
+        alignmentDom.classList.remove('active')
+        justifyDom.classList.remove('active')
         if (payload.rowFlex && payload.rowFlex === 'right') {
-            rightDom.classList.add('active');
+            rightDom.classList.add('active')
         } else if (payload.rowFlex && payload.rowFlex === 'center') {
-            centerDom.classList.add('active');
+            centerDom.classList.add('active')
         } else if (payload.rowFlex && payload.rowFlex === 'alignment') {
-            alignmentDom.classList.add('active');
+            alignmentDom.classList.add('active')
         } else if (payload.rowFlex && payload.rowFlex === 'justify') {
-            justifyDom.classList.add('active');
+            justifyDom.classList.add('active')
         } else {
-            leftDom.classList.add('active');
+            leftDom.classList.add('active')
         }
 
         // 行间距
         rowOptionDom
             .querySelectorAll<HTMLLIElement>('li')
-            .forEach((li) => li.classList.remove('active'));
+            .forEach((li) => li.classList.remove('active'))
         const curRowMarginDom = rowOptionDom.querySelector<HTMLLIElement>(
             `[data-rowmargin='${payload.rowMargin}']`,
-        )!;
-        curRowMarginDom.classList.add('active');
+        )!
+        curRowMarginDom.classList.add('active')
 
         // 功能
         payload.undo
             ? undoDom.classList.remove('no-allow')
-            : undoDom.classList.add('no-allow');
+            : undoDom.classList.add('no-allow')
         payload.redo
             ? redoDom.classList.remove('no-allow')
-            : redoDom.classList.add('no-allow');
+            : redoDom.classList.add('no-allow')
         payload.painter
             ? painterDom.classList.add('active')
-            : painterDom.classList.remove('active');
+            : painterDom.classList.remove('active')
 
         // 标题
         titleOptionDom
             .querySelectorAll<HTMLLIElement>('li')
-            .forEach((li) => li.classList.remove('active'));
+            .forEach((li) => li.classList.remove('active'))
         if (payload.level) {
             const curTitleDom = titleOptionDom.querySelector<HTMLLIElement>(
                 `[data-level='${payload.level}']`,
-            )!;
-            titleSelectDom.innerText = curTitleDom.innerText;
-            curTitleDom.classList.add('active');
+            )!
+            titleSelectDom.innerText = curTitleDom.innerText
+            curTitleDom.classList.add('active')
         } else {
-            titleSelectDom.innerText = '正文';
+            titleSelectDom.innerText = '正文'
             titleOptionDom
                 .querySelector('li:first-child')!
-                .classList.add('active');
+                .classList.add('active')
         }
 
         // 列表
         listOptionDom
             .querySelectorAll<HTMLLIElement>('li')
-            .forEach((li) => li.classList.remove('active'));
+            .forEach((li) => li.classList.remove('active'))
         if (payload.listType) {
-            listDom.classList.add('active');
-            const listType = payload.listType;
+            listDom.classList.add('active')
+            const listType = payload.listType
             const listStyle =
                 payload.listType === ListType.OL
                     ? ListStyle.DECIMAL
-                    : payload.listType;
+                    : payload.listType
             const curListDom = listOptionDom.querySelector<HTMLLIElement>(
                 `[data-list-type='${listType}'][data-list-style='${listStyle}']`,
-            );
+            )
             if (curListDom) {
-                curListDom.classList.add('active');
+                curListDom.classList.add('active')
             }
         } else {
-            listDom.classList.remove('active');
+            listDom.classList.remove('active')
         }
 
         // 批注
         commentDom
             .querySelectorAll<HTMLDivElement>('.comment-item')
             .forEach((commentItemDom) => {
-                commentItemDom.classList.remove('active');
-            });
+                commentItemDom.classList.remove('active')
+            })
         if (payload.groupIds) {
-            const [id] = payload.groupIds;
+            const [id] = payload.groupIds
             const activeCommentDom = commentDom.querySelector<HTMLDivElement>(
                 `.comment-item[data-id='${id}']`,
-            );
+            )
             if (activeCommentDom) {
-                activeCommentDom.classList.add('active');
-                scrollIntoView(commentDom, activeCommentDom);
+                activeCommentDom.classList.add('active')
+                scrollIntoView(commentDom, activeCommentDom)
             }
         }
-    };
+    }
 
     instance.listener.visiblePageNoListChange = function (payload) {
-        const text = payload.map((i) => i + 1).join('、');
+        const text = payload.map((i) => i + 1).join('、')
         document.querySelector<HTMLSpanElement>('.page-no-list')!.innerText =
-            text;
-    };
+            text
+    }
 
     instance.listener.pageSizeChange = function (payload) {
         document.querySelector<HTMLSpanElement>('.page-size')!.innerText =
-            `${payload}`;
-    };
+            `${payload}`
+    }
 
     instance.listener.intersectionPageNoChange = function (payload) {
         document.querySelector<HTMLSpanElement>('.page-no')!.innerText = `${
             payload + 1
-        }`;
-    };
+        }`
+    }
 
     instance.listener.pageScaleChange = function (payload) {
         document.querySelector<HTMLSpanElement>(
             '.page-scale-percentage',
-        )!.innerText = `${Math.floor(payload * 10 * 10)}%`;
-    };
+        )!.innerText = `${Math.floor(payload * 10 * 10)}%`
+    }
 
     instance.listener.controlChange = function (payload) {
         const disableMenusInControlContext = [
@@ -1747,52 +1747,53 @@ window.onload = function () {
             'separator',
             'page-break',
             'control',
-        ];
+        ]
         // 菜单操作权限
         disableMenusInControlContext.forEach((menu) => {
             const menuDom = document.querySelector<HTMLDivElement>(
                 `.menu-item__${menu}`,
-            )!;
+            )!
             payload
                 ? menuDom.classList.add('disable')
-                : menuDom.classList.remove('disable');
-        });
-    };
+                : menuDom.classList.remove('disable')
+        })
+    }
 
     instance.listener.pageModeChange = function (payload) {
         const activeMode = pageModeOptionsDom.querySelector<HTMLLIElement>(
             `[data-page-mode='${payload}']`,
-        )!;
+        )!
         pageModeOptionsDom
             .querySelectorAll('li')
-            .forEach((li) => li.classList.remove('active'));
-        activeMode.classList.add('active');
-    };
+            .forEach((li) => li.classList.remove('active'))
+        activeMode.classList.add('active')
+    }
 
     const handleContentChange = async function () {
         // 字数
-        const wordCount = await instance.command.getWordCount();
+        const wordCount = await instance.command.getWordCount()
         document.querySelector<HTMLSpanElement>('.word-count')!.innerText = `${
             wordCount || 0
-        }`;
+        }`
         // 目录
         if (isCatalogShow) {
             nextTick(() => {
-                updateCatalog();
-            });
+                updateCatalog()
+            })
         }
         // 批注
         nextTick(() => {
-            updateComment();
-        });
-    };
-    instance.listener.contentChange = debounce(handleContentChange, 200);
-    handleContentChange();
+            updateComment()
+        })
+    }
+    instance.listener.contentChange = debounce(handleContentChange, 200)
+    handleContentChange()
 
-    instance.listener.saved = function (payload) {
-        instance.command.getValue();
+    instance.listener.saved = function () {
+        instance.command.getValue()
+
         // ('elementList: ', payload);
-    };
+    }
 
     // 9. 右键菜单注册
     instance.register.contextMenuList([
@@ -1803,7 +1804,7 @@ window.onload = function () {
                     !payload.isReadonly &&
                     payload.editorHasSelection &&
                     payload.zone === EditorZone.MAIN
-                );
+                )
             },
             callback: (command: Command) => {
                 new Dialog({
@@ -1821,33 +1822,33 @@ window.onload = function () {
                     onConfirm: (payload) => {
                         const value = payload.find(
                             (p) => p.name === 'value',
-                        )?.value;
-                        if (!value) return;
-                        const groupId = command.executeSetGroup();
-                        if (!groupId) return;
+                        )?.value
+                        if (!value) return
+                        const groupId = command.executeSetGroup()
+                        if (!groupId) return
                         commentList.push({
                             id: groupId,
                             content: value,
                             userName: 'Hufe',
                             rangeText: command.getRangeText(),
                             createdDate: new Date().toLocaleString(),
-                        });
+                        })
                     },
-                });
+                })
             },
         },
         {
             name: '签名',
             icon: 'signature',
             when: (payload) => {
-                return !payload.isReadonly && payload.editorTextFocus;
+                return !payload.isReadonly && payload.editorTextFocus
             },
             callback: (command: Command) => {
                 new Signature({
                     onConfirm(payload) {
-                        if (!payload) return;
-                        const { value, width, height } = payload;
-                        if (!value || !width || !height) return;
+                        if (!payload) return
+                        const { value, width, height } = payload
+                        if (!value || !width || !height) return
                         command.executeInsertElementList([
                             {
                                 value,
@@ -1855,22 +1856,22 @@ window.onload = function () {
                                 height,
                                 type: ElementType.IMAGE,
                             },
-                        ]);
+                        ])
                     },
-                });
+                })
             },
         },
         {
             name: '格式整理',
             icon: 'word-tool',
             when: (payload) => {
-                return !payload.isReadonly;
+                return !payload.isReadonly
             },
             callback: (command: Command) => {
-                command.executeWordTool();
+                command.executeWordTool()
             },
         },
-    ]);
+    ])
 
     // 10. 快捷键注册
     instance.register.shortcutList([
@@ -1879,7 +1880,7 @@ window.onload = function () {
             mod: true,
             isGlobal: true,
             callback: (command: Command) => {
-                command.executePrint();
+                command.executePrint()
             },
         },
         {
@@ -1887,12 +1888,12 @@ window.onload = function () {
             mod: true,
             isGlobal: true,
             callback: (command: Command) => {
-                const text = command.getRangeText();
-                searchDom.click();
+                const text = command.getRangeText()
+                searchDom.click()
                 if (text) {
-                    searchInputDom.value = text;
-                    instance.command.executeSearch(text);
-                    setSearchResult();
+                    searchInputDom.value = text
+                    instance.command.executeSearch(text)
+                    setSearchResult()
                 }
             },
         },
@@ -1901,7 +1902,7 @@ window.onload = function () {
             ctrl: true,
             isGlobal: true,
             callback: (command: Command) => {
-                command.executePageScaleMinus();
+                command.executePageScaleMinus()
             },
         },
         {
@@ -1909,7 +1910,7 @@ window.onload = function () {
             ctrl: true,
             isGlobal: true,
             callback: (command: Command) => {
-                command.executePageScaleAdd();
+                command.executePageScaleAdd()
             },
         },
         {
@@ -1917,8 +1918,8 @@ window.onload = function () {
             ctrl: true,
             isGlobal: true,
             callback: (command: Command) => {
-                command.executePageScaleRecovery();
+                command.executePageScaleRecovery()
             },
         },
-    ]);
-};
+    ])
+}

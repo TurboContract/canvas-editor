@@ -1,4 +1,4 @@
-import { VerticalAlign } from '../dataset/enum/VerticalAlign';
+import { VerticalAlign } from '../dataset/enum/VerticalAlign'
 
 export interface ICheckbox {
     value: boolean | null;

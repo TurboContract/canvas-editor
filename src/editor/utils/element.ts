@@ -650,9 +650,17 @@ interface IPickElementOption {
 }
 
 export function pickElementAttr(
-    payload: IElement,
+    payload: IElement | undefined,
     option: IPickElementOption = {},
 ): IElement {
+    if (!payload) {
+        // Fallback для ситуаций, когда контекст диапазона попадает
+        // в индекс вне массива (например, для курсора в таблице).
+        // Важно: возвращаем минимальный IElement с валидным `value`.
+        return {
+            value: '\n',
+        } as IElement
+    }
     const { extraPickAttrs } = option
     const zipAttrs = EDITOR_ELEMENT_ZIP_ATTR
     if (extraPickAttrs) {

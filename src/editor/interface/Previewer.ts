@@ -1,4 +1,4 @@
-import { IElement } from './Element';
+import { IElement } from './Element'
 
 export interface IPreviewerCreateResult {
     resizerSelection: HTMLDivElement;

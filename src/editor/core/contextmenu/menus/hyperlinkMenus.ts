@@ -1,13 +1,13 @@
-import { INTERNAL_CONTEXT_MENU_KEY } from '../../../dataset/constant/ContextMenu';
-import { ElementType } from '../../../dataset/enum/Element';
+import { INTERNAL_CONTEXT_MENU_KEY } from '../../../dataset/constant/ContextMenu'
+import { ElementType } from '../../../dataset/enum/Element'
 import {
     IContextMenuContext,
     IRegisterContextMenu,
-} from '../../../interface/contextmenu/ContextMenu';
-import { Command } from '../../command/Command';
+} from '../../../interface/contextmenu/ContextMenu'
+import { Command } from '../../command/Command'
 const {
     HYPERLINK: { DELETE, CANCEL, EDIT },
-} = INTERNAL_CONTEXT_MENU_KEY;
+} = INTERNAL_CONTEXT_MENU_KEY
 
 export const hyperlinkMenus: IRegisterContextMenu[] = [
     {
@@ -17,10 +17,10 @@ export const hyperlinkMenus: IRegisterContextMenu[] = [
             return (
                 !payload.isReadonly &&
                 payload.startElement?.type === ElementType.HYPERLINK
-            );
+            )
         },
         callback: (command: Command) => {
-            command.executeDeleteHyperlink();
+            command.executeDeleteHyperlink()
         },
     },
     {
@@ -30,10 +30,10 @@ export const hyperlinkMenus: IRegisterContextMenu[] = [
             return (
                 !payload.isReadonly &&
                 payload.startElement?.type === ElementType.HYPERLINK
-            );
+            )
         },
         callback: (command: Command) => {
-            command.executeCancelHyperlink();
+            command.executeCancelHyperlink()
         },
     },
     {
@@ -43,13 +43,13 @@ export const hyperlinkMenus: IRegisterContextMenu[] = [
             return (
                 !payload.isReadonly &&
                 payload.startElement?.type === ElementType.HYPERLINK
-            );
+            )
         },
         callback: (command: Command, context: IContextMenuContext) => {
-            const url = window.prompt('编辑链接', context.startElement?.url);
+            const url = window.prompt('编辑链接', context.startElement?.url)
             if (url) {
-                command.executeEditHyperlink(url);
+                command.executeEditHyperlink(url)
             }
         },
     },
-];
+]

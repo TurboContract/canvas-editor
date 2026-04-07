@@ -1,5 +1,5 @@
-import { NumberType } from '../dataset/enum/Common';
-import { RowFlex } from '../dataset/enum/Row';
+import { NumberType } from '../dataset/enum/Common'
+import { RowFlex } from '../dataset/enum/Row'
 
 export interface IPageNumber {
     bottom?: number;

@@ -1,7 +1,9 @@
-import { VerticalAlign } from '../../dataset/enum/VerticalAlign';
-import { TdBorder, TdSlash } from '../../dataset/enum/table/Table';
-import { IElement, IElementPosition } from '../Element';
-import { IRow } from '../Row';
+import { RowFlex } from '../../dataset/enum/Row'
+import { VerticalAlign } from '../../dataset/enum/VerticalAlign'
+import { TdBorder, TdSlash } from '../../dataset/enum/table/Table'
+import { TextOrientation } from '../../dataset/enum/table/TextOrientation'
+import { IElement, IElementPosition } from '../Element'
+import { IRow } from '../Row'
 
 export interface ITd {
     conceptId?: string;
@@ -25,6 +27,9 @@ export interface ITd {
     rowList?: IRow[];
     positionList?: IElementPosition[];
     verticalAlign?: VerticalAlign;
+    textOrientation?: TextOrientation;
+    /** Для вертикального текста: выравнивание на всю ячейку, не на отдельные абзацы */
+    rowFlex?: RowFlex;
     backgroundColor?: string;
     borderTypes?: TdBorder[];
     slashTypes?: TdSlash[];

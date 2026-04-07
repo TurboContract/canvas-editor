@@ -1,9 +1,9 @@
-import { ControlComponent } from '../../../../dataset/enum/Control';
+import { ControlComponent } from '../../../../dataset/enum/Control'
 import {
     IControlContext,
     IControlRuleOption,
-} from '../../../../interface/Control';
-import { CheckboxControl } from '../checkbox/CheckboxControl';
+} from '../../../../interface/Control'
+import { CheckboxControl } from '../checkbox/CheckboxControl'
 
 export class RadioControl extends CheckboxControl {
     public setSelect(
@@ -16,49 +16,49 @@ export class RadioControl extends CheckboxControl {
             !options.isIgnoreDisabledRule &&
             this.control.getIsDisabledControl(context)
         ) {
-            return;
+            return
         }
-        const { control } = this.element;
+        const { control } = this.element
         const elementList =
-            context.elementList || this.control.getElementList();
-        const { startIndex } = context.range || this.control.getRange();
-        const startElement = elementList[startIndex];
+            context.elementList || this.control.getElementList()
+        const { startIndex } = context.range || this.control.getRange()
+        const startElement = elementList[startIndex]
         // 向左查找
-        let preIndex = startIndex;
+        let preIndex = startIndex
         while (preIndex > 0) {
-            const preElement = elementList[preIndex];
+            const preElement = elementList[preIndex]
             if (
                 preElement.controlId !== startElement.controlId ||
                 preElement.controlComponent === ControlComponent.PREFIX
             ) {
-                break;
+                break
             }
             if (preElement.controlComponent === ControlComponent.RADIO) {
-                const radio = preElement.radio!;
-                radio.value = codes.includes(radio.code!);
+                const radio = preElement.radio!
+                radio.value = codes.includes(radio.code!)
             }
-            preIndex--;
+            preIndex--
         }
         // 向右查找
-        let nextIndex = startIndex + 1;
+        let nextIndex = startIndex + 1
         while (nextIndex < elementList.length) {
-            const nextElement = elementList[nextIndex];
+            const nextElement = elementList[nextIndex]
             if (
                 nextElement.controlId !== startElement.controlId ||
                 nextElement.controlComponent === ControlComponent.POSTFIX
             ) {
-                break;
+                break
             }
             if (nextElement.controlComponent === ControlComponent.RADIO) {
-                const radio = nextElement.radio!;
-                radio.value = codes.includes(radio.code!);
+                const radio = nextElement.radio!
+                radio.value = codes.includes(radio.code!)
             }
-            nextIndex++;
+            nextIndex++
         }
-        control!.code = codes.join(',');
+        control!.code = codes.join(',')
         this.control.repaintControl({
             curIndex: startIndex,
             isSetCursor: false,
-        });
+        })
     }
 }

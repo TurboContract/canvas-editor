@@ -1,6 +1,6 @@
 export const NAME_PLACEHOLDER = {
     SELECTED_TEXT: '%s',
-};
+}
 
 export const INTERNAL_CONTEXT_MENU_KEY = {
     GLOBAL: {
@@ -44,6 +44,10 @@ export const INTERNAL_CONTEXT_MENU_KEY = {
         VERTICAL_ALIGN_TOP: 'tableVerticalAlignTop',
         VERTICAL_ALIGN_MIDDLE: 'tableVerticalAlignMiddle',
         VERTICAL_ALIGN_BOTTOM: 'tableVerticalAlignBottom',
+        TEXT_DIRECTION: 'tableTextDirection',
+        TEXT_DIRECTION_HORIZONTAL: 'tableTextDirectionHorizontal',
+        TEXT_DIRECTION_ROTATE_90: 'tableTextDirectionRotate90',
+        TEXT_DIRECTION_ROTATE_270: 'tableTextDirectionRotate270',
         INSERT_ROW_COL: 'tableInsertRowCol',
         INSERT_TOP_ROW: 'tableInsertTopRow',
         INSERT_BOTTOM_ROW: 'tableInsertBottomRow',
@@ -60,4 +64,4 @@ export const INTERNAL_CONTEXT_MENU_KEY = {
         EDIT_FORMULA_IN_CELL: 'tableEditFormulaInCell',
         DELETE_FORMULA_IN_CELL: 'tableDeleteFormulaInCell',
     },
-};
+}

@@ -1,4 +1,4 @@
-import { IPadding } from '../Common';
+import { IPadding } from '../Common'
 
 export interface ITableOption {
     tdPadding?: IPadding;

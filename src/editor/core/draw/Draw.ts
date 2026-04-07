@@ -1,5 +1,5 @@
-import { ZERO } from '../../dataset/constant/Common';
-import { RowFlex } from '../../dataset/enum/Row';
+import { ZERO } from '../../dataset/constant/Common'
+import { RowFlex } from '../../dataset/enum/Row'
 import {
     IAppendElementListOption,
     IComputeRowListPayload,
@@ -10,54 +10,54 @@ import {
     IGetImageOption,
     IGetValueOption,
     IPainterOption,
-} from '../../interface/Draw';
+} from '../../interface/Draw'
 import {
     IEditorData,
     IEditorOption,
     IEditorResult,
     ISetValueOption,
-} from '../../interface/Editor';
+} from '../../interface/Editor'
 import {
     IElement,
     IElementFillRect,
     IElementMetrics,
     IElementStyle,
-} from '../../interface/Element';
-import { IRow, IRowElement } from '../../interface/Row';
-import { deepClone, getUUID, nextTick } from '../../utils';
-import { Cursor } from '../cursor/Cursor';
-import { CanvasEvent } from '../event/CanvasEvent';
-import { GlobalEvent } from '../event/GlobalEvent';
-import { HistoryManager } from '../history/HistoryManager';
-import { Listener } from '../listener/Listener';
+} from '../../interface/Element'
+import { IRow, IRowElement } from '../../interface/Row'
+import { deepClone, getUUID, nextTick } from '../../utils'
+import { Cursor } from '../cursor/Cursor'
+import { CanvasEvent } from '../event/CanvasEvent'
+import { GlobalEvent } from '../event/GlobalEvent'
+import { HistoryManager } from '../history/HistoryManager'
+import { Listener } from '../listener/Listener'
 import {
     ICursorPositionChange,
     IParagraphIndentChange,
-} from '../../interface/Listener';
-import { Position } from '../position/Position';
-import { RangeManager } from '../range/RangeManager';
-import { Background } from './frame/Background';
-import { Highlight } from './richtext/Highlight';
-import { Margin } from './frame/Margin';
-import { Search } from './interactive/Search';
-import { Strikeout } from './richtext/Strikeout';
-import { Underline } from './richtext/Underline';
-import { ElementType } from '../../dataset/enum/Element';
-import { ImageParticle } from './particle/ImageParticle';
-import { LaTexParticle } from './particle/latex/LaTexParticle';
-import { TextParticle } from './particle/TextParticle';
-import { PageNumber } from './frame/PageNumber';
-import { ScrollObserver } from '../observer/ScrollObserver';
-import { SelectionObserver } from '../observer/SelectionObserver';
-import { TableParticle } from './particle/table/TableParticle';
-import { TableTool } from './particle/table/TableTool';
-import { HyperlinkParticle } from './particle/HyperlinkParticle';
-import { Header } from './frame/Header';
-import { SuperscriptParticle } from './particle/Superscript';
-import { SubscriptParticle } from './particle/Subscript';
-import { SeparatorParticle } from './particle/Separator';
-import { PageBreakParticle } from './particle/PageBreak';
-import { Watermark } from './frame/Watermark';
+} from '../../interface/Listener'
+import { Position } from '../position/Position'
+import { RangeManager } from '../range/RangeManager'
+import { Background } from './frame/Background'
+import { Highlight } from './richtext/Highlight'
+import { Margin } from './frame/Margin'
+import { Search } from './interactive/Search'
+import { Strikeout } from './richtext/Strikeout'
+import { Underline } from './richtext/Underline'
+import { ElementType } from '../../dataset/enum/Element'
+import { ImageParticle } from './particle/ImageParticle'
+import { LaTexParticle } from './particle/latex/LaTexParticle'
+import { TextParticle } from './particle/TextParticle'
+import { PageNumber } from './frame/PageNumber'
+import { ScrollObserver } from '../observer/ScrollObserver'
+import { SelectionObserver } from '../observer/SelectionObserver'
+import { TableParticle } from './particle/table/TableParticle'
+import { TableTool } from './particle/table/TableTool'
+import { HyperlinkParticle } from './particle/HyperlinkParticle'
+import { Header } from './frame/Header'
+import { SuperscriptParticle } from './particle/Superscript'
+import { SubscriptParticle } from './particle/Subscript'
+import { SeparatorParticle } from './particle/Separator'
+import { PageBreakParticle } from './particle/PageBreak'
+import { Watermark } from './frame/Watermark'
 import {
     EditorComponent,
     EditorMode,
@@ -65,8 +65,8 @@ import {
     PageMode,
     PaperDirection,
     WordBreak,
-} from '../../dataset/enum/Editor';
-import { Control } from './control/Control';
+} from '../../dataset/enum/Editor'
+import { Control } from './control/Control'
 import {
     deleteSurroundElementList,
     formatElementList,
@@ -74,120 +74,121 @@ import {
     getSlimCloneElementList,
     pickSurroundElementList,
     zipElementList,
-} from '../../utils/element';
-import { CheckboxParticle } from './particle/CheckboxParticle';
-import { RadioParticle } from './particle/RadioParticle';
-import { DeepRequired, IPadding } from '../../interface/Common';
+} from '../../utils/element'
+import { CheckboxParticle } from './particle/CheckboxParticle'
+import { RadioParticle } from './particle/RadioParticle'
+import { DeepRequired, IPadding } from '../../interface/Common'
 import {
     ControlComponent,
     ControlIndentation,
-} from '../../dataset/enum/Control';
-import { WorkerManager } from '../worker/WorkerManager';
-import { Previewer } from './particle/previewer/Previewer';
-import { DateParticle } from './particle/date/DateParticle';
-import { IMargin } from '../../interface/Margin';
-import { BlockParticle } from './particle/block/BlockParticle';
-import { EDITOR_COMPONENT, EDITOR_PREFIX } from '../../dataset/constant/Editor';
-import { I18n } from '../i18n/I18n';
-import { evaluate } from 'mathjs';
-import { ImageObserver } from '../observer/ImageObserver';
-import { Zone } from '../zone/Zone';
-import { Footer } from './frame/Footer';
+} from '../../dataset/enum/Control'
+import { WorkerManager } from '../worker/WorkerManager'
+import { Previewer } from './particle/previewer/Previewer'
+import { DateParticle } from './particle/date/DateParticle'
+import { IMargin } from '../../interface/Margin'
+import { BlockParticle } from './particle/block/BlockParticle'
+import { EDITOR_COMPONENT, EDITOR_PREFIX } from '../../dataset/constant/Editor'
+import { I18n } from '../i18n/I18n'
+import { evaluate } from 'mathjs'
+import { ImageObserver } from '../observer/ImageObserver'
+import { Zone } from '../zone/Zone'
+import { Footer } from './frame/Footer'
 import {
     IMAGE_ELEMENT_TYPE,
     TEXTLIKE_ELEMENT_TYPE,
-} from '../../dataset/constant/Element';
-import { ListParticle } from './particle/ListParticle';
-import { Placeholder } from './frame/Placeholder';
-import { EventBus } from '../event/eventbus/EventBus';
-import { EventBusMap } from '../../interface/EventBus';
-import { Group } from './interactive/Group';
-import { Override } from '../override/Override';
-import { ImageDisplay } from '../../dataset/enum/Common';
-import { PUNCTUATION_REG } from '../../dataset/constant/Regular';
-import { LineBreakParticle } from './particle/LineBreakParticle';
-import { MouseObserver } from '../observer/MouseObserver';
-import { LineNumber } from './frame/LineNumber';
-import { PageBorder } from './frame/PageBorder';
-import { ITd } from '../../interface/table/Td';
-import { Actuator } from '../actuator/Actuator';
-import { ParagraphSymbolParticle } from './particle/ParagraphSymbolParticle';
-import { TabSymbolParticle } from './particle/TabSymbolParticle';
-import { SpaceSymbolParticle } from './particle/SpaceSymbolParticle';
+} from '../../dataset/constant/Element'
+import { ListParticle } from './particle/ListParticle'
+import { Placeholder } from './frame/Placeholder'
+import { EventBus } from '../event/eventbus/EventBus'
+import { EventBusMap } from '../../interface/EventBus'
+import { Group } from './interactive/Group'
+import { Override } from '../override/Override'
+import { ImageDisplay } from '../../dataset/enum/Common'
+import { PUNCTUATION_REG } from '../../dataset/constant/Regular'
+import { LineBreakParticle } from './particle/LineBreakParticle'
+import { MouseObserver } from '../observer/MouseObserver'
+import { LineNumber } from './frame/LineNumber'
+import { PageBorder } from './frame/PageBorder'
+import { ITd } from '../../interface/table/Td'
+import { Actuator } from '../actuator/Actuator'
+import { ParagraphSymbolParticle } from './particle/ParagraphSymbolParticle'
+import { TabSymbolParticle } from './particle/TabSymbolParticle'
+import { SpaceSymbolParticle } from './particle/SpaceSymbolParticle'
+import { TextOrientation } from '../../dataset/enum/table/TextOrientation'
 
 export class Draw {
-    private container: HTMLDivElement;
-    private pageContainer: HTMLDivElement;
-    private pageList: HTMLCanvasElement[];
-    private ctxList: CanvasRenderingContext2D[];
-    private pageNo: number;
-    private pagePixelRatio: number | null;
-    private mode: EditorMode;
-    private options: DeepRequired<IEditorOption>;
-    private position: Position;
-    private zone: Zone;
-    private elementList: IElement[];
-    private listener: Listener;
-    private eventBus: EventBus<EventBusMap>;
-    private override: Override;
+    private container: HTMLDivElement
+    private pageContainer: HTMLDivElement
+    private pageList: HTMLCanvasElement[]
+    private ctxList: CanvasRenderingContext2D[]
+    private pageNo: number
+    private pagePixelRatio: number | null
+    private mode: EditorMode
+    private options: DeepRequired<IEditorOption>
+    private position: Position
+    private zone: Zone
+    private elementList: IElement[]
+    private listener: Listener
+    private eventBus: EventBus<EventBusMap>
+    private override: Override
 
-    private i18n: I18n;
-    private canvasEvent: CanvasEvent;
-    private globalEvent: GlobalEvent;
-    private cursor: Cursor;
-    private range: RangeManager;
-    private margin: Margin;
-    private background: Background;
-    private search: Search;
-    private group: Group;
-    private underline: Underline;
-    private strikeout: Strikeout;
-    private highlight: Highlight;
-    private historyManager: HistoryManager;
-    private previewer: Previewer;
-    private imageParticle: ImageParticle;
-    private laTexParticle: LaTexParticle;
-    private textParticle: TextParticle;
-    private tableParticle: TableParticle;
-    private tableTool: TableTool;
-    private pageNumber: PageNumber;
-    private lineNumber: LineNumber;
-    private waterMark: Watermark;
-    private placeholder: Placeholder;
-    private header: Header;
-    private footer: Footer;
-    private hyperlinkParticle: HyperlinkParticle;
-    private dateParticle: DateParticle;
-    private separatorParticle: SeparatorParticle;
-    private pageBreakParticle: PageBreakParticle;
-    private superscriptParticle: SuperscriptParticle;
-    private subscriptParticle: SubscriptParticle;
-    private checkboxParticle: CheckboxParticle;
-    private radioParticle: RadioParticle;
-    private blockParticle: BlockParticle;
-    private listParticle: ListParticle;
-    private lineBreakParticle: LineBreakParticle;
-    private paragraphSymbolParticle: ParagraphSymbolParticle;
-    private tabSymbolParticle: TabSymbolParticle;
-    private spaceSymbolParticle: SpaceSymbolParticle;
-    private control: Control;
-    private pageBorder: PageBorder;
-    private workerManager: WorkerManager;
-    private scrollObserver: ScrollObserver;
-    private selectionObserver: SelectionObserver;
-    private imageObserver: ImageObserver;
+    private i18n: I18n
+    private canvasEvent: CanvasEvent
+    private globalEvent: GlobalEvent
+    private cursor: Cursor
+    private range: RangeManager
+    private margin: Margin
+    private background: Background
+    private search: Search
+    private group: Group
+    private underline: Underline
+    private strikeout: Strikeout
+    private highlight: Highlight
+    private historyManager: HistoryManager
+    private previewer: Previewer
+    private imageParticle: ImageParticle
+    private laTexParticle: LaTexParticle
+    private textParticle: TextParticle
+    private tableParticle: TableParticle
+    private tableTool: TableTool
+    private pageNumber: PageNumber
+    private lineNumber: LineNumber
+    private waterMark: Watermark
+    private placeholder: Placeholder
+    private header: Header
+    private footer: Footer
+    private hyperlinkParticle: HyperlinkParticle
+    private dateParticle: DateParticle
+    private separatorParticle: SeparatorParticle
+    private pageBreakParticle: PageBreakParticle
+    private superscriptParticle: SuperscriptParticle
+    private subscriptParticle: SubscriptParticle
+    private checkboxParticle: CheckboxParticle
+    private radioParticle: RadioParticle
+    private blockParticle: BlockParticle
+    private listParticle: ListParticle
+    private lineBreakParticle: LineBreakParticle
+    private paragraphSymbolParticle: ParagraphSymbolParticle
+    private tabSymbolParticle: TabSymbolParticle
+    private spaceSymbolParticle: SpaceSymbolParticle
+    private control: Control
+    private pageBorder: PageBorder
+    private workerManager: WorkerManager
+    private scrollObserver: ScrollObserver
+    private selectionObserver: SelectionObserver
+    private imageObserver: ImageObserver
 
-    private LETTER_REG: RegExp;
-    private WORD_LIKE_REG: RegExp;
-    private rowList: IRow[];
-    private pageRowList: IRow[][];
-    private painterStyle: IElementStyle | null;
-    private painterOptions: IPainterOption | null;
-    private visiblePageNoList: number[];
-    private intersectionPageNo: number;
-    private lazyRenderIntersectionObserver: IntersectionObserver | null;
-    private printModeData: Required<IEditorData> | null;
-    public onLastPageReached = () => {};
+    private LETTER_REG: RegExp
+    private WORD_LIKE_REG: RegExp
+    private rowList: IRow[]
+    private pageRowList: IRow[][]
+    private painterStyle: IElementStyle | null
+    private painterOptions: IPainterOption | null
+    private visiblePageNoList: number[]
+    private intersectionPageNo: number
+    private lazyRenderIntersectionObserver: IntersectionObserver | null
+    private printModeData: Required<IEditorData> | null
+    public onLastPageReached = () => {}
 
     constructor(
         rootContainer: HTMLElement,
@@ -197,102 +198,102 @@ export class Draw {
         eventBus: EventBus<EventBusMap>,
         override: Override,
     ) {
-        this.container = this._wrapContainer(rootContainer);
-        this.pageList = [];
-        this.ctxList = [];
-        this.pageNo = 0;
-        this.pagePixelRatio = null;
-        this.mode = options.mode;
-        this.options = options;
-        this.elementList = data.main;
-        this.listener = listener;
-        this.eventBus = eventBus;
-        this.override = override;
-        this._formatContainer();
-        this.pageContainer = this._createPageContainer();
-        this._createPage(0);
+        this.container = this._wrapContainer(rootContainer)
+        this.pageList = []
+        this.ctxList = []
+        this.pageNo = 0
+        this.pagePixelRatio = null
+        this.mode = options.mode
+        this.options = options
+        this.elementList = data.main
+        this.listener = listener
+        this.eventBus = eventBus
+        this.override = override
+        this._formatContainer()
+        this.pageContainer = this._createPageContainer()
+        this._createPage(0)
 
-        this.i18n = new I18n();
-        this.historyManager = new HistoryManager(this);
-        this.position = new Position(this);
-        this.zone = new Zone(this);
-        this.range = new RangeManager(this);
-        this.margin = new Margin(this);
-        this.background = new Background(this);
-        this.search = new Search(this);
-        this.group = new Group(this);
-        this.underline = new Underline(this);
-        this.strikeout = new Strikeout(this);
-        this.highlight = new Highlight(this);
-        this.previewer = new Previewer(this);
-        this.imageParticle = new ImageParticle(this);
-        this.laTexParticle = new LaTexParticle(this);
-        this.textParticle = new TextParticle(this);
-        this.tableParticle = new TableParticle(this);
-        this.tableTool = new TableTool(this);
-        this.pageNumber = new PageNumber(this);
-        this.lineNumber = new LineNumber(this);
-        this.waterMark = new Watermark(this);
-        this.placeholder = new Placeholder(this);
-        this.header = new Header(this, data.header);
-        this.footer = new Footer(this, data.footer);
-        this.hyperlinkParticle = new HyperlinkParticle(this);
-        this.dateParticle = new DateParticle(this);
-        this.separatorParticle = new SeparatorParticle(this);
-        this.pageBreakParticle = new PageBreakParticle(this);
-        this.superscriptParticle = new SuperscriptParticle();
-        this.subscriptParticle = new SubscriptParticle();
-        this.checkboxParticle = new CheckboxParticle(this);
-        this.radioParticle = new RadioParticle(this);
-        this.blockParticle = new BlockParticle(this);
-        this.listParticle = new ListParticle(this);
-        this.lineBreakParticle = new LineBreakParticle(this);
-        this.paragraphSymbolParticle = new ParagraphSymbolParticle(this);
-        this.tabSymbolParticle = new TabSymbolParticle(this);
-        this.spaceSymbolParticle = new SpaceSymbolParticle(this);
-        this.control = new Control(this);
-        this.pageBorder = new PageBorder(this);
+        this.i18n = new I18n()
+        this.historyManager = new HistoryManager(this)
+        this.position = new Position(this)
+        this.zone = new Zone(this)
+        this.range = new RangeManager(this)
+        this.margin = new Margin(this)
+        this.background = new Background(this)
+        this.search = new Search(this)
+        this.group = new Group(this)
+        this.underline = new Underline(this)
+        this.strikeout = new Strikeout(this)
+        this.highlight = new Highlight(this)
+        this.previewer = new Previewer(this)
+        this.imageParticle = new ImageParticle(this)
+        this.laTexParticle = new LaTexParticle(this)
+        this.textParticle = new TextParticle(this)
+        this.tableParticle = new TableParticle(this)
+        this.tableTool = new TableTool(this)
+        this.pageNumber = new PageNumber(this)
+        this.lineNumber = new LineNumber(this)
+        this.waterMark = new Watermark(this)
+        this.placeholder = new Placeholder(this)
+        this.header = new Header(this, data.header)
+        this.footer = new Footer(this, data.footer)
+        this.hyperlinkParticle = new HyperlinkParticle(this)
+        this.dateParticle = new DateParticle(this)
+        this.separatorParticle = new SeparatorParticle(this)
+        this.pageBreakParticle = new PageBreakParticle(this)
+        this.superscriptParticle = new SuperscriptParticle()
+        this.subscriptParticle = new SubscriptParticle()
+        this.checkboxParticle = new CheckboxParticle(this)
+        this.radioParticle = new RadioParticle(this)
+        this.blockParticle = new BlockParticle(this)
+        this.listParticle = new ListParticle(this)
+        this.lineBreakParticle = new LineBreakParticle(this)
+        this.paragraphSymbolParticle = new ParagraphSymbolParticle(this)
+        this.tabSymbolParticle = new TabSymbolParticle(this)
+        this.spaceSymbolParticle = new SpaceSymbolParticle(this)
+        this.control = new Control(this)
+        this.pageBorder = new PageBorder(this)
 
-        this.scrollObserver = new ScrollObserver(this, this.onLastPageReached);
-        this.selectionObserver = new SelectionObserver(this);
-        this.imageObserver = new ImageObserver();
-        new MouseObserver(this);
+        this.scrollObserver = new ScrollObserver(this, this.onLastPageReached)
+        this.selectionObserver = new SelectionObserver(this)
+        this.imageObserver = new ImageObserver()
+        new MouseObserver(this)
 
-        this.canvasEvent = new CanvasEvent(this);
-        this.cursor = new Cursor(this, this.canvasEvent);
-        this.canvasEvent.register();
-        this.globalEvent = new GlobalEvent(this, this.canvasEvent);
-        this.globalEvent.register();
+        this.canvasEvent = new CanvasEvent(this)
+        this.cursor = new Cursor(this, this.canvasEvent)
+        this.canvasEvent.register()
+        this.globalEvent = new GlobalEvent(this, this.canvasEvent)
+        this.globalEvent.register()
 
-        this.workerManager = new WorkerManager(this);
-        new Actuator(this);
-        const { letterClass } = options;
-        this.LETTER_REG = new RegExp(`[${letterClass.join('')}]`);
+        this.workerManager = new WorkerManager(this)
+        new Actuator(this)
+        const { letterClass } = options
+        this.LETTER_REG = new RegExp(`[${letterClass.join('')}]`)
         this.WORD_LIKE_REG = new RegExp(
             `${letterClass.map((letter) => `[^${letter}][${letter}]`).join('|')}`,
-        );
-        this.rowList = [];
-        this.pageRowList = [];
-        this.painterStyle = null;
-        this.painterOptions = null;
-        this.visiblePageNoList = [];
-        this.intersectionPageNo = 0;
-        this.lazyRenderIntersectionObserver = null;
-        this.printModeData = null;
+        )
+        this.rowList = []
+        this.pageRowList = []
+        this.painterStyle = null
+        this.painterOptions = null
+        this.visiblePageNoList = []
+        this.intersectionPageNo = 0
+        this.lazyRenderIntersectionObserver = null
+        this.printModeData = null
 
         this.render({
             isInit: true,
             isSetCursor: false,
             isFirstRender: true,
-        });
+        })
     }
 
     public getLetterReg(): RegExp {
-        return this.LETTER_REG;
+        return this.LETTER_REG
     }
 
     public getMode(): EditorMode {
-        return this.mode;
+        return this.mode
     }
 
     public setMode(payload: EditorMode) {
@@ -300,400 +301,400 @@ export class Draw {
             this.mode === payload &&
             this.mode !== EditorMode.NON_PRINTING_CHARS
         )
-            return;
+            return
         // 设置打印模式
         if (payload === EditorMode.PRINT) {
             this.printModeData = {
                 header: this.header.getElementList(),
                 main: this.elementList,
                 footer: this.footer.getElementList(),
-            };
+            }
             // 过滤控件辅助元素
-            const clonePrintModeData = deepClone(this.printModeData);
+            const clonePrintModeData = deepClone(this.printModeData)
             const editorDataKeys: (keyof IEditorData)[] = [
                 'header',
                 'main',
                 'footer',
-            ];
+            ]
             editorDataKeys.forEach((key) => {
                 clonePrintModeData[key] = this.control.filterAssistElement(
                     clonePrintModeData[key],
-                );
-            });
-            this.setEditorData(clonePrintModeData);
+                )
+            })
+            this.setEditorData(clonePrintModeData)
         }
         // 取消打印模式
         if (this.mode === EditorMode.PRINT && this.printModeData) {
-            this.setEditorData(this.printModeData);
-            this.printModeData = null;
+            this.setEditorData(this.printModeData)
+            this.printModeData = null
         }
-        this.clearSideEffect();
-        this.range.clearRange();
+        this.clearSideEffect()
+        this.range.clearRange()
         if (this.mode === EditorMode.NON_PRINTING_CHARS) {
-            this.mode = EditorMode.EDIT;
+            this.mode = EditorMode.EDIT
         } else {
-            this.mode = payload;
+            this.mode = payload
         }
-        this.options.mode = payload;
+        this.options.mode = payload
         this.render({
             isSetCursor: false,
             isSubmitHistory: false,
-        });
+        })
     }
 
     public isReadonly() {
         switch (this.mode) {
             case EditorMode.DESIGN:
-                return false;
+                return false
             case EditorMode.READONLY:
             case EditorMode.PRINT:
-                return true;
+                return true
             case EditorMode.FORM:
-                return !this.control.getIsRangeWithinControl();
+                return !this.control.getIsRangeWithinControl()
             default:
-                return false;
+                return false
         }
     }
 
     public isDisabled() {
-        if (this.mode === EditorMode.DESIGN) return false;
-        const { startIndex, endIndex } = this.range.getRange();
-        const elementList = this.getElementList();
+        if (this.mode === EditorMode.DESIGN) return false
+        const { startIndex, endIndex } = this.range.getRange()
+        const elementList = this.getElementList()
         // 优先判断表格单元格
-        if (this.getTd()?.disabled) return true;
+        if (this.getTd()?.disabled) return true
         if (startIndex === endIndex) {
-            const startElement = elementList[startIndex];
-            const nextElement = elementList[startIndex + 1];
+            const startElement = elementList[startIndex]
+            const nextElement = elementList[startIndex + 1]
             return !!(
                 (startElement?.title?.disabled &&
                     nextElement?.title?.disabled) ||
                 (startElement?.control?.disabled &&
                     nextElement?.control?.disabled)
-            );
+            )
         }
         const selectionElementList = elementList.slice(
             startIndex + 1,
             endIndex + 1,
-        );
+        )
         return selectionElementList.some(
             (element) => element.title?.disabled || element.control?.disabled,
-        );
+        )
     }
 
     public isDesignMode() {
-        return this.mode === EditorMode.DESIGN;
+        return this.mode === EditorMode.DESIGN
     }
 
     public getOriginalWidth(): number {
-        const { paperDirection, width, height } = this.options;
-        return paperDirection === PaperDirection.VERTICAL ? width : height;
+        const { paperDirection, width, height } = this.options
+        return paperDirection === PaperDirection.VERTICAL ? width : height
     }
 
     public getOriginalHeight(): number {
-        const { paperDirection, width, height } = this.options;
-        return paperDirection === PaperDirection.VERTICAL ? height : width;
+        const { paperDirection, width, height } = this.options
+        return paperDirection === PaperDirection.VERTICAL ? height : width
     }
 
     public getWidth(): number {
-        return Math.floor(this.getOriginalWidth() * this.options.scale);
+        return Math.floor(this.getOriginalWidth() * this.options.scale)
     }
 
     public getHeight(): number {
-        return Math.floor(this.getOriginalHeight() * this.options.scale);
+        return Math.floor(this.getOriginalHeight() * this.options.scale)
     }
 
     public getMainHeight(): number {
-        const pageHeight = this.getHeight();
-        return pageHeight - this.getMainOuterHeight();
+        const pageHeight = this.getHeight()
+        return pageHeight - this.getMainOuterHeight()
     }
 
     public getMainOuterHeight(): number {
-        const margins = this.getMargins();
-        const headerExtraHeight = this.header.getExtraHeight();
-        const footerExtraHeight = this.footer.getExtraHeight();
-        return margins[0] + margins[2] + headerExtraHeight + footerExtraHeight;
+        const margins = this.getMargins()
+        const headerExtraHeight = this.header.getExtraHeight()
+        const footerExtraHeight = this.footer.getExtraHeight()
+        return margins[0] + margins[2] + headerExtraHeight + footerExtraHeight
     }
 
     public getCanvasWidth(pageNo = -1): number {
-        const page = this.getPage(pageNo);
-        return page.width;
+        const page = this.getPage(pageNo)
+        return page.width
     }
 
     public getCanvasHeight(pageNo = -1): number {
-        const page = this.getPage(pageNo);
-        return page.height;
+        const page = this.getPage(pageNo)
+        return page.height
     }
 
     public getInnerWidth(): number {
-        const width = this.getWidth();
-        const margins = this.getMargins();
-        return width - margins[1] - margins[3];
+        const width = this.getWidth()
+        const margins = this.getMargins()
+        return width - margins[1] - margins[3]
     }
 
     public getOriginalInnerWidth(): number {
-        const width = this.getOriginalWidth();
-        const margins = this.getOriginalMargins();
-        return width - margins[1] - margins[3];
+        const width = this.getOriginalWidth()
+        const margins = this.getOriginalMargins()
+        return width - margins[1] - margins[3]
     }
 
     public getContextInnerWidth(): number {
-        const positionContext = this.position.getPositionContext();
+        const positionContext = this.position.getPositionContext()
         if (positionContext.isTable) {
-            const { index, trIndex, tdIndex } = positionContext;
-            const elementList = this.getOriginalElementList();
-            const td = elementList[index!].trList![trIndex!].tdList[tdIndex!];
-            const tdPadding = this.getTdPadding();
-            return td!.width! - tdPadding[1] - tdPadding[3];
+            const { index, trIndex, tdIndex } = positionContext
+            const elementList = this.getOriginalElementList()
+            const td = elementList[index!].trList![trIndex!].tdList[tdIndex!]
+            const tdPadding = this.getTdPadding()
+            return td!.width! - tdPadding[1] - tdPadding[3]
         }
-        return this.getOriginalInnerWidth();
+        return this.getOriginalInnerWidth()
     }
 
     public getMargins(): IMargin {
         return <IMargin>(
             this.getOriginalMargins().map((m) => m * this.options.scale)
-        );
+        )
     }
 
     public getOriginalMargins(): number[] {
-        const { margins, paperDirection } = this.options;
+        const { margins, paperDirection } = this.options
         return paperDirection === PaperDirection.VERTICAL
             ? margins
-            : [margins[1], margins[2], margins[3], margins[0]];
+            : [margins[1], margins[2], margins[3], margins[0]]
     }
 
     public getPageGap(): number {
-        return this.options.pageGap * this.options.scale;
+        return this.options.pageGap * this.options.scale
     }
 
     public getOriginalPageGap(): number {
-        return this.options.pageGap;
+        return this.options.pageGap
     }
 
     public getPageNumberBottom(): number {
         const {
             pageNumber: { bottom },
             scale,
-        } = this.options;
-        return bottom * scale;
+        } = this.options
+        return bottom * scale
     }
 
     public getMarginIndicatorSize(): number {
-        return this.options.marginIndicatorSize * this.options.scale;
+        return this.options.marginIndicatorSize * this.options.scale
     }
 
     public getDefaultBasicRowMarginHeight(): number {
-        return this.options.defaultBasicRowMarginHeight * this.options.scale;
+        return this.options.defaultBasicRowMarginHeight * this.options.scale
     }
 
     public getTdPadding(): IPadding {
         const {
             table: { tdPadding },
             scale,
-        } = this.options;
-        return <IPadding>tdPadding.map((m) => m * scale);
+        } = this.options
+        return <IPadding>tdPadding.map((m) => m * scale)
     }
 
     public getContainer(): HTMLDivElement {
-        return this.container;
+        return this.container
     }
 
     public getPageContainer(): HTMLDivElement {
-        return this.pageContainer;
+        return this.pageContainer
     }
 
     public getVisiblePageNoList(): number[] {
-        return this.visiblePageNoList;
+        return this.visiblePageNoList
     }
 
     public setVisiblePageNoList(payload: number[]) {
-        this.visiblePageNoList = payload;
+        this.visiblePageNoList = payload
         if (this.listener.visiblePageNoListChange) {
-            this.listener.visiblePageNoListChange(this.visiblePageNoList);
+            this.listener.visiblePageNoListChange(this.visiblePageNoList)
         }
         if (this.eventBus.isSubscribe('visiblePageNoListChange')) {
             this.eventBus.emit(
                 'visiblePageNoListChange',
                 this.visiblePageNoList,
-            );
+            )
         }
     }
 
     public getIntersectionPageNo(): number {
-        return this.intersectionPageNo;
+        return this.intersectionPageNo
     }
 
     public setIntersectionPageNo(payload: number) {
-        this.intersectionPageNo = payload;
+        this.intersectionPageNo = payload
         if (this.listener.intersectionPageNoChange) {
-            this.listener.intersectionPageNoChange(this.intersectionPageNo);
+            this.listener.intersectionPageNoChange(this.intersectionPageNo)
         }
         if (this.eventBus.isSubscribe('intersectionPageNoChange')) {
             this.eventBus.emit(
                 'intersectionPageNoChange',
                 this.intersectionPageNo,
-            );
+            )
         }
     }
 
     public getPageNo(): number {
-        return this.pageNo;
+        return this.pageNo
     }
 
     public setPageNo(payload: number) {
-        this.pageNo = payload;
+        this.pageNo = payload
     }
 
     public getPage(pageNo = -1): HTMLCanvasElement {
-        return this.pageList[~pageNo ? pageNo : this.pageNo];
+        return this.pageList[~pageNo ? pageNo : this.pageNo]
     }
 
     public getPageList(): HTMLCanvasElement[] {
-        return this.pageList;
+        return this.pageList
     }
 
     public getPageCount(): number {
-        return this.pageList.length;
+        return this.pageList.length
     }
 
     public getTableRowList(sourceElementList: IElement[]): IRow[] {
-        const positionContext = this.position.getPositionContext();
-        const { index, trIndex, tdIndex } = positionContext;
+        const positionContext = this.position.getPositionContext()
+        const { index, trIndex, tdIndex } = positionContext
         return sourceElementList[index!].trList![trIndex!].tdList[tdIndex!]
-            .rowList!;
+            .rowList!
     }
 
     public getOriginalRowList() {
-        const zoneManager = this.getZone();
+        const zoneManager = this.getZone()
         if (zoneManager.isHeaderActive()) {
-            return this.header.getRowList();
+            return this.header.getRowList()
         }
         if (zoneManager.isFooterActive()) {
-            return this.footer.getRowList();
+            return this.footer.getRowList()
         }
-        return this.rowList;
+        return this.rowList
     }
 
     public getRowList(): IRow[] {
-        const positionContext = this.position.getPositionContext();
+        const positionContext = this.position.getPositionContext()
         return positionContext.isTable
             ? this.getTableRowList(this.getOriginalElementList())
-            : this.getOriginalRowList();
+            : this.getOriginalRowList()
     }
 
     public getPageRowList(): IRow[][] {
-        return this.pageRowList;
+        return this.pageRowList
     }
 
     public getCtx(): CanvasRenderingContext2D {
-        return this.ctxList[this.pageNo];
+        return this.ctxList[this.pageNo]
     }
 
     public getOptions(): DeepRequired<IEditorOption> {
-        return this.options;
+        return this.options
     }
 
     public getSearch(): Search {
-        return this.search;
+        return this.search
     }
 
     public getGroup(): Group {
-        return this.group;
+        return this.group
     }
 
     public getHistoryManager(): HistoryManager {
-        return this.historyManager;
+        return this.historyManager
     }
 
     public getPosition(): Position {
-        return this.position;
+        return this.position
     }
 
     public getZone(): Zone {
-        return this.zone;
+        return this.zone
     }
 
     public getRange(): RangeManager {
-        return this.range;
+        return this.range
     }
 
     public getLineBreakParticle(): LineBreakParticle {
-        return this.lineBreakParticle;
+        return this.lineBreakParticle
     }
 
     public getParagraphSymbolParticle(): ParagraphSymbolParticle {
-        return this.paragraphSymbolParticle;
+        return this.paragraphSymbolParticle
     }
 
     public getTabSymbolParticle(): TabSymbolParticle {
-        return this.tabSymbolParticle;
+        return this.tabSymbolParticle
     }
 
     public getSpaceSymbolParticle(): SpaceSymbolParticle {
-        return this.spaceSymbolParticle;
+        return this.spaceSymbolParticle
     }
 
     public getTextParticle(): TextParticle {
-        return this.textParticle;
+        return this.textParticle
     }
 
     public getHeaderElementList(): IElement[] {
-        return this.header.getElementList();
+        return this.header.getElementList()
     }
 
     public getTableElementList(
         sourceElementList: IElement[],
         isFormula?: boolean,
     ): IElement[] {
-        const positionContext = this.position.getPositionContext();
-        const { index, trIndex, tdIndex } = positionContext;
+        const positionContext = this.position.getPositionContext()
+        const { index, trIndex, tdIndex } = positionContext
         return (
             sourceElementList[index!].trList?.[!isFormula ? trIndex! : 0]
                 .tdList[!isFormula ? tdIndex! : 0].value || []
-        );
+        )
     }
 
     public getElementList(isFormula?: boolean): IElement[] {
-        const positionContext = this.position.getPositionContext();
-        const elementList = this.getOriginalElementList();
+        const positionContext = this.position.getPositionContext()
+        const elementList = this.getOriginalElementList()
         return positionContext.isTable
             ? this.getTableElementList(elementList, isFormula)
-            : elementList;
+            : elementList
     }
 
     public getMainElementList(): IElement[] {
-        const positionContext = this.position.getPositionContext();
+        const positionContext = this.position.getPositionContext()
         return positionContext.isTable
             ? this.getTableElementList(this.elementList)
-            : this.elementList;
+            : this.elementList
     }
 
     public getOriginalElementList() {
-        const zoneManager = this.getZone();
+        const zoneManager = this.getZone()
         if (zoneManager.isHeaderActive()) {
-            return this.getHeaderElementList();
+            return this.getHeaderElementList()
         }
         if (zoneManager.isFooterActive()) {
-            return this.getFooterElementList();
+            return this.getFooterElementList()
         }
-        return this.elementList;
+        return this.elementList
     }
 
     public getOriginalMainElementList(): IElement[] {
-        return this.elementList;
+        return this.elementList
     }
 
     public getFooterElementList(): IElement[] {
-        return this.footer.getElementList();
+        return this.footer.getElementList()
     }
 
     public getTd(): ITd | null {
-        const positionContext = this.position.getPositionContext();
-        const { index, trIndex, tdIndex, isTable } = positionContext;
+        const positionContext = this.position.getPositionContext()
+        const { index, trIndex, tdIndex, isTable } = positionContext
         if (isTable) {
-            const elementList = this.getOriginalElementList();
-            return elementList[index!].trList![trIndex!].tdList[tdIndex!];
+            const elementList = this.getOriginalElementList()
+            return elementList[index!].trList![trIndex!].tdList[tdIndex!]
         }
-        return null;
+        return null
     }
 
     public insertElementList(
@@ -702,40 +703,40 @@ export class Draw {
         startIndex2?: number,
         endIndex2?: number,
     ) {
-        if (!payload.length || !this.range.getIsCanInput()) return;
+        if (!payload.length || !this.range.getIsCanInput()) return
 
-        const { startIndex, endIndex } = this.range.getRange();
-        if (!~startIndex && !~endIndex) return;
+        const { startIndex, endIndex } = this.range.getRange()
+        if (!~startIndex && !~endIndex) return
 
         formatElementList(payload, {
             isHandleFirstElement: false,
             editorOptions: this.options,
-        });
+        })
 
-        let currentIndex = -1;
+        let currentIndex = -1
 
-        let activeControl = this.control.getActiveControl();
+        let activeControl = this.control.getActiveControl()
 
         if (!activeControl && this.control.getIsRangeWithinControl()) {
-            this.control.initControl();
-            activeControl = this.control.getActiveControl();
+            this.control.initControl()
+            activeControl = this.control.getActiveControl()
         }
 
         if (activeControl && this.control.getIsRangeWithinControl()) {
             currentIndex = activeControl.setValue(payload, undefined, {
                 isIgnoreDisabledRule: true,
-            });
+            })
         } else {
-            const elementList = this.getElementList();
-            const isCollapsed = startIndex === endIndex;
-            const insertPosition = startIndex + 1;
-            const initialStartIndex2 = startIndex2;
-            const pageRowList = this.getPageRowList();
-            const position = this.getPosition();
-            const positionList = position.getPositionList();
-            const cursorPosition = position.getCursorPosition();
-            const marginTop = this.getMainOuterHeight();
-            const currentPageRows = pageRowList[cursorPosition.pageNo] || [];
+            const elementList = this.getElementList()
+            const isCollapsed = startIndex === endIndex
+            const insertPosition = startIndex + 1
+            const initialStartIndex2 = startIndex2
+            const pageRowList = this.getPageRowList()
+            const position = this.getPosition()
+            const positionList = position.getPositionList()
+            const cursorPosition = position.getCursorPosition()
+            const marginTop = this.getMainOuterHeight()
+            const currentPageRows = pageRowList[cursorPosition.pageNo] || []
 
             // Вычисляем текущую высоту страницы до места вставки
             let currentPageHeight =
@@ -744,78 +745,53 @@ export class Draw {
                     0,
                 ) +
                 marginTop +
-                50;
+                50
 
-            const pageHeight = this.getHeight();
+            const pageHeight = this.getHeight()
 
             // Если вставка происходит при копировании, определяем границы вставки
             if (isCopied) {
-                if (!cursorPosition) return;
+                if (!cursorPosition) return
 
                 currentPageHeight -=
-                    currentPageRows[cursorPosition.rowIndex]?.height;
-                startIndex2 += 1;
+                    currentPageRows[cursorPosition.rowIndex]?.height
+                startIndex2 += 1
 
-                let rowIndex = cursorPosition.rowIndex;
+                let rowIndex = cursorPosition.rowIndex
 
                 // Проверяем, пока есть свободное место на странице и элементы для вставки
                 while (
                     currentPageHeight < pageHeight &&
                     startIndex2 < endIndex2
                 ) {
-                    const innerWidth = this.getInnerWidth();
-                    const currentRow = currentPageRows[rowIndex];
-                    let availableWidth = innerWidth - (currentRow?.width || 0);
+                    const innerWidth = this.getInnerWidth()
+                    const currentRow = currentPageRows[rowIndex]
+                    let availableWidth = innerWidth - (currentRow?.width || 0)
 
                     // Размещение элементов в текущей строке, пока хватает ширины
                     while (availableWidth > 0 && startIndex2 < endIndex2) {
                         if (positionList[startIndex2]?.value === ZERO) {
-                            startIndex2++;
-                            break;
+                            startIndex2++
+                            break
                         }
                         availableWidth -=
-                            positionList[startIndex2]?.metrics.width;
-                        startIndex2++;
+                            positionList[startIndex2]?.metrics.width
+                        startIndex2++
                     }
-                    rowIndex++;
+                    rowIndex++
 
                     if (startIndex2 < endIndex2) {
                         currentPageHeight +=
                             currentPageRows[positionList[startIndex2].rowIndex]
-                                .height;
+                                .height
                     }
                 }
 
-                // Проверяем, находится ли курсор ниже разделителя сноски (если есть)
-                const footnoteRowIndexInPage = currentPageRows.findIndex(
-                    (row) =>
-                        row.elementList.some(
-                            (elem) =>
-                                elem.type === ElementType.SEPARATOR &&
-                                elem.isFootnote,
-                        ),
-                );
-
-                let isCursorUnderSeparator = false;
-                if (footnoteRowIndexInPage !== -1) {
-                    const cursorRowIndexInPage =
-                        cursorPosition.rowIndex -
-                        pageRowList
-                            .slice(0, cursorPosition.pageNo)
-                            .reduce(
-                                (acc, pageRows) => acc + pageRows.length,
-                                0,
-                            );
-
-                    if (cursorRowIndexInPage > footnoteRowIndexInPage) {
-                        isCursorUnderSeparator = true;
-                    }
-                }
             }
 
             if (isCopied) {
                 // Количество элементов, которые мы можем вставить до окончания места
-                const elementsToPushBefore = startIndex2 - initialStartIndex2;
+                const elementsToPushBefore = startIndex2 - initialStartIndex2
 
                 // Если выделение не схлопнуто, сначала удаляем выбранный диапазон
                 if (!isCollapsed) {
@@ -823,7 +799,7 @@ export class Draw {
                         elementList,
                         insertPosition,
                         endIndex - startIndex,
-                    );
+                    )
                 }
 
                 // Проверяем позицию разделителя сноски на текущей странице
@@ -834,7 +810,7 @@ export class Draw {
                                 elem.type === ElementType.SEPARATOR &&
                                 elem.isFootnote,
                         ),
-                );
+                )
 
                 // Подсчитываем количество элементов под разделителем, если страница переполнена
                 const elementUnderSeparatorAmount =
@@ -848,7 +824,7 @@ export class Draw {
                             (sum, currentRow) =>
                                 sum + currentRow.elementList.length,
                             0,
-                        ) + 3 || 0;
+                        ) + 3 || 0
 
                 // Если текущая высота превысила высоту страницы, разбиваем вставку
                 if (currentPageHeight > pageHeight && isCopied) {
@@ -858,31 +834,31 @@ export class Draw {
                         insertPosition,
                         0,
                         payload.splice(0, elementsToPushBefore + 1),
-                    );
+                    )
 
                     this.spliceElementList(
                         elementList,
                         insertPosition + elementsToPushBefore + 1,
                         0,
                         [{ value: ZERO }],
-                    );
+                    )
 
                     this.spliceElementList(elementList, elementList.length, 0, [
                         {
                             value: ZERO,
                         },
-                    ]);
+                    ])
 
                     this.spliceElementList(
                         elementList,
                         elementList.length,
                         0,
                         payload.slice(elementsToPushBefore, -1),
-                    );
+                    )
                     currentIndex =
                         startIndex +
                         payload.length +
-                        elementUnderSeparatorAmount;
+                        elementUnderSeparatorAmount
                 }
                 // const chunkSize = 10000;
                 // for (let i = 0; i < payload.length; i += chunkSize) {
@@ -894,32 +870,32 @@ export class Draw {
                 //         ...chunk,
                 //     );
                 // }
-                this.spliceElementList(elementList, insertPosition, 0, payload);
-                currentIndex = startIndex + payload.length;
+                this.spliceElementList(elementList, insertPosition, 0, payload)
+                currentIndex = startIndex + payload.length
             } else {
                 // Иначе вставляем весь список сразу
-                this.spliceElementList(elementList, insertPosition, 0, payload);
-                currentIndex = startIndex + payload.length;
+                this.spliceElementList(elementList, insertPosition, 0, payload)
+                currentIndex = startIndex + payload.length
             }
             const rowIndexInElementList = elementList.findLastIndex(
                 (el, index) =>
                     el?.listId === payload[0]?.listId &&
                     el.value === ZERO &&
                     index <= insertPosition,
-            );
+            )
 
             const isEmpty = elementList.find(
                 (el, index) =>
                     index < currentIndex &&
                     index > rowIndexInElementList &&
                     el.type !== ElementType.TAB,
-            );
+            )
 
             if (payload[0]?.type === ElementType.TAB && !isEmpty) {
-                elementList[rowIndexInElementList].listLevel += 1;
+                elementList[rowIndexInElementList].listLevel += 1
             }
 
-            const preElement = elementList[insertPosition - 1];
+            const preElement = elementList[insertPosition - 1]
 
             if (
                 payload[0]?.listId &&
@@ -928,28 +904,28 @@ export class Draw {
                 preElement?.value === ZERO &&
                 (!preElement?.type || preElement?.type === ElementType.TEXT)
             ) {
-                elementList.splice(startIndex, 1);
-                currentIndex -= 1;
+                elementList.splice(startIndex, 1)
+                currentIndex -= 1
             }
         }
         if (this.position.getPositionContext().isTable) {
             const { index, trIndex, tdIndex } =
-                this.position.getPositionContext();
-            const originalElementList = this.elementList;
+                this.position.getPositionContext()
+            const originalElementList = this.elementList
             const formulas = originalElementList[index].trList.map((row) =>
                 row.tdList.map((cell) => cell.formula),
-            );
+            )
             if (
                 !originalElementList[index].trList[trIndex].tdList[tdIndex]
                     .formula
             ) {
                 formulas.forEach((tr, trIndex) =>
                     tr.forEach((td, tdIndex) => {
-                        if (!td) return;
+                        if (!td) return
                         const elementList =
                             originalElementList[index].trList[trIndex].tdList[
                                 tdIndex
-                            ].value;
+                            ].value
                         this.calculateFormula(
                             elementList,
                             index,
@@ -957,16 +933,16 @@ export class Draw {
                             trIndex,
                             tdIndex,
                             true,
-                        );
+                        )
                     }),
-                );
+                )
             }
         }
         if (~currentIndex) {
-            this.range.setRange(currentIndex, currentIndex);
+            this.range.setRange(currentIndex, currentIndex)
             this.render({
                 curIndex: currentIndex,
-            });
+            })
         }
     }
 
@@ -974,24 +950,24 @@ export class Draw {
         elementList: IElement[],
         options: IAppendElementListOption = {},
     ) {
-        if (!elementList.length) return;
+        if (!elementList.length) return
         formatElementList(elementList, {
             isHandleFirstElement: false,
             editorOptions: this.options,
-        });
-        let curIndex: number;
-        const { isPrepend } = options;
+        })
+        let curIndex: number
+        const { isPrepend } = options
         if (isPrepend) {
-            this.elementList.splice(1, 0, ...elementList);
-            curIndex = elementList.length;
+            this.elementList.splice(1, 0, ...elementList)
+            curIndex = elementList.length
         } else {
-            this.elementList.push(...elementList);
-            curIndex = this.elementList.length - 1;
+            this.elementList.push(...elementList)
+            curIndex = this.elementList.length - 1
         }
-        this.range.setRange(curIndex, curIndex);
+        this.range.setRange(curIndex, curIndex)
         this.render({
             curIndex,
-        });
+        })
     }
 
     public spliceElementList(
@@ -1000,284 +976,284 @@ export class Draw {
         deleteCount: number,
         items?: IElement[],
     ) {
-        const isDesignMode = this.isDesignMode();
+        const isDesignMode = this.isDesignMode()
         if (deleteCount > 0) {
             // 当最后元素与开始元素列表信息不一致时：清除当前列表信息
-            const endIndex = start + deleteCount;
-            const endElement = elementList[endIndex];
-            const endElementListId = endElement?.listId;
+            const endIndex = start + deleteCount
+            const endElement = elementList[endIndex]
+            const endElementListId = endElement?.listId
             if (
                 endElementListId &&
                 elementList[start - 1]?.listId !== endElementListId
             ) {
-                let startIndex = endIndex;
+                let startIndex = endIndex
                 while (startIndex < elementList.length) {
-                    const curElement = elementList[startIndex];
+                    const curElement = elementList[startIndex]
                     if (
                         curElement.listId !== endElementListId ||
                         curElement.value === ZERO
                     ) {
-                        break;
+                        break
                     }
-                    delete curElement.listId;
-                    delete curElement.listType;
-                    delete curElement.listStyle;
-                    startIndex++;
+                    delete curElement.listId
+                    delete curElement.listType
+                    delete curElement.listStyle
+                    startIndex++
                 }
             }
             // 元素删除（不可删除控件忽略）
             if (!this.control.getActiveControl()) {
-                const tdDeletable = this.getTd()?.deletable;
-                let deleteIndex = endIndex - 1;
+                const tdDeletable = this.getTd()?.deletable
+                let deleteIndex = endIndex - 1
                 while (deleteIndex >= start) {
-                    const deleteElement = elementList[deleteIndex];
+                    const deleteElement = elementList[deleteIndex]
                     if (
                         isDesignMode ||
                         (tdDeletable !== false &&
                             deleteElement?.control?.deletable !== false &&
                             deleteElement?.title?.deletable !== false)
                     ) {
-                        elementList.splice(deleteIndex, 1);
+                        elementList.splice(deleteIndex, 1)
                     }
-                    deleteIndex--;
+                    deleteIndex--
                 }
             } else {
-                elementList.splice(start, deleteCount);
+                elementList.splice(start, deleteCount)
             }
         }
         // 循环添加，避免使用解构影响性能
         if (items?.length) {
             for (let i = 0; i < items.length; i++) {
-                elementList.splice(start + i, 0, items[i]);
+                elementList.splice(start + i, 0, items[i])
             }
         }
     }
 
     public getCanvasEvent(): CanvasEvent {
-        return this.canvasEvent;
+        return this.canvasEvent
     }
 
     public getGlobalEvent(): GlobalEvent {
-        return this.globalEvent;
+        return this.globalEvent
     }
 
     public getListener(): Listener {
-        return this.listener;
+        return this.listener
     }
 
     public getEventBus(): EventBus<EventBusMap> {
-        return this.eventBus;
+        return this.eventBus
     }
 
     public getOverride(): Override {
-        return this.override;
+        return this.override
     }
 
     public getCursor(): Cursor {
-        return this.cursor;
+        return this.cursor
     }
 
     public getPreviewer(): Previewer {
-        return this.previewer;
+        return this.previewer
     }
 
     public getImageParticle(): ImageParticle {
-        return this.imageParticle;
+        return this.imageParticle
     }
 
     public getTableTool(): TableTool {
-        return this.tableTool;
+        return this.tableTool
     }
 
     public getTableParticle(): TableParticle {
-        return this.tableParticle;
+        return this.tableParticle
     }
 
     public getHeader(): Header {
-        return this.header;
+        return this.header
     }
 
     public getFooter(): Footer {
-        return this.footer;
+        return this.footer
     }
 
     public getHyperlinkParticle(): HyperlinkParticle {
-        return this.hyperlinkParticle;
+        return this.hyperlinkParticle
     }
 
     public getDateParticle(): DateParticle {
-        return this.dateParticle;
+        return this.dateParticle
     }
 
     public getListParticle(): ListParticle {
-        return this.listParticle;
+        return this.listParticle
     }
 
     public getCheckboxParticle(): CheckboxParticle {
-        return this.checkboxParticle;
+        return this.checkboxParticle
     }
 
     public getRadioParticle(): RadioParticle {
-        return this.radioParticle;
+        return this.radioParticle
     }
 
     public getControl(): Control {
-        return this.control;
+        return this.control
     }
 
     public getWorkerManager(): WorkerManager {
-        return this.workerManager;
+        return this.workerManager
     }
 
     public getImageObserver(): ImageObserver {
-        return this.imageObserver;
+        return this.imageObserver
     }
 
     public getI18n(): I18n {
-        return this.i18n;
+        return this.i18n
     }
 
     public getRowCount(): number {
-        return this.getRowList().length;
+        return this.getRowList().length
     }
 
     public async getDataURL(payload: IGetImageOption = {}): Promise<string[]> {
-        const { pixelRatio, mode } = payload;
+        const { pixelRatio, mode } = payload
         // 放大像素比
         if (pixelRatio) {
-            this.setPagePixelRatio(pixelRatio);
+            this.setPagePixelRatio(pixelRatio)
         }
         // 不同模式
-        const currentMode = this.mode;
-        const isSwitchMode = !!mode && currentMode !== mode;
+        const currentMode = this.mode
+        const isSwitchMode = !!mode && currentMode !== mode
         if (isSwitchMode) {
-            this.setMode(mode);
+            this.setMode(mode)
         }
         this.render({
             isLazy: false,
             isCompute: false,
             isSetCursor: false,
             isSubmitHistory: false,
-        });
-        await this.imageObserver.allSettled();
-        const dataUrlList = this.pageList.map((c) => c.toDataURL());
+        })
+        await this.imageObserver.allSettled()
+        const dataUrlList = this.pageList.map((c) => c.toDataURL())
         // 还原
         if (pixelRatio) {
-            this.setPagePixelRatio(null);
+            this.setPagePixelRatio(null)
         }
         if (isSwitchMode) {
-            this.setMode(currentMode);
+            this.setMode(currentMode)
         }
-        return dataUrlList;
+        return dataUrlList
     }
 
     public getPainterStyle(): IElementStyle | null {
         return this.painterStyle && Object.keys(this.painterStyle).length
             ? this.painterStyle
-            : null;
+            : null
     }
 
     public getPainterOptions(): IPainterOption | null {
-        return this.painterOptions;
+        return this.painterOptions
     }
 
     public setPainterStyle(
         payload: IElementStyle | null,
         options?: IPainterOption,
     ) {
-        this.painterStyle = payload;
-        this.painterOptions = options || null;
+        this.painterStyle = payload
+        this.painterOptions = options || null
         if (this.getPainterStyle()) {
-            this.pageList.forEach((c) => (c.style.cursor = 'copy'));
+            this.pageList.forEach((c) => (c.style.cursor = 'copy'))
         }
     }
 
     public setDefaultRange() {
-        if (!this.elementList.length) return;
+        if (!this.elementList.length) return
         setTimeout(() => {
-            const curIndex = this.elementList.length - 1;
-            this.range.setRange(curIndex, curIndex);
-            this.range.setRangeStyle();
-        });
+            const curIndex = this.elementList.length - 1
+            this.range.setRange(curIndex, curIndex)
+            this.range.setRangeStyle()
+        })
     }
 
     public getIsPagingMode(): boolean {
-        return this.options.pageMode === PageMode.PAGING;
+        return this.options.pageMode === PageMode.PAGING
     }
 
     public setPageMode(payload: PageMode) {
-        if (!payload || this.options.pageMode === payload) return;
-        this.options.pageMode = payload;
+        if (!payload || this.options.pageMode === payload) return
+        this.options.pageMode = payload
         // 纸张大小重置
         if (payload === PageMode.PAGING) {
-            const { height } = this.options;
-            const dpr = this.getPagePixelRatio();
-            const canvas = this.pageList[0];
-            canvas.style.height = `${height}px`;
-            canvas.height = height * dpr;
+            const { height } = this.options
+            const dpr = this.getPagePixelRatio()
+            const canvas = this.pageList[0]
+            canvas.style.height = `${height}px`
+            canvas.height = height * dpr
             // canvas尺寸发生变化，上下文被重置
-            this._initPageContext(this.ctxList[0]);
+            this._initPageContext(this.ctxList[0])
         } else {
             // 连页模式：移除懒加载监听&清空页眉页脚计算数据
-            this._disconnectLazyRender();
-            this.header.recovery();
-            this.footer.recovery();
-            this.zone.setZone(EditorZone.MAIN);
+            this._disconnectLazyRender()
+            this.header.recovery()
+            this.footer.recovery()
+            this.zone.setZone(EditorZone.MAIN)
         }
-        const { startIndex } = this.range.getRange();
-        const isCollapsed = this.range.getIsCollapsed();
+        const { startIndex } = this.range.getRange()
+        const isCollapsed = this.range.getIsCollapsed()
         this.render({
             isSetCursor: true,
             curIndex: startIndex,
             isSubmitHistory: false,
-        });
+        })
         // 重新定位避免事件监听丢失
         if (!isCollapsed) {
             this.cursor.drawCursor({
                 isShow: false,
-            });
+            })
         }
         // 回调
         setTimeout(() => {
             if (this.listener.pageModeChange) {
-                this.listener.pageModeChange(payload);
+                this.listener.pageModeChange(payload)
             }
             if (this.eventBus.isSubscribe('pageModeChange')) {
-                this.eventBus.emit('pageModeChange', payload);
+                this.eventBus.emit('pageModeChange', payload)
             }
-        });
+        })
     }
 
     public setPageScale(payload: number) {
-        const dpr = this.getPagePixelRatio();
-        this.options.scale = payload;
-        const width = this.getWidth();
-        const height = this.getHeight();
-        this.container.style.width = `${width}px`;
+        const dpr = this.getPagePixelRatio()
+        this.options.scale = payload
+        const width = this.getWidth()
+        const height = this.getHeight()
+        this.container.style.width = `${width}px`
         this.pageList.forEach((p, i) => {
-            p.width = width * dpr;
-            p.height = height * dpr;
-            p.style.width = `${width}px`;
-            p.style.height = `${height}px`;
-            p.style.marginBottom = `${this.getPageGap()}px`;
-            this._initPageContext(this.ctxList[i]);
-        });
-        const cursorPosition = this.position.getCursorPosition();
+            p.width = width * dpr
+            p.height = height * dpr
+            p.style.width = `${width}px`
+            p.style.height = `${height}px`
+            p.style.marginBottom = `${this.getPageGap()}px`
+            this._initPageContext(this.ctxList[i])
+        })
+        const cursorPosition = this.position.getCursorPosition()
         this.render({
             isSubmitHistory: false,
             isSetCursor: !!cursorPosition,
             curIndex: cursorPosition?.index,
-        });
+        })
         if (this.listener.pageScaleChange) {
-            this.listener.pageScaleChange(payload);
+            this.listener.pageScaleChange(payload)
         }
         if (this.eventBus.isSubscribe('pageScaleChange')) {
-            this.eventBus.emit('pageScaleChange', payload);
+            this.eventBus.emit('pageScaleChange', payload)
         }
     }
 
     public getPagePixelRatio(): number {
-        return this.pagePixelRatio || window.devicePixelRatio;
+        return this.pagePixelRatio || window.devicePixelRatio
     }
 
     public setPagePixelRatio(payload: number | null) {
@@ -1285,77 +1261,77 @@ export class Draw {
             (!this.pagePixelRatio && payload === window.devicePixelRatio) ||
             payload === this.pagePixelRatio
         ) {
-            return;
+            return
         }
-        this.pagePixelRatio = payload;
-        this.setPageDevicePixel();
+        this.pagePixelRatio = payload
+        this.setPageDevicePixel()
     }
 
     public setPageDevicePixel() {
-        const dpr = this.getPagePixelRatio();
-        const width = this.getWidth();
-        const height = this.getHeight();
+        const dpr = this.getPagePixelRatio()
+        const width = this.getWidth()
+        const height = this.getHeight()
         this.pageList.forEach((p, i) => {
-            p.width = width * dpr;
-            p.height = height * dpr;
-            this._initPageContext(this.ctxList[i]);
-        });
+            p.width = width * dpr
+            p.height = height * dpr
+            this._initPageContext(this.ctxList[i])
+        })
         this.render({
             isSubmitHistory: false,
             isSetCursor: false,
-        });
+        })
     }
 
     public setPaperSize(width: number, height: number) {
-        this.options.width = width;
-        this.options.height = height;
-        const dpr = this.getPagePixelRatio();
-        const realWidth = this.getWidth();
-        const realHeight = this.getHeight();
-        this.container.style.width = `${realWidth}px`;
+        this.options.width = width
+        this.options.height = height
+        const dpr = this.getPagePixelRatio()
+        const realWidth = this.getWidth()
+        const realHeight = this.getHeight()
+        this.container.style.width = `${realWidth}px`
         this.pageList.forEach((p, i) => {
-            p.width = realWidth * dpr;
-            p.height = realHeight * dpr;
-            p.style.width = `${realWidth}px`;
-            p.style.height = `${realHeight}px`;
-            this._initPageContext(this.ctxList[i]);
-        });
+            p.width = realWidth * dpr
+            p.height = realHeight * dpr
+            p.style.width = `${realWidth}px`
+            p.style.height = `${realHeight}px`
+            this._initPageContext(this.ctxList[i])
+        })
         this.render({
             isSubmitHistory: false,
             isSetCursor: false,
-        });
+        })
     }
 
     public setPaperDirection(payload: PaperDirection) {
-        const dpr = this.getPagePixelRatio();
-        this.options.paperDirection = payload;
-        const width = this.getWidth();
-        const height = this.getHeight();
-        this.container.style.width = `${width}px`;
+        const dpr = this.getPagePixelRatio()
+        this.options.paperDirection = payload
+        const width = this.getWidth()
+        const height = this.getHeight()
+        this.container.style.width = `${width}px`
         this.pageList.forEach((p, i) => {
-            p.width = width * dpr;
-            p.height = height * dpr;
-            p.style.width = `${width}px`;
-            p.style.height = `${height}px`;
-            this._initPageContext(this.ctxList[i]);
-        });
+            p.width = width * dpr
+            p.height = height * dpr
+            p.style.width = `${width}px`
+            p.style.height = `${height}px`
+            this._initPageContext(this.ctxList[i])
+        })
         this.render({
             isSubmitHistory: false,
             isSetCursor: false,
-        });
+        })
     }
 
     public setPaperMargin(payload: IMargin) {
-        this.options.margins = payload;
+        this.options.margins = payload
         this.render({
             isSubmitHistory: false,
             isSetCursor: false,
-        });
+        })
     }
 
     public getValue(options: IGetValueOption = {}): IEditorResult {
-        const { pageNo, extraPickAttrs } = options;
-        let mainElementList = this.elementList;
+        const { pageNo, extraPickAttrs } = options
+        let mainElementList = this.elementList
 
         if (
             Number.isInteger(pageNo) &&
@@ -1364,7 +1340,7 @@ export class Draw {
         ) {
             mainElementList = this.pageRowList[pageNo!].flatMap(
                 (row) => row.elementList,
-            );
+            )
         }
         const data: IEditorData = {
             header: zipElementList(this.getHeaderElementList(), {
@@ -1376,135 +1352,135 @@ export class Draw {
             footer: zipElementList(this.getFooterElementList(), {
                 extraPickAttrs,
             }),
-        };
+        }
         return {
             version: '1',
             data,
             options: deepClone(this.options),
-        };
+        }
     }
 
     public setValue(payload: Partial<IEditorData>, options?: ISetValueOption) {
-        const { header, main, footer } = deepClone(payload);
-        if (!header && !main && !footer) return;
-        const { isSetCursor = false } = options || {};
-        const pageComponentData = [header, main, footer];
+        const { header, main, footer } = deepClone(payload)
+        if (!header && !main && !footer) return
+        const { isSetCursor = false } = options || {}
+        const pageComponentData = [header, main, footer]
         pageComponentData.forEach((data) => {
-            if (!data) return;
+            if (!data) return
             formatElementList(data, {
                 editorOptions: this.options,
                 isForceCompensation: true,
-            });
-        });
+            })
+        })
         this.setEditorData({
             header,
             main,
             footer,
-        });
+        })
         // 渲染&计算&清空历史记录
-        this.historyManager.recovery();
+        this.historyManager.recovery()
         const curIndex = isSetCursor
             ? main?.length
                 ? main.length - 1
                 : 0
-            : undefined;
+            : undefined
         if (curIndex !== undefined) {
-            this.range.setRange(curIndex, curIndex);
+            this.range.setRange(curIndex, curIndex)
         }
         this.render({
             curIndex,
             isSetCursor,
             isFirstRender: true,
-        });
+        })
     }
 
     public setEditorData(payload: Partial<IEditorData>) {
-        const { header, main, footer } = payload;
+        const { header, main, footer } = payload
         if (header) {
-            this.header.setElementList(header);
+            this.header.setElementList(header)
         }
         if (main) {
-            this.elementList = main;
+            this.elementList = main
         }
         if (footer) {
-            this.footer.setElementList(footer);
+            this.footer.setElementList(footer)
         }
     }
 
     private _wrapContainer(rootContainer: HTMLElement): HTMLDivElement {
-        const container = document.createElement('div');
-        rootContainer.append(container);
-        return container;
+        const container = document.createElement('div')
+        rootContainer.append(container)
+        return container
     }
 
     private _formatContainer() {
         // 容器宽度需跟随纸张宽度
-        this.container.style.position = 'relative';
-        this.container.style.width = `${this.getWidth()}px`;
-        this.container.setAttribute(EDITOR_COMPONENT, EditorComponent.MAIN);
+        this.container.style.position = 'relative'
+        this.container.style.width = `${this.getWidth()}px`
+        this.container.setAttribute(EDITOR_COMPONENT, EditorComponent.MAIN)
     }
 
     private _createPageContainer(): HTMLDivElement {
-        const pageContainer = document.createElement('div');
-        pageContainer.classList.add(`${EDITOR_PREFIX}-page-container`);
-        this.container.append(pageContainer);
-        return pageContainer;
+        const pageContainer = document.createElement('div')
+        pageContainer.classList.add(`${EDITOR_PREFIX}-page-container`)
+        this.container.append(pageContainer)
+        return pageContainer
     }
 
     private _createPage(pageNo: number) {
-        const width = this.getWidth();
-        const height = this.getHeight();
-        const canvas = document.createElement('canvas');
-        canvas.style.width = `${width}px`;
-        canvas.style.height = `${height}px`;
-        canvas.style.display = 'block';
-        canvas.style.backgroundColor = '#ffffff';
-        canvas.style.marginBottom = `${this.getPageGap()}px`;
-        canvas.setAttribute('data-index', String(pageNo));
-        this.pageContainer.append(canvas);
+        const width = this.getWidth()
+        const height = this.getHeight()
+        const canvas = document.createElement('canvas')
+        canvas.style.width = `${width}px`
+        canvas.style.height = `${height}px`
+        canvas.style.display = 'block'
+        canvas.style.backgroundColor = '#ffffff'
+        canvas.style.marginBottom = `${this.getPageGap()}px`
+        canvas.setAttribute('data-index', String(pageNo))
+        this.pageContainer.append(canvas)
         // 调整分辨率
-        const dpr = this.getPagePixelRatio();
-        canvas.width = width * dpr;
-        canvas.height = height * dpr;
-        canvas.style.cursor = 'text';
-        const ctx = canvas.getContext('2d')!;
+        const dpr = this.getPagePixelRatio()
+        canvas.width = width * dpr
+        canvas.height = height * dpr
+        canvas.style.cursor = 'text'
+        const ctx = canvas.getContext('2d')!
         // 初始化上下文配置
-        this._initPageContext(ctx);
+        this._initPageContext(ctx)
         // 缓存上下文
-        this.pageList.push(canvas);
-        this.ctxList.push(ctx);
+        this.pageList.push(canvas)
+        this.ctxList.push(ctx)
     }
 
     private _initPageContext(ctx: CanvasRenderingContext2D) {
-        const dpr = this.getPagePixelRatio();
-        ctx.scale(dpr, dpr);
+        const dpr = this.getPagePixelRatio()
+        ctx.scale(dpr, dpr)
         // 重置以下属性是因部分浏览器(chrome)会应用css样式
-        ctx.letterSpacing = '0px';
-        ctx.wordSpacing = '0px';
-        ctx.direction = 'ltr';
+        ctx.letterSpacing = '0px'
+        ctx.wordSpacing = '0px'
+        ctx.direction = 'ltr'
     }
 
     public getElementFont(el: IElement, scale = 1): string {
-        const { defaultSize, defaultFont } = this.options;
-        const font = el.font || defaultFont;
-        const size = el.actualSize || el.size || defaultSize;
+        const { defaultSize, defaultFont } = this.options
+        const font = el.font || defaultFont
+        const size = el.actualSize || el.size || defaultSize
         return `${el.italic ? 'italic ' : ''}${el.bold ? 'bold ' : ''}${
             size * scale
-        }px ${font}`;
+        }px ${font}`
     }
 
     public getElementSize(el: IElement) {
-        return el.actualSize || el.size || this.options.defaultSize;
+        return el.actualSize || el.size || this.options.defaultSize
     }
 
     public getElementRowMargin(el: IElement) {
         const { defaultBasicRowMarginHeight, defaultRowMargin, scale } =
-            this.options;
+            this.options
         return (
             defaultBasicRowMarginHeight *
             (el.rowMargin ?? defaultRowMargin) *
             scale
-        );
+        )
     }
 
     public computeRowList(
@@ -1520,32 +1496,44 @@ export class Draw {
             pageHeight = 0,
             mainOuterHeight = 0,
             surroundElementList = [],
-        } = payload;
-        const currentStartIndex = payload.startIndex || 0;
+            tdTextOrientation,
+            tdRowFlex,
+        } = payload
+        const useUnifiedTdRowFlex =
+            isFromTable &&
+            tdRowFlex !== undefined &&
+            tdTextOrientation !== undefined &&
+            tdTextOrientation !== TextOrientation.HORIZONTAL
+        const pickRowFlex = (elementIndex: number) =>
+            useUnifiedTdRowFlex
+                ? tdRowFlex!
+                : elementList[elementIndex]?.rowFlex ||
+                  elementList[elementIndex + 1]?.rowFlex
+        const currentStartIndex = payload.startIndex || 0
         const {
             defaultSize,
             defaultRowMargin,
             scale,
             table: { tdPadding },
             defaultTabWidth,
-        } = this.options;
+        } = this.options
         const defaultBasicRowMarginHeight =
-            this.getDefaultBasicRowMarginHeight();
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+            this.getDefaultBasicRowMarginHeight()
+        const canvas = document.createElement('canvas')
+        const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
         // 计算列表偏移宽度
         const listStyleMap = this.listParticle.computeListStyle(
             ctx,
             elementList,
-        );
-        const rowList: IRow[] = [];
-        let rowsCount = -1;
-        let curRowChunked: IRow = null;
+        )
+        const rowList: IRow[] = []
+        let rowsCount = -1
+        let curRowChunked: IRow = null
         if (
             currentStartIndex &&
             elementList[0]?.id === this.elementList[currentStartIndex - 1]?.id
         ) {
-            curRowChunked = this.rowList[this.rowList.length - 1];
+            curRowChunked = this.rowList[this.rowList.length - 1]
         } else if (elementList.length) {
             rowList.push({
                 width: 0,
@@ -1554,92 +1542,87 @@ export class Draw {
                 elementList: [],
                 startIndex: currentStartIndex,
                 rowIndex: 0,
-                rowFlex: elementList?.[0]?.rowFlex || elementList?.[1]?.rowFlex,
-            });
-            rowsCount++;
-            curRowChunked = null;
+                rowFlex: pickRowFlex(0),
+            })
+            rowsCount++
+            curRowChunked = null
         }
         // 起始位置及页码计算
-        let x = startX;
-        let y = startY;
-        let pageNo = 0;
+        let x = startX
+        let y = startY
+        let pageNo = 0
         // 列表位置
-        let listId: string | undefined;
-        const listIndex = 0;
-        const secondListIndex = 0;
-        let indexes: number[] = [];
+        let listId: string | undefined
+        const listIndex = 0
+        const secondListIndex = 0
+        let indexes: number[] = []
         // 控件最小宽度
-        let controlRealWidth = 0;
+        let controlRealWidth = 0
 
         for (let i = 0; i < elementList.length; i++) {
-            let curRow: IRow = rowList[rowList.length - 1];
+            let curRow: IRow = rowList[rowList.length - 1]
             if (curRowChunked !== null && rowList.length === 0) {
-                curRow = curRowChunked;
+                curRow = curRowChunked
             }
-            const element = elementList[i];
+            const element = elementList[i]
             const rowMargin =
                 defaultBasicRowMarginHeight *
-                (element.rowMargin ?? defaultRowMargin);
+                (element.rowMargin ?? defaultRowMargin)
 
             const metrics: IElementMetrics = {
                 width: 0,
                 height: 0,
                 boundingBoxAscent: 0,
                 boundingBoxDescent: 0,
-            };
+            }
 
-            let spacingBefore = 0;
-            let spacingAfter = 0;
-            let firstLine = 0;
+            let spacingBefore = 0
+            let spacingAfter = 0
+            let firstLine = 0
 
             if (curRow.elementList && curRow.elementList.length > 0) {
                 //отступ слева
                 const foundElementBefore = curRow.elementList.find(
                     (el) => el.spacing?.before,
-                );
+                )
                 if (foundElementBefore) {
-                    spacingBefore = foundElementBefore.spacing.before;
+                    spacingBefore = foundElementBefore.spacing.before
                 }
 
                 // отступ справа
                 const foundElementAfter = curRow.elementList.find(
                     (el) => el.spacing?.after,
-                );
+                )
                 if (foundElementAfter) {
-                    spacingAfter = foundElementAfter.spacing.after;
+                    spacingAfter = foundElementAfter.spacing.after
                 }
-                const currentId =
-                    curRow.elementList.find((el) => el.id)?.id || null;
-                const isFirstRowInParagraph = rowList.findIndex((row) =>
-                    row.elementList.find((el) => el.id === currentId),
-                );
                 // Вычисляем firstLine отступ для первой строки
                 const foundElementFirstLine = curRow.elementList.find(
                     (el) => el.spacing?.firstLine,
-                );
+                )
                 if (foundElementFirstLine) {
-                    firstLine = foundElementFirstLine?.spacing.firstLine;
+                    firstLine = foundElementFirstLine?.spacing.firstLine
                 }
             }
             // 实际可用宽度
             const offsetX =
                 curRow.offsetX ||
                 (element.listId && listStyleMap.get(element.listId)) ||
-                0;
+                0
             //уменьшаем доступную ширину на величину отступов для переноса элементов на следующую строку
             const currentId =
-                curRow.elementList.find((el) => el.id)?.id || null;
+                curRow.elementList.find((el) => el.id)?.id || null
             const isFirstRowInParagraph = rowList.findIndex((row) =>
                 row.elementList.find((el) => el.id === currentId),
-            );
+            )
             let availableWidth =
-                innerWidth - offsetX - spacingBefore - spacingAfter;
+                innerWidth - offsetX - spacingBefore - spacingAfter
             if (isFirstRowInParagraph === rowsCount) {
-                availableWidth -= firstLine;
-                availableWidth += spacingBefore;
+                availableWidth -= firstLine
+                availableWidth += spacingBefore
             }
             // 增加起始位置坐标偏移量
-            x += curRow.elementList.length === 1 ? offsetX : 0;
+            x += curRow.elementList.length === 1 ? offsetX : 0
             if (
                 element.type === ElementType.IMAGE ||
                 element.type === ElementType.LATEX
@@ -1650,159 +1633,175 @@ export class Draw {
                     element.imgDisplay === ImageDisplay.FLOAT_TOP ||
                     element.imgDisplay === ImageDisplay.FLOAT_BOTTOM
                 ) {
-                    metrics.width = 0;
-                    metrics.height = 0;
-                    metrics.boundingBoxDescent = 0;
+                    metrics.width = 0
+                    metrics.height = 0
+                    metrics.boundingBoxDescent = 0
                 } else {
-                    const elementWidth = element.width! * scale;
-                    const elementHeight = element.height! * scale;
+                    const elementWidth = element.width! * scale
+                    const elementHeight = element.height! * scale
                     // 图片超出尺寸后自适应（图片大小大于可用宽度时）
                     if (elementWidth > availableWidth) {
                         const adaptiveHeight =
-                            (elementHeight * availableWidth) / elementWidth;
-                        element.width = availableWidth / scale;
-                        element.height = adaptiveHeight / scale;
-                        metrics.width = availableWidth;
-                        metrics.height = adaptiveHeight;
-                        metrics.boundingBoxDescent = adaptiveHeight;
+                            (elementHeight * availableWidth) / elementWidth
+                        element.width = availableWidth / scale
+                        element.height = adaptiveHeight / scale
+                        metrics.width = availableWidth
+                        metrics.height = adaptiveHeight
+                        metrics.boundingBoxDescent = adaptiveHeight
                     } else {
-                        metrics.width = elementWidth;
-                        metrics.height = elementHeight;
-                        metrics.boundingBoxDescent = elementHeight;
+                        metrics.width = elementWidth
+                        metrics.height = elementHeight
+                        metrics.boundingBoxDescent = elementHeight
                     }
                 }
-                metrics.boundingBoxAscent = 0;
+                metrics.boundingBoxAscent = 0
             } else if (element.type === ElementType.TABLE) {
-                const tdPaddingWidth = tdPadding[1] + tdPadding[3];
-                const tdPaddingHeight = tdPadding[0] + tdPadding[2];
+                const tdPaddingWidth = tdPadding[1] + tdPadding[3]
+                const tdPaddingHeight = tdPadding[0] + tdPadding[2]
                 // 表格分页处理进度：https://github.com/Hufe921/canvas-editor/issues/41
                 // 查看后续表格是否属于同一个源表格-存在即合并
                 if (element.pagingId) {
-                    let tableIndex = i + 1;
-                    let combineCount = 0;
+                    let tableIndex = i + 1
+                    let combineCount = 0
                     while (tableIndex < elementList.length) {
-                        const nextElement = elementList[tableIndex];
+                        const nextElement = elementList[tableIndex]
                         if (nextElement.pagingId === element.pagingId) {
                             const nexTrList = nextElement.trList!.filter(
                                 (tr) => !tr.pagingRepeat,
-                            );
-                            element.trList!.push(...nexTrList);
-                            element.height! += nextElement.height!;
-                            tableIndex++;
-                            combineCount++;
+                            )
+                            element.trList!.push(...nexTrList)
+                            element.height! += nextElement.height!
+                            tableIndex++
+                            combineCount++
                         } else {
-                            break;
+                            break
                         }
                     }
                     if (combineCount) {
-                        elementList.splice(i + 1, combineCount);
+                        elementList.splice(i + 1, combineCount)
                     }
                 }
-                element.pagingIndex = element.pagingIndex ?? 0;
+                element.pagingIndex = element.pagingIndex ?? 0
                 // 计算表格行列
-                this.tableParticle.computeRowColInfo(element);
+                this.tableParticle.computeRowColInfo(element)
                 // 计算表格内元素信息
-                const trList = element.trList!;
+                const trList = element.trList!
                 for (let t = 0; t < trList.length; t++) {
-                    const tr = trList[t];
+                    const tr = trList[t]
                     for (let d = 0; d < tr.tdList.length; d++) {
-                        const td = tr.tdList[d];
+                        const td = tr.tdList[d]
+                        const tdOrientation =
+                            td.textOrientation ?? TextOrientation.HORIZONTAL
                         const rowList = this.computeRowList({
                             innerWidth: (td.width! - tdPaddingWidth) * scale,
                             elementList: td.value,
                             isFromTable: true,
                             isPagingMode,
-                        });
-                        const rowHeight = rowList.reduce(
-                            (pre, cur) => pre + cur.height,
-                            0,
-                        );
-                        td.rowList = rowList;
-                        // 移除缩放导致的行高变化-渲染时会进行缩放调整
-                        const curTdHeight = rowHeight / scale + tdPaddingHeight;
+                            tdTextOrientation: tdOrientation,
+                            tdRowFlex: td.rowFlex,
+                        })
+                        td.rowList = rowList
+                        // Высота ячейки должна соответствовать фактическому
+                        // "протяжению" отрисованного текста внутри границы.
+                        // Для вертикальных ориентаций оси после `ctx.transform(...)`
+                        // смещаются, поэтому нужный размер зависит от ширины строк,
+                        // а не от суммы высот.
+                        const curTdHeight =
+                            tdOrientation ===
+                            TextOrientation.HORIZONTAL
+                                ? rowList.reduce((pre, cur) => pre + cur.height, 0) /
+                                      scale +
+                                  tdPaddingHeight
+                                : (rowList.length
+                                      ? Math.max(
+                                            ...rowList.map((cur) => cur.width),
+                                        )
+                                      : 0) /
+                                      scale +
+                                  tdPaddingWidth
                         // 内容高度大于当前单元格高度需增加
                         if (td.height! < curTdHeight) {
-                            const extraHeight = curTdHeight - td.height!;
-                            const changeTr = trList[t + td.rowspan - 1];
-                            changeTr.height += extraHeight;
+                            const extraHeight = curTdHeight - td.height!
+                            const changeTr = trList[t + td.rowspan - 1]
+                            changeTr.height += extraHeight
                             changeTr.tdList.forEach((changeTd) => {
-                                changeTd.height! += extraHeight;
-                            });
+                                changeTd.height! += extraHeight
+                            })
                         }
                         // 当前单元格最小高度及真实高度（包含跨列）
-                        let curTdMinHeight = 0;
-                        let curTdRealHeight = 0;
-                        let i = 0;
+                        let curTdMinHeight = 0
+                        let curTdRealHeight = 0
+                        let i = 0
                         while (i < td.rowspan) {
-                            const curTr = trList[i + t] || trList[t];
-                            curTdMinHeight += curTr.minHeight!;
-                            curTdRealHeight += curTr.height!;
-                            i++;
+                            const curTr = trList[i + t] || trList[t]
+                            curTdMinHeight += curTr.minHeight!
+                            curTdRealHeight += curTr.height!
+                            i++
                         }
-                        td.realMinHeight = curTdMinHeight;
-                        td.realHeight = curTdRealHeight;
-                        td.mainHeight = curTdHeight;
+                        td.realMinHeight = curTdMinHeight
+                        td.realHeight = curTdRealHeight
+                        td.mainHeight = curTdHeight
                     }
                 }
                 // 单元格高度大于实际内容高度需减少
                 const reduceTrList =
-                    this.tableParticle.getTrListGroupByCol(trList);
+                    this.tableParticle.getTrListGroupByCol(trList)
                 for (let t = 0; t < reduceTrList.length; t++) {
-                    const tr = reduceTrList[t];
-                    let reduceHeight = -1;
+                    const tr = reduceTrList[t]
+                    let reduceHeight = -1
                     for (let d = 0; d < tr.tdList.length; d++) {
-                        const td = tr.tdList[d];
-                        const curTdRealHeight = td.realHeight!;
-                        const curTdHeight = td.mainHeight!;
-                        const curTdMinHeight = td.realMinHeight!;
+                        const td = tr.tdList[d]
+                        const curTdRealHeight = td.realHeight!
+                        const curTdHeight = td.mainHeight!
+                        const curTdMinHeight = td.realMinHeight!
                         // 获取最大可减少高度
                         const curReduceHeight =
                             curTdHeight < curTdMinHeight
                                 ? curTdRealHeight - curTdMinHeight
-                                : curTdRealHeight - curTdHeight;
+                                : curTdRealHeight - curTdHeight
                         if (!~reduceHeight || curReduceHeight < reduceHeight) {
-                            reduceHeight = curReduceHeight;
+                            reduceHeight = curReduceHeight
                         }
                     }
                     if (reduceHeight > 0) {
-                        const changeTr = trList[t];
-                        changeTr.height -= reduceHeight;
+                        const changeTr = trList[t]
+                        changeTr.height -= reduceHeight
                         changeTr.tdList.forEach((changeTd) => {
-                            changeTd.height! -= reduceHeight;
-                        });
+                            changeTd.height! -= reduceHeight
+                        })
                     }
                 }
                 // 需要重新计算表格内值
-                this.tableParticle.computeRowColInfo(element);
+                this.tableParticle.computeRowColInfo(element)
                 // 计算出表格高度
-                const tableHeight = this.tableParticle.getTableHeight(element);
-                const tableWidth = this.tableParticle.getTableWidth(element);
-                element.width = tableWidth;
-                element.height = tableHeight;
-                const elementWidth = tableWidth * scale;
-                const elementHeight = tableHeight * scale;
-                metrics.width = elementWidth;
-                metrics.height = elementHeight;
-                metrics.boundingBoxDescent = elementHeight;
-                metrics.boundingBoxAscent = -rowMargin;
+                const tableHeight = this.tableParticle.getTableHeight(element)
+                const tableWidth = this.tableParticle.getTableWidth(element)
+                element.width = tableWidth
+                element.height = tableHeight
+                const elementWidth = tableWidth * scale
+                const elementHeight = tableHeight * scale
+                metrics.width = elementWidth
+                metrics.height = elementHeight
+                metrics.boundingBoxDescent = elementHeight
+                metrics.boundingBoxAscent = -rowMargin
                 // 表格分页处理(拆分表格)
                 if (isPagingMode) {
-                    const height = this.getHeight();
-                    const marginHeight = this.getMainOuterHeight();
-                    let curPagePreHeight = marginHeight;
+                    const height = this.getHeight()
+                    const marginHeight = this.getMainOuterHeight()
+                    let curPagePreHeight = marginHeight
                     for (let r = 0; r < rowList.length; r++) {
-                        const row = rowList[r];
+                        const row = rowList[r]
                         if (
                             row.height + curPagePreHeight > height ||
                             rowList[r - 1]?.isPageBreak
                         ) {
-                            curPagePreHeight = marginHeight + row.height;
+                            curPagePreHeight = marginHeight + row.height
                         } else {
-                            curPagePreHeight += row.height;
+                            curPagePreHeight += row.height
                         }
                     }
                     // 当前剩余高度是否能容下当前表格第一行（可拆分）的高度，排除掉表头类型
-                    const rowMarginHeight = rowMargin * 2 * scale;
+                    const rowMarginHeight = rowMargin * 2 * scale
                     if (
                         curPagePreHeight +
                             element.trList![0].height! +
@@ -1812,23 +1811,23 @@ export class Draw {
                             element.trList![0].pagingRepeat)
                     ) {
                         // 无可拆分行则切换至新页
-                        curPagePreHeight = marginHeight;
+                        curPagePreHeight = marginHeight
                     }
                     // 表格高度超过页面高度开始截断行
                     if (
                         curPagePreHeight + rowMarginHeight + elementHeight >
                         height
                     ) {
-                        const trList = element.trList!;
+                        const trList = element.trList!
                         // 计算需要移除的行数
-                        let deleteStart = 0;
-                        let deleteCount = 0;
-                        let preTrHeight = 0;
+                        let deleteStart = 0
+                        let deleteCount = 0
+                        let preTrHeight = 0
                         // 大于一行时再拆分避免循环
                         if (trList.length > 1) {
                             for (let r = 0; r < trList.length; r++) {
-                                const tr = trList[r];
-                                const trHeight = tr.height * scale;
+                                const tr = trList[r]
+                                const trHeight = tr.height * scale
                                 if (
                                     curPagePreHeight +
                                         rowMarginHeight +
@@ -1840,17 +1839,17 @@ export class Draw {
                                     const rowColCount = tr.tdList.reduce(
                                         (pre, cur) => pre + cur.colspan,
                                         0,
-                                    );
+                                    )
                                     if (
                                         element.colgroup?.length !== rowColCount
                                     ) {
-                                        deleteCount = 0;
+                                        deleteCount = 0
                                     }
-                                    break;
+                                    break
                                 } else {
-                                    deleteStart = r + 1;
-                                    deleteCount = trList.length - deleteStart;
-                                    preTrHeight += trHeight;
+                                    deleteStart = r + 1
+                                    deleteCount = trList.length - deleteStart
+                                    preTrHeight += trHeight
                                 }
                             }
                         }
@@ -1858,69 +1857,69 @@ export class Draw {
                             const cloneTrList = trList.splice(
                                 deleteStart,
                                 deleteCount,
-                            );
+                            )
                             const cloneTrHeight = cloneTrList.reduce(
                                 (pre, cur) => pre + cur.height,
                                 0,
-                            );
-                            const pagingId = element.pagingId || getUUID();
-                            element.pagingId = pagingId;
-                            element.height -= cloneTrHeight;
-                            metrics.height -= cloneTrHeight;
-                            metrics.boundingBoxDescent -= cloneTrHeight;
+                            )
+                            const pagingId = element.pagingId || getUUID()
+                            element.pagingId = pagingId
+                            element.height -= cloneTrHeight
+                            metrics.height -= cloneTrHeight
+                            metrics.boundingBoxDescent -= cloneTrHeight
                             // 追加拆分表格
-                            const cloneElement = deepClone(element);
-                            cloneElement.pagingId = pagingId;
-                            cloneElement.pagingIndex = element.pagingIndex! + 1;
+                            const cloneElement = deepClone(element)
+                            cloneElement.pagingId = pagingId
+                            cloneElement.pagingIndex = element.pagingIndex! + 1
                             // 处理分页重复表头
                             const repeatTrList = trList.filter(
                                 (tr) => tr.pagingRepeat,
-                            );
+                            )
                             if (repeatTrList.length) {
                                 const cloneRepeatTrList =
-                                    deepClone(repeatTrList);
+                                    deepClone(repeatTrList)
                                 cloneRepeatTrList.forEach(
                                     (tr) => (tr.id = getUUID()),
-                                );
-                                cloneTrList.unshift(...cloneRepeatTrList);
+                                )
+                                cloneTrList.unshift(...cloneRepeatTrList)
                             }
-                            cloneElement.trList = cloneTrList;
-                            cloneElement.id = getUUID();
+                            cloneElement.trList = cloneTrList
+                            cloneElement.id = getUUID()
                             this.spliceElementList(elementList, i + 1, 0, [
                                 cloneElement,
-                            ]);
+                            ])
                         }
                     }
                     // 表格经过分页处理-需要处理上下文
                     if (element.pagingId) {
                         const positionContext =
-                            this.position.getPositionContext();
+                            this.position.getPositionContext()
                         if (positionContext.isTable) {
                             // 查找光标所在表格索引（根据trId搜索）
-                            let newPositionContextIndex = -1;
-                            let newPositionContextTrIndex = -1;
-                            let tableIndex = i;
+                            let newPositionContextIndex = -1
+                            let newPositionContextTrIndex = -1
+                            let tableIndex = i
                             while (tableIndex < elementList.length) {
-                                const curElement = elementList[tableIndex];
+                                const curElement = elementList[tableIndex]
                                 if (curElement.pagingId !== element.pagingId)
-                                    break;
+                                    break
                                 const trIndex = curElement.trList!.findIndex(
                                     (r) => r.id === positionContext.trId,
-                                );
+                                )
                                 if (~trIndex) {
-                                    newPositionContextIndex = tableIndex;
-                                    newPositionContextTrIndex = trIndex;
-                                    break;
+                                    newPositionContextIndex = tableIndex
+                                    newPositionContextTrIndex = trIndex
+                                    break
                                 }
-                                tableIndex++;
+                                tableIndex++
                             }
                             if (~newPositionContextIndex) {
-                                positionContext.index = newPositionContextIndex;
+                                positionContext.index = newPositionContextIndex
                                 positionContext.trIndex =
-                                    newPositionContextTrIndex;
+                                    newPositionContextTrIndex
                                 this.position.setPositionContext(
                                     positionContext,
-                                );
+                                )
                             }
                         }
                     }
@@ -1928,75 +1927,75 @@ export class Draw {
             } else if (element.type === ElementType.SEPARATOR) {
                 const {
                     separator: { lineWidth },
-                } = this.options;
-                element.width = availableWidth / scale;
-                metrics.width = availableWidth;
-                metrics.height = lineWidth * scale;
-                metrics.boundingBoxAscent = -rowMargin;
-                metrics.boundingBoxDescent = -rowMargin + metrics.height;
+                } = this.options
+                element.width = availableWidth / scale
+                metrics.width = availableWidth
+                metrics.height = lineWidth * scale
+                metrics.boundingBoxAscent = -rowMargin
+                metrics.boundingBoxDescent = -rowMargin + metrics.height
             } else if (element.type === ElementType.PAGE_BREAK) {
-                element.width = availableWidth / scale;
-                metrics.width = availableWidth;
-                metrics.height = defaultSize;
+                element.width = availableWidth / scale
+                metrics.width = availableWidth
+                metrics.height = defaultSize
             } else if (
                 element.type === ElementType.RADIO ||
                 element.controlComponent === ControlComponent.RADIO
             ) {
-                const { width, height, gap } = this.options.radio;
-                const elementWidth = width + gap * 2;
-                element.width = elementWidth;
-                metrics.width = elementWidth * scale;
-                metrics.height = height * scale;
+                const { width, height, gap } = this.options.radio
+                const elementWidth = width + gap * 2
+                element.width = elementWidth
+                metrics.width = elementWidth * scale
+                metrics.height = height * scale
             } else if (
                 element.type === ElementType.CHECKBOX ||
                 element.controlComponent === ControlComponent.CHECKBOX
             ) {
-                const { width, height, gap } = this.options.checkbox;
-                const elementWidth = width + gap * 2;
-                element.width = elementWidth;
-                metrics.width = elementWidth * scale;
-                metrics.height = height * scale;
+                const { width, height, gap } = this.options.checkbox
+                const elementWidth = width + gap * 2
+                element.width = elementWidth
+                metrics.width = elementWidth * scale
+                metrics.height = height * scale
             } else if (element.type === ElementType.TAB) {
-                metrics.width = defaultTabWidth * scale;
-                metrics.height = defaultSize * scale;
-                metrics.boundingBoxDescent = 0;
-                metrics.boundingBoxAscent = metrics.height;
+                metrics.width = defaultTabWidth * scale
+                metrics.height = defaultSize * scale
+                metrics.boundingBoxDescent = 0
+                metrics.boundingBoxAscent = metrics.height
             } else if (element.type === ElementType.BLOCK) {
                 if (!element.width) {
-                    metrics.width = availableWidth;
+                    metrics.width = availableWidth
                 } else {
-                    const elementWidth = element.width * scale;
-                    metrics.width = Math.min(elementWidth, availableWidth);
+                    const elementWidth = element.width * scale
+                    metrics.width = Math.min(elementWidth, availableWidth)
                 }
-                metrics.height = element.height! * scale;
-                metrics.boundingBoxDescent = metrics.height;
-                metrics.boundingBoxAscent = 0;
+                metrics.height = element.height! * scale
+                metrics.boundingBoxDescent = metrics.height
+                metrics.boundingBoxAscent = 0
             } else {
                 // 设置上下标真实字体尺寸
-                const size = element.size || defaultSize;
+                const size = element.size || defaultSize
                 if (
                     element.type === ElementType.SUPERSCRIPT ||
                     element.type === ElementType.SUBSCRIPT
                 ) {
-                    element.actualSize = Math.ceil(size * 0.6);
+                    element.actualSize = Math.ceil(size * 0.6)
                 }
-                metrics.height = (element.actualSize || size) * scale;
-                ctx.font = this.getElementFont(element);
-                const fontMetrics = this.textParticle.measureText(ctx, element);
-                metrics.width = fontMetrics.width * scale;
+                metrics.height = (element.actualSize || size) * scale
+                ctx.font = this.getElementFont(element)
+                const fontMetrics = this.textParticle.measureText(ctx, element)
+                metrics.width = fontMetrics.width * scale
                 if (element.letterSpacing) {
-                    metrics.width += element.letterSpacing * scale;
+                    metrics.width += element.letterSpacing * scale
                 }
                 metrics.boundingBoxAscent =
                     (element.value === ZERO
                         ? element.size || defaultSize
-                        : fontMetrics.actualBoundingBoxAscent) * scale;
+                        : fontMetrics.actualBoundingBoxAscent) * scale
                 metrics.boundingBoxDescent =
-                    fontMetrics.actualBoundingBoxDescent * scale;
+                    fontMetrics.actualBoundingBoxDescent * scale
                 if (element.type === ElementType.SUPERSCRIPT) {
-                    metrics.boundingBoxAscent += metrics.height / 2;
+                    metrics.boundingBoxAscent += metrics.height / 2
                 } else if (element.type === ElementType.SUBSCRIPT) {
-                    metrics.boundingBoxDescent += metrics.height / 2;
+                    metrics.boundingBoxDescent += metrics.height / 2
                 }
             }
             const ascent =
@@ -2004,43 +2003,43 @@ export class Draw {
                     element.type === ElementType.IMAGE) ||
                 element.type === ElementType.LATEX
                     ? metrics.height + rowMargin
-                    : metrics.boundingBoxAscent + rowMargin;
+                    : metrics.boundingBoxAscent + rowMargin
             const height =
                 rowMargin +
                 metrics.boundingBoxAscent +
                 metrics.boundingBoxDescent +
-                rowMargin;
+                rowMargin
             const rowElement: IRowElement = Object.assign(element, {
                 metrics,
                 left: 0,
                 style: this.getElementFont(element, scale),
-            });
+            })
             // 暂时只考虑非换行场景：控件开始时统计宽度，结束时消费宽度及还原
             if (rowElement.control?.minWidth) {
                 if (rowElement.controlComponent) {
-                    controlRealWidth += metrics.width;
+                    controlRealWidth += metrics.width
                 }
                 if (rowElement.controlComponent === ControlComponent.POSTFIX) {
                     const extraWidth =
-                        rowElement.control.minWidth - controlRealWidth;
+                        rowElement.control.minWidth - controlRealWidth
                     // 消费超出实际最小宽度的长度
                     if (extraWidth > 0) {
                         // 超出行宽时截断
                         const rowRemainingWidth =
-                            availableWidth - curRow.width - metrics.width;
+                            availableWidth - curRow.width - metrics.width
                         const left =
-                            Math.min(rowRemainingWidth, extraWidth) * scale;
-                        rowElement.left = left;
-                        curRow.width += left;
+                            Math.min(rowRemainingWidth, extraWidth) * scale
+                        rowElement.left = left
+                        curRow.width += left
                     }
-                    controlRealWidth = 0;
+                    controlRealWidth = 0
                 }
             }
             // 超过限定宽度
-            const preElement = elementList[i - 1];
-            let nextElement = elementList[i + 1];
+            const preElement = elementList[i - 1]
+            let nextElement = elementList[i + 1]
             // 累计行宽 + 当前元素宽度 + 排版宽度(英文单词整体宽度 + 后面标点符号宽度)
-            let curRowWidth = curRow.width + metrics.width;
+            let curRowWidth = curRow.width + metrics.width
             if (this.options.wordBreak === WordBreak.BREAK_WORD) {
                 if (
                     (!preElement?.type ||
@@ -2048,15 +2047,15 @@ export class Draw {
                     (!element.type || element.type === ElementType.TEXT)
                 ) {
                     // 英文单词
-                    const word = `${preElement?.value || ''}${element.value}`;
+                    const word = `${preElement?.value || ''}${element.value}`
                     if (this.WORD_LIKE_REG.test(word)) {
                         const { width, endElement } =
-                            this.textParticle.measureWord(ctx, elementList, i);
+                            this.textParticle.measureWord(ctx, elementList, i)
                         // 单词宽度大于行可用宽度，无需折行
-                        const wordWidth = width * scale;
+                        const wordWidth = width * scale
                         if (wordWidth <= availableWidth) {
-                            curRowWidth += wordWidth;
-                            nextElement = endElement;
+                            curRowWidth += wordWidth
+                            nextElement = endElement
                         }
                     }
                     // 标点符号
@@ -2064,8 +2063,8 @@ export class Draw {
                         this.textParticle.measurePunctuationWidth(
                             ctx,
                             nextElement,
-                        );
-                    curRowWidth += punctuationWidth * scale;
+                        )
+                    curRowWidth += punctuationWidth * scale
                 }
             }
             // 列表信息
@@ -2081,28 +2080,28 @@ export class Draw {
                 //     secondListIndex = 0
                 //     listIndex++;
                 // }
-                const currentLevel = element.listLevel || 0;
+                const currentLevel = element.listLevel || 0
 
                 if (element.listId !== listId) {
                     // Начинаем новый список, сбрасываем `indexes`
-                    indexes = [];
+                    indexes = []
                 }
 
                 // Убедимся, что `indexes` имеет достаточную длину
                 while (indexes.length <= currentLevel) {
-                    indexes.push(0);
+                    indexes.push(0)
                 }
 
                 if (element.value === ZERO && !element.listWrap) {
                     // Увеличиваем счетчик на текущем уровне
-                    indexes[currentLevel]++;
+                    indexes[currentLevel]++
 
                     // Сбрасываем счетчики более глубоких уровней
-                    indexes = indexes.slice(0, currentLevel + 1);
+                    indexes = indexes.slice(0, currentLevel + 1)
                 }
             }
 
-            listId = element.listId;
+            listId = element.listId
             // 计算四周环绕导致的元素偏移量
             const surroundPosition = this.position.setSurroundPosition({
                 pageNo,
@@ -2116,10 +2115,10 @@ export class Draw {
                 },
                 availableWidth,
                 surroundElementList,
-            });
-            x = surroundPosition.x;
-            curRowWidth += surroundPosition.rowIncreaseWidth;
-            x += metrics.width;
+            })
+            x = surroundPosition.x
+            curRowWidth += surroundPosition.rowIncreaseWidth
+            x += metrics.width
             // 是否强制换行
             const isForceBreak =
                 element.type === ElementType.SEPARATOR ||
@@ -2130,10 +2129,10 @@ export class Draw {
                 preElement?.imgDisplay === ImageDisplay.INLINE ||
                 element.imgDisplay === ImageDisplay.INLINE ||
                 preElement?.listId !== element.listId ||
-                (i !== 0 && element.value === ZERO);
+                (i !== 0 && element.value === ZERO)
             // 是否宽度不足导致换行
-            const isWidthNotEnough = curRowWidth > availableWidth;
-            const isWrap = isForceBreak || isWidthNotEnough;
+            const isWidthNotEnough = curRowWidth > availableWidth
+            const isWrap = isForceBreak || isWidthNotEnough
             // 新行数据处理
             if (isWrap) {
                 const row: IRow = {
@@ -2144,10 +2143,9 @@ export class Draw {
                     elementList: [rowElement],
                     ascent,
                     rowIndex: curRow.rowIndex + 1,
-                    rowFlex:
-                        elementList[i]?.rowFlex || elementList[i + 1]?.rowFlex,
+                    rowFlex: pickRowFlex(i),
                     isPageBreak: element.type === ElementType.PAGE_BREAK,
-                };
+                }
                 // 控件缩进
                 if (
                     rowElement.controlComponent !== ControlComponent.PREFIX &&
@@ -2159,49 +2157,49 @@ export class Draw {
                         (el) =>
                             el.controlId === rowElement.controlId &&
                             el.controlComponent !== ControlComponent.PREFIX,
-                    );
+                    )
                     if (~preStartIndex) {
                         const preRowPositionList =
                             this.position.computeRowPosition({
                                 row: curRow,
                                 innerWidth: this.getInnerWidth(),
-                            });
+                            })
                         const valueStartPosition =
-                            preRowPositionList[preStartIndex];
+                            preRowPositionList[preStartIndex]
                         if (valueStartPosition) {
                             row.offsetX =
-                                valueStartPosition.coordinate.leftTop[0];
+                                valueStartPosition.coordinate.leftTop[0]
                         }
                     }
                 }
                 // 列表缩进
                 if (element.listId) {
-                    row.isList = true;
+                    row.isList = true
                     row.offsetX =
                         listStyleMap.get(element.listId!) +
-                        (row.elementList[0].listLevel * defaultTabWidth - 6);
-                    row.listIndex = listIndex;
-                    row.indexes = indexes.slice(0);
-                    row.secondListIndex = secondListIndex;
+                        (row.elementList[0].listLevel * defaultTabWidth - 6)
+                    row.listIndex = listIndex
+                    row.indexes = indexes.slice(0)
+                    row.secondListIndex = secondListIndex
                 }
-                rowList.push(row);
-                rowsCount++;
+                rowList.push(row)
+                rowsCount++
             } else {
-                curRow.width += metrics.width;
+                curRow.width += metrics.width
                 // 减小块元素前第一行空行行高
                 if (i === 0 && getIsBlockElement(elementList[1])) {
-                    curRow.height = defaultBasicRowMarginHeight;
-                    curRow.ascent = defaultBasicRowMarginHeight;
+                    curRow.height = defaultBasicRowMarginHeight
+                    curRow.ascent = defaultBasicRowMarginHeight
                 } else if (curRow.height < height) {
-                    curRow.height = height;
-                    curRow.ascent = ascent;
+                    curRow.height = height
+                    curRow.ascent = ascent
                 }
-                curRow.elementList.push(rowElement);
+                curRow.elementList.push(rowElement)
             }
             // 行结束时逻辑
             if (isWrap || i === elementList.length - 1) {
                 // 换行原因：宽度不足
-                curRow.isWidthNotEnough = isWidthNotEnough && !isForceBreak;
+                curRow.isWidthNotEnough = isWidthNotEnough && !isForceBreak
                 // 两端对齐、分散对齐
                 if (
                     !curRow.isSurround &&
@@ -2213,21 +2211,21 @@ export class Draw {
                     const rowElementList =
                         curRow.elementList[0]?.value === ZERO
                             ? curRow.elementList.slice(1)
-                            : curRow.elementList;
+                            : curRow.elementList
                     const gap =
                         (availableWidth - curRow.width) /
-                        (rowElementList.length - 1);
+                        (rowElementList.length - 1)
                     for (let e = 0; e < rowElementList.length - 1; e++) {
-                        const el = rowElementList[e];
-                        el.metrics.width += gap;
+                        const el = rowElementList[e]
+                        el.metrics.width += gap
                     }
-                    curRow.width = availableWidth;
+                    curRow.width = availableWidth
                 }
             }
             // 重新计算坐标、页码、下一行首行元素环绕交叉
             if (isWrap) {
-                x = startX;
-                y += curRow.height;
+                x = startX
+                y += curRow.height
                 if (
                     isPagingMode &&
                     !isFromTable &&
@@ -2235,14 +2233,14 @@ export class Draw {
                     (y - startY + mainOuterHeight + height > pageHeight ||
                         element.type === ElementType.PAGE_BREAK)
                 ) {
-                    y = startY;
+                    y = startY
                     // 删除多余四周环绕型元素
-                    deleteSurroundElementList(surroundElementList, pageNo);
-                    pageNo += 1;
+                    deleteSurroundElementList(surroundElementList, pageNo)
+                    pageNo += 1
                 }
                 // 计算下一行第一个元素是否存在环绕交叉
-                rowElement.left = 0;
-                const nextRow = rowList[rowList.length - 1];
+                rowElement.left = 0
+                const nextRow = rowList[rowList.length - 1]
                 const surroundPosition = this.position.setSurroundPosition({
                     pageNo,
                     rowElement,
@@ -2255,49 +2253,49 @@ export class Draw {
                     },
                     availableWidth,
                     surroundElementList,
-                });
-                x = surroundPosition.x;
-                x += metrics.width;
+                })
+                x = surroundPosition.x
+                x += metrics.width
             }
         }
 
-        return rowList;
+        return rowList
     }
 
-    private _computePageList(isFootnote?: boolean): IRow[][] {
-        const pageRowList: IRow[][] = [[]];
+    private _computePageList(): IRow[][] {
+        const pageRowList: IRow[][] = [[]]
         const {
             pageMode,
             pageNumber: { maxPageNo },
-        } = this.options;
-        const height = this.getHeight();
-        const marginHeight = this.getMainOuterHeight();
-        let pageHeight = marginHeight;
-        let pageNo = 0;
+        } = this.options
+        const height = this.getHeight()
+        const marginHeight = this.getMainOuterHeight()
+        let pageHeight = marginHeight
+        let pageNo = 0
         if (pageMode === PageMode.CONTINUITY) {
-            pageRowList[0] = this.rowList;
+            pageRowList[0] = this.rowList
             // 重置高度
             pageHeight += this.rowList.reduce(
                 (pre, cur) => pre + cur.height,
                 0,
-            );
-            const dpr = this.getPagePixelRatio();
-            const pageDom = this.pageList[0];
+            )
+            const dpr = this.getPagePixelRatio()
+            const pageDom = this.pageList[0]
             const pageDomHeight = Number(
                 pageDom.style.height.replace('px', ''),
-            );
+            )
             if (pageHeight > pageDomHeight) {
-                pageDom.style.height = `${pageHeight}px`;
-                pageDom.height = pageHeight * dpr;
+                pageDom.style.height = `${pageHeight}px`
+                pageDom.height = pageHeight * dpr
             } else {
-                const reduceHeight = pageHeight < height ? height : pageHeight;
-                pageDom.style.height = `${reduceHeight}px`;
-                pageDom.height = reduceHeight * dpr;
+                const reduceHeight = pageHeight < height ? height : pageHeight
+                pageDom.style.height = `${reduceHeight}px`
+                pageDom.height = reduceHeight * dpr
             }
-            this._initPageContext(this.ctxList[0]);
+            this._initPageContext(this.ctxList[0])
         } else {
             for (let i = 0; i < this.rowList.length; i++) {
-                const row = this.rowList[i];
+                const row = this.rowList[i]
                 if (
                     row.height + pageHeight > height ||
                     this.rowList[i - 1]?.isPageBreak
@@ -2306,19 +2304,19 @@ export class Draw {
                         this.elementList = this.elementList.slice(
                             0,
                             row.startIndex,
-                        );
-                        break;
+                        )
+                        break
                     }
-                    pageHeight = marginHeight + row.height;
-                    pageRowList.push([row]);
-                    pageNo++;
+                    pageHeight = marginHeight + row.height
+                    pageRowList.push([row])
+                    pageNo++
                 } else {
-                    pageHeight += row.height;
-                    pageRowList[pageNo].push(row);
+                    pageHeight += row.height
+                    pageRowList[pageNo].push(row)
                 }
             }
         }
-        return pageRowList;
+        return pageRowList
     }
 
     private _drawHighlight(
@@ -2327,16 +2325,16 @@ export class Draw {
     ) {
         const {
             control: { activeBackgroundColor },
-        } = this.options;
-        const { rowList, positionList } = payload;
+        } = this.options
+        const { rowList, positionList } = payload
         const activeControlElement = this.control
             .getActiveControl()
-            ?.getElement();
+            ?.getElement()
         for (let i = 0; i < rowList.length; i++) {
-            const curRow = rowList[i];
+            const curRow = rowList[i]
             for (let j = 0; j < curRow.elementList.length; j++) {
-                const element = curRow.elementList[j];
-                const preElement = curRow.elementList[j - 1];
+                const element = curRow.elementList[j]
+                const preElement = curRow.elementList[j - 1]
                 if (
                     element.highlight ||
                     (activeBackgroundColor &&
@@ -2350,16 +2348,16 @@ export class Draw {
                         preElement.highlight &&
                         preElement.highlight !== element.highlight
                     ) {
-                        this.highlight.render(ctx);
+                        this.highlight.render(ctx)
                     }
                     // 当前元素位置信息记录
                     const {
                         coordinate: {
                             leftTop: [x, y],
                         },
-                    } = positionList[curRow.startIndex + j];
+                    } = positionList[curRow.startIndex + j]
                     // 元素向左偏移量
-                    const offsetX = element.left || 0;
+                    const offsetX = element.left || 0
                     this.highlight.recordFillInfo(
                         ctx,
                         x - offsetX,
@@ -2367,26 +2365,26 @@ export class Draw {
                         element.metrics.width + offsetX,
                         curRow.height,
                         element.highlight || activeBackgroundColor,
-                    );
+                    )
                 } else if (preElement?.highlight) {
                     // 之前是高亮元素，当前不是需立即绘制
-                    this.highlight.render(ctx);
+                    this.highlight.render(ctx)
                 }
             }
-            this.highlight.render(ctx);
+            this.highlight.render(ctx)
         }
     }
 
     public drawRow(ctx: CanvasRenderingContext2D, payload: IDrawRowPayload) {
         // 优先绘制高亮元素
-        this._drawHighlight(ctx, payload);
+        this._drawHighlight(ctx, payload)
         // 绘制元素、下划线、删除线、选区
         const {
             scale,
             table: { tdPadding },
             group,
             lineBreak,
-        } = this.options;
+        } = this.options
         const {
             rowList,
             pageNo,
@@ -2395,109 +2393,109 @@ export class Draw {
             startIndex,
             zone,
             isDrawLineBreak = !lineBreak.disabled,
-        } = payload;
-        const isPrintMode = this.mode === EditorMode.PRINT;
-        const isNonPrintingMode = this.mode === EditorMode.NON_PRINTING_CHARS;
-        const { isCrossRowCol, tableId } = this.range.getRange();
-        let index = startIndex;
+        } = payload
+        const isPrintMode = this.mode === EditorMode.PRINT
+        const isNonPrintingMode = this.mode === EditorMode.NON_PRINTING_CHARS
+        const { isCrossRowCol, tableId } = this.range.getRange()
+        let index = startIndex
         for (let i = 0; i < rowList.length; i++) {
-            const curRow = rowList[i];
+            const curRow = rowList[i]
             // 选区绘制记录
             const rangeRecord: IElementFillRect = {
                 x: 0,
                 y: 0,
                 width: 0,
                 height: 0,
-            };
-            let tableRangeElement: IElement | null = null;
+            }
+            let tableRangeElement: IElement | null = null
             for (let j = 0; j < curRow.elementList.length; j++) {
-                const element = curRow.elementList[j];
-                const metrics = element.metrics;
+                const element = curRow.elementList[j]
+                const metrics = element.metrics
                 // 当前元素位置信息
                 const {
                     ascent: offsetY,
                     coordinate: {
                         leftTop: [x, y],
                     },
-                } = positionList[curRow.startIndex + j];
-                const preElement = curRow.elementList[j - 1];
+                } = positionList[curRow.startIndex + j]
+                const preElement = curRow.elementList[j - 1]
                 // 元素绘制
                 if (element.type === ElementType.IMAGE) {
-                    this.textParticle.complete();
+                    this.textParticle.complete()
                     // 浮动图片单独绘制
                     if (
                         element.imgDisplay !== ImageDisplay.SURROUND &&
                         element.imgDisplay !== ImageDisplay.FLOAT_TOP &&
                         element.imgDisplay !== ImageDisplay.FLOAT_BOTTOM
                     ) {
-                        this.imageParticle.render(ctx, element, x, y + offsetY);
+                        this.imageParticle.render(ctx, element, x, y + offsetY)
                     }
                 } else if (element.type === ElementType.LATEX) {
-                    this.textParticle.complete();
-                    this.laTexParticle.render(ctx, element, x, y + offsetY);
+                    this.textParticle.complete()
+                    this.laTexParticle.render(ctx, element, x, y + offsetY)
                 } else if (element.type === ElementType.TABLE) {
                     if (isCrossRowCol) {
-                        rangeRecord.x = x;
-                        rangeRecord.y = y;
-                        tableRangeElement = element;
+                        rangeRecord.x = x
+                        rangeRecord.y = y
+                        tableRangeElement = element
                     }
-                    this.tableParticle.render(ctx, element, x, y);
+                    this.tableParticle.render(ctx, element, x, y)
                 } else if (element.type === ElementType.HYPERLINK) {
-                    this.textParticle.complete();
-                    this.hyperlinkParticle.render(ctx, element, x, y + offsetY);
+                    this.textParticle.complete()
+                    this.hyperlinkParticle.render(ctx, element, x, y + offsetY)
                 } else if (element.type === ElementType.DATE) {
-                    const nextElement = curRow.elementList[j + 1];
+                    const nextElement = curRow.elementList[j + 1]
                     // 释放之前的
                     if (!preElement || preElement.dateId !== element.dateId) {
-                        this.textParticle.complete();
+                        this.textParticle.complete()
                     }
-                    this.textParticle.record(ctx, element, x, y + offsetY);
+                    this.textParticle.record(ctx, element, x, y + offsetY)
                     if (!nextElement || nextElement.dateId !== element.dateId) {
                         // 手动触发渲染
-                        this.textParticle.complete();
+                        this.textParticle.complete()
                     }
                 } else if (element.type === ElementType.SUPERSCRIPT) {
-                    this.textParticle.complete();
+                    this.textParticle.complete()
                     this.superscriptParticle.render(
                         ctx,
                         element,
                         x,
                         y + offsetY,
-                    );
+                    )
                 } else if (element.type === ElementType.SUBSCRIPT) {
-                    this.underline.render(ctx);
-                    this.textParticle.complete();
-                    this.subscriptParticle.render(ctx, element, x, y + offsetY);
+                    this.underline.render(ctx)
+                    this.textParticle.complete()
+                    this.subscriptParticle.render(ctx, element, x, y + offsetY)
                 } else if (element.type === ElementType.SEPARATOR) {
-                    this.separatorParticle.render(ctx, element, x, y);
+                    this.separatorParticle.render(ctx, element, x, y)
                 } else if (element.type === ElementType.PAGE_BREAK) {
                     if (this.mode !== EditorMode.CLEAN && !isPrintMode) {
-                        this.pageBreakParticle.render(ctx, element, x, y);
+                        this.pageBreakParticle.render(ctx, element, x, y)
                     }
                 } else if (
                     element.type === ElementType.CHECKBOX ||
                     element.controlComponent === ControlComponent.CHECKBOX
                 ) {
-                    this.textParticle.complete();
+                    this.textParticle.complete()
                     this.checkboxParticle.render({
                         ctx,
                         x,
                         y: y + offsetY,
                         index: j,
                         row: curRow,
-                    });
+                    })
                 } else if (
                     element.type === ElementType.RADIO ||
                     element.controlComponent === ControlComponent.RADIO
                 ) {
-                    this.textParticle.complete();
+                    this.textParticle.complete()
                     this.radioParticle.render({
                         ctx,
                         x,
                         y: y + offsetY,
                         index: j,
                         row: curRow,
-                    });
+                    })
                 } else if (element.type === ElementType.TAB) {
                     if (zone === 'main' && isNonPrintingMode) {
                         this.tabSymbolParticle.render(
@@ -2505,23 +2503,23 @@ export class Draw {
                             element,
                             x,
                             y + curRow.height / 2,
-                        );
+                        )
                     }
-                    this.textParticle.complete();
+                    this.textParticle.complete()
                 } else if (
                     element.rowFlex === RowFlex.ALIGNMENT ||
                     element.rowFlex === RowFlex.JUSTIFY
                 ) {
                     // 如果是两端对齐，因canvas目前不支持letterSpacing需单独绘制文本
-                    this.textParticle.record(ctx, element, x, y + offsetY);
-                    this.textParticle.complete();
+                    this.textParticle.record(ctx, element, x, y + offsetY)
+                    this.textParticle.complete()
                 } else if (element.type === ElementType.BLOCK) {
-                    this.textParticle.complete();
-                    this.blockParticle.render(pageNo, element, x, y);
+                    this.textParticle.complete()
+                    this.blockParticle.render(pageNo, element, x, y)
                 } else {
                     // 如果当前元素设置左偏移，则上一元素立即绘制
                     if (element.left) {
-                        this.textParticle.complete();
+                        this.textParticle.complete()
                     }
                     if (
                         zone === 'main' &&
@@ -2533,16 +2531,16 @@ export class Draw {
                             element,
                             x,
                             y + curRow.height / 2,
-                        ); // ; добавить потом
+                        ) // ; добавить потом
                     }
-                    this.textParticle.record(ctx, element, x, y + offsetY);
+                    this.textParticle.record(ctx, element, x, y + offsetY)
                     // 如果设置字宽、字间距、标点符号（避免浏览器排版缩小间距）需单独绘制
                     if (
                         element.width ||
                         element.letterSpacing ||
                         PUNCTUATION_REG.test(element.value)
                     ) {
-                        this.textParticle.complete();
+                        this.textParticle.complete()
                     }
                 }
                 // 换行符绘制
@@ -2558,7 +2556,7 @@ export class Draw {
                         element,
                         x,
                         y + curRow.height / 2,
-                    );
+                    )
                 }
                 if (
                     zone === 'main' &&
@@ -2575,14 +2573,14 @@ export class Draw {
                             element,
                             x + 27,
                             y + curRow.height / 2,
-                        );
+                        )
                     else {
                         this.paragraphSymbolParticle.render(
                             ctx,
                             element,
                             x,
                             y + curRow.height / 2,
-                        );
+                        )
                     }
                 }
                 // 边框绘制（目前仅支持控件）
@@ -2592,18 +2590,18 @@ export class Draw {
                         preElement?.control?.border &&
                         preElement.controlId !== element.controlId
                     ) {
-                        this.control.drawBorder(ctx);
+                        this.control.drawBorder(ctx)
                     }
                     // 当前元素位置信息记录
-                    const rowMargin = this.getElementRowMargin(element);
+                    const rowMargin = this.getElementRowMargin(element)
                     this.control.recordBorderInfo(
                         x,
                         y + rowMargin,
                         element.metrics.width,
                         curRow.height - 2 * rowMargin,
-                    );
+                    )
                 } else if (preElement?.control?.border) {
-                    this.control.drawBorder(ctx);
+                    this.control.drawBorder(ctx)
                 }
                 // 下划线记录
                 if (element.underline || element.control?.underline) {
@@ -2612,23 +2610,23 @@ export class Draw {
                         preElement?.type === ElementType.SUBSCRIPT &&
                         element.type !== ElementType.SUBSCRIPT
                     ) {
-                        this.underline.render(ctx);
+                        this.underline.render(ctx)
                     }
                     // 行间距
-                    const rowMargin = this.getElementRowMargin(element);
+                    const rowMargin = this.getElementRowMargin(element)
                     // 元素向左偏移量
-                    const offsetX = element.left || 0;
+                    const offsetX = element.left || 0
                     // 下标元素y轴偏移值
-                    let offsetY = 0;
+                    let offsetY = 0
                     if (element.type === ElementType.SUBSCRIPT) {
-                        offsetY = this.subscriptParticle.getOffsetY(element);
+                        offsetY = this.subscriptParticle.getOffsetY(element)
                     }
                     // 占位符不参与颜色计算
                     const color =
                         element.controlComponent ===
                         ControlComponent.PLACEHOLDER
                             ? undefined
-                            : element.color;
+                            : element.color
                     this.underline.recordFillInfo(
                         ctx,
                         x - offsetX,
@@ -2637,12 +2635,12 @@ export class Draw {
                         0,
                         color,
                         element.textDecoration?.style,
-                    );
+                    )
                 } else if (
                     preElement?.underline ||
                     preElement?.control?.underline
                 ) {
-                    this.underline.render(ctx);
+                    this.underline.render(ctx)
                 }
                 // 删除线记录
                 if (element.strikeout) {
@@ -2661,51 +2659,51 @@ export class Draw {
                                 this.getElementSize(preElement) !==
                                     this.getElementSize(element))
                         ) {
-                            this.strikeout.render(ctx);
+                            this.strikeout.render(ctx)
                         }
                         // 基线文字测量信息
                         const standardMetrics =
                             this.textParticle.measureBasisWord(
                                 ctx,
                                 this.getElementFont(element),
-                            );
+                            )
                         // 文字渲染位置 + 基线文字下偏移量 - 一半文字高度
                         let adjustY =
                             y +
                             offsetY +
                             standardMetrics.actualBoundingBoxDescent * scale -
-                            metrics.height / 2;
+                            metrics.height / 2
                         // 上下标位置调整
                         if (element.type === ElementType.SUBSCRIPT) {
                             adjustY +=
-                                this.subscriptParticle.getOffsetY(element);
+                                this.subscriptParticle.getOffsetY(element)
                         } else if (element.type === ElementType.SUPERSCRIPT) {
                             adjustY +=
-                                this.superscriptParticle.getOffsetY(element);
+                                this.superscriptParticle.getOffsetY(element)
                         }
                         this.strikeout.recordFillInfo(
                             ctx,
                             x,
                             adjustY,
                             metrics.width,
-                        );
+                        )
                     }
                 } else if (preElement?.strikeout) {
-                    this.strikeout.render(ctx);
+                    this.strikeout.render(ctx)
                 }
                 // 选区记录
                 const {
                     zone: currentZone,
                     startIndex,
                     endIndex,
-                } = this.range.getRange();
+                } = this.range.getRange()
                 if (
                     currentZone === zone &&
                     startIndex !== endIndex &&
                     startIndex <= index &&
                     index <= endIndex
                 ) {
-                    const positionContext = this.position.getPositionContext();
+                    const positionContext = this.position.getPositionContext()
                     // 表格需限定上下文
                     if (
                         (!positionContext.isTable && !element.tdId) ||
@@ -2713,29 +2711,29 @@ export class Draw {
                     ) {
                         // 从行尾开始-绘制最小宽度
                         if (startIndex === index) {
-                            const nextElement = elementList[startIndex + 1];
+                            const nextElement = elementList[startIndex + 1]
                             if (nextElement && nextElement.value === ZERO) {
-                                rangeRecord.x = x + metrics.width;
-                                rangeRecord.y = y;
-                                rangeRecord.height = curRow.height;
-                                rangeRecord.width += this.options.rangeMinWidth;
+                                rangeRecord.x = x + metrics.width
+                                rangeRecord.y = y
+                                rangeRecord.height = curRow.height
+                                rangeRecord.width += this.options.rangeMinWidth
                             }
                         } else {
-                            let rangeWidth = metrics.width;
+                            let rangeWidth = metrics.width
                             // 最小选区宽度
                             if (
                                 rangeWidth === 0 &&
                                 curRow.elementList.length === 1
                             ) {
-                                rangeWidth = this.options.rangeMinWidth;
+                                rangeWidth = this.options.rangeMinWidth
                             }
                             // 记录第一次位置、行高
                             if (!rangeRecord.width) {
-                                rangeRecord.x = x;
-                                rangeRecord.y = y;
-                                rangeRecord.height = curRow.height;
+                                rangeRecord.x = x
+                                rangeRecord.y = y
+                                rangeRecord.height = curRow.height
                             }
-                            rangeRecord.width += rangeWidth;
+                            rangeRecord.width += rangeWidth
                         }
                     }
                 }
@@ -2747,16 +2745,23 @@ export class Draw {
                         y,
                         metrics.width,
                         curRow.height,
-                    );
+                    )
                 }
-                index++;
+                index++
                 // 绘制表格内元素
                 if (element.type === ElementType.TABLE) {
-                    const tdPaddingWidth = tdPadding[1] + tdPadding[3];
+                    const tdPaddingWidth = tdPadding[1] + tdPadding[3]
                     for (let t = 0; t < element.trList!.length; t++) {
-                        const tr = element.trList![t];
+                        const tr = element.trList![t]
                         for (let d = 0; d < tr.tdList!.length; d++) {
-                            const td = tr.tdList[d];
+                            const td = tr.tdList[d]
+                        const tdOrientation =
+                            td.textOrientation ?? TextOrientation.HORIZONTAL
+
+                        // Поворачиваем ИМЕННО содержимое ячейки (td.value),
+                        // вокруг верхнего левого угла ячейки (без учёта текста/паддинга).
+                        // Это соответствует желаемому "pivot" для корректного размещения.
+                        if (tdOrientation === TextOrientation.HORIZONTAL) {
                             this.drawRow(ctx, {
                                 elementList: td.value,
                                 positionList: td.positionList!,
@@ -2767,7 +2772,56 @@ export class Draw {
                                     (td.width! - tdPaddingWidth) * scale,
                                 zone,
                                 isDrawLineBreak,
-                            });
+                            })
+                            continue
+                        }
+
+                        // Преобразование координат: x,y -> x',y'
+                        // Ради правильного размещения добавляем смещение,
+                        // чтобы повернутый текст оставался внутри рамки ячейки.
+                        const tdX = (td.x ?? 0) * scale + x
+                        const tdY = (td.y ?? 0) * scale + y
+                        const tdW = (td.width ?? 0) * scale
+                        ctx.save()
+                        if (tdOrientation === TextOrientation.VERTICAL_TOP_TO_BOTTOM) {
+                            // 90° clockwise: x' = y + (cx - cy)
+                            //               y' = -x + (cy + cx + w)
+                            // где (cx,cy) = верхний левый угол ячейки, w = ширина ячейки
+                            ctx.transform(
+                                0,
+                                -1,
+                                1,
+                                0,
+                                tdX - tdY,
+                                tdY + tdX + tdW,
+                            )
+                        } else if (
+                            tdOrientation === TextOrientation.VERTICAL_BOTTOM_TO_TOP
+                        ) {
+                            // -90° (270° clockwise): x' = -y + (cx + cy)
+                            //                      y' = x + (cy - cx)
+                            ctx.transform(
+                                0,
+                                1,
+                                -1,
+                                0,
+                                tdX + tdY,
+                                tdY - tdX,
+                            )
+                        }
+
+                        this.drawRow(ctx, {
+                            elementList: td.value,
+                            positionList: td.positionList!,
+                            rowList: td.rowList!,
+                            pageNo,
+                            startIndex: 0,
+                            innerWidth:
+                                (td.width! - tdPaddingWidth) * scale,
+                            zone,
+                            isDrawLineBreak,
+                        })
+                        ctx.restore()
                         }
                     }
                 }
@@ -2778,20 +2832,20 @@ export class Draw {
                     ctx,
                     curRow,
                     positionList[curRow.startIndex],
-                );
+                )
             }
             // 绘制文字、边框、下划线、删除线
-            this.textParticle.complete();
-            this.control.drawBorder(ctx);
-            this.underline.render(ctx);
-            this.strikeout.render(ctx);
+            this.textParticle.complete()
+            this.control.drawBorder(ctx)
+            this.underline.render(ctx)
+            this.strikeout.render(ctx)
             // 绘制批注样式
-            this.group.render(ctx);
+            this.group.render(ctx)
             // 绘制选区
             if (!isPrintMode) {
                 if (rangeRecord.width && rangeRecord.height) {
-                    const { x, y, width, height } = rangeRecord;
-                    this.range.render(ctx, x, y, width, height);
+                    const { x, y, width, height } = rangeRecord
+                    this.range.render(ctx, x, y, width, height)
                 }
                 if (
                     isCrossRowCol &&
@@ -2802,8 +2856,8 @@ export class Draw {
                         coordinate: {
                             leftTop: [x, y],
                         },
-                    } = positionList[curRow.startIndex];
-                    this.tableParticle.drawRange(ctx, tableRangeElement, x, y);
+                    } = positionList[curRow.startIndex]
+                    this.tableParticle.drawRange(ctx, tableRangeElement, x, y)
                 }
             }
         }
@@ -2813,12 +2867,12 @@ export class Draw {
         ctx: CanvasRenderingContext2D,
         payload: IDrawFloatPayload,
     ) {
-        const { scale } = this.options;
-        const floatPositionList = this.position.getFloatPositionList();
-        const { imgDisplays, pageNo } = payload;
+        const { scale } = this.options
+        const floatPositionList = this.position.getFloatPositionList()
+        const { imgDisplays, pageNo } = payload
         for (let e = 0; e < floatPositionList.length; e++) {
-            const floatPosition = floatPositionList[e];
-            const element = floatPosition.element;
+            const floatPosition = floatPositionList[e]
+            const element = floatPosition.element
             if (
                 (pageNo === floatPosition.pageNo ||
                     floatPosition.zone === EditorZone.HEADER ||
@@ -2827,31 +2881,31 @@ export class Draw {
                 imgDisplays.includes(element.imgDisplay) &&
                 element.type === ElementType.IMAGE
             ) {
-                const imgFloatPosition = element.imgFloatPosition!;
+                const imgFloatPosition = element.imgFloatPosition!
                 this.imageParticle.render(
                     ctx,
                     element,
                     imgFloatPosition.x * scale,
                     imgFloatPosition.y * scale,
-                );
+                )
             }
         }
     }
 
     private _clearPage(pageNo: number) {
-        const ctx = this.ctxList[pageNo];
-        const pageDom = this.pageList[pageNo];
+        const ctx = this.ctxList[pageNo]
+        const pageDom = this.pageList[pageNo]
         ctx.clearRect(
             0,
             0,
             Math.max(pageDom.width, this.getWidth()),
             Math.max(pageDom.height, this.getHeight()),
-        );
-        this.blockParticle.clear();
+        )
+        this.blockParticle.clear()
     }
 
     private _drawPage(payload: IDrawPagePayload) {
-        const { elementList, positionList, rowList, pageNo } = payload;
+        const { elementList, positionList, rowList, pageNo } = payload
         const {
             inactiveAlpha,
             pageMode,
@@ -2860,27 +2914,27 @@ export class Draw {
             pageNumber,
             lineNumber,
             pageBorder,
-        } = this.options;
-        const innerWidth = this.getInnerWidth();
-        const ctx = this.ctxList[pageNo];
+        } = this.options
+        const innerWidth = this.getInnerWidth()
+        const ctx = this.ctxList[pageNo]
         // 判断当前激活区域-非正文区域时元素透明度降低
-        ctx.globalAlpha = !this.zone.isMainActive() ? inactiveAlpha : 1;
-        this._clearPage(pageNo);
+        ctx.globalAlpha = !this.zone.isMainActive() ? inactiveAlpha : 1
+        this._clearPage(pageNo)
         // 绘制背景
-        this.background.render(ctx, pageNo);
+        this.background.render(ctx, pageNo)
         // 绘制页边距
         if (this.mode !== EditorMode.PRINT) {
-            this.margin.render(ctx, pageNo);
+            this.margin.render(ctx, pageNo)
         }
         // 渲染衬于文字下方元素
         this._drawFloat(ctx, {
             pageNo,
             imgDisplays: [ImageDisplay.FLOAT_BOTTOM],
-        });
+        })
         // 控件高亮
-        this.control.renderHighlightList(ctx, pageNo);
+        this.control.renderHighlightList(ctx, pageNo)
         // 渲染元素
-        const index = rowList[0]?.startIndex;
+        const index = rowList[0]?.startIndex
         this.drawRow(ctx, {
             elementList,
             positionList,
@@ -2889,93 +2943,93 @@ export class Draw {
             startIndex: index,
             innerWidth,
             zone: EditorZone.MAIN,
-        });
+        })
         if (this.getIsPagingMode()) {
             // 绘制页眉
             if (!header.disabled) {
-                this.header.render(ctx, pageNo);
+                this.header.render(ctx, pageNo)
             }
             // 绘制页码
             if (!pageNumber.disabled) {
-                this.pageNumber.render(ctx, pageNo);
+                this.pageNumber.render(ctx, pageNo)
             }
             // 绘制页脚
             if (!footer.disabled) {
-                this.footer.render(ctx, pageNo);
+                this.footer.render(ctx, pageNo)
             }
         }
         // 渲染浮于文字上方元素
         this._drawFloat(ctx, {
             pageNo,
             imgDisplays: [ImageDisplay.FLOAT_TOP, ImageDisplay.SURROUND],
-        });
+        })
         // 搜索匹配绘制
         if (this.search.getSearchKeyword()) {
-            this.search.render(ctx, pageNo);
+            this.search.render(ctx, pageNo)
         }
         // 绘制水印
         if (pageMode !== PageMode.CONTINUITY && this.options.watermark.data) {
-            this.waterMark.render(ctx);
+            this.waterMark.render(ctx)
         }
         // 绘制空白占位符
         if (this.elementList.length <= 1 && !this.elementList[0]?.listId) {
-            this.placeholder.render(ctx);
+            this.placeholder.render(ctx)
         }
         // 渲染行数
         if (!lineNumber.disabled) {
-            this.lineNumber.render(ctx, pageNo);
+            this.lineNumber.render(ctx, pageNo)
         }
         // 绘制页面边框
         if (!pageBorder.disabled) {
-            this.pageBorder.render(ctx);
+            this.pageBorder.render(ctx)
         }
     }
 
     private _disconnectLazyRender() {
-        this.lazyRenderIntersectionObserver?.disconnect();
+        this.lazyRenderIntersectionObserver?.disconnect()
     }
 
     private _lazyRender() {
-        const positionList = this.position.getOriginalMainPositionList();
-        const elementList = this.getOriginalMainElementList();
-        this._disconnectLazyRender();
+        const positionList = this.position.getOriginalMainPositionList()
+        const elementList = this.getOriginalMainElementList()
+        this._disconnectLazyRender()
         this.lazyRenderIntersectionObserver = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
                         const index = Number(
                             (<HTMLCanvasElement>entry.target).dataset.index,
-                        );
+                        )
                         this._drawPage({
                             elementList,
                             positionList,
                             rowList: this.pageRowList[index],
                             pageNo: index,
-                        });
+                        })
                     }
-                });
+                })
             },
-        );
+        )
         this.pageList.forEach((el) => {
-            this.lazyRenderIntersectionObserver!.observe(el);
-        });
+            this.lazyRenderIntersectionObserver!.observe(el)
+        })
     }
 
     private _immediateRender() {
-        const positionList = this.position.getOriginalMainPositionList();
-        const elementList = this.getOriginalMainElementList();
+        const positionList = this.position.getOriginalMainPositionList()
+        const elementList = this.getOriginalMainElementList()
         for (let i = 0; i < this.pageRowList.length; i++) {
             this._drawPage({
                 elementList,
                 positionList,
                 rowList: this.pageRowList[i],
                 pageNo: i,
-            });
+            })
         }
     }
 
-    public render(payload?: IDrawOption, isFootnote?: boolean) {
-        const { header, footer } = this.options;
+    public render(payload?: IDrawOption) {
+        const { header, footer } = this.options
         const {
             isSubmitHistory = true,
             isSetCursor = true,
@@ -2984,44 +3038,44 @@ export class Draw {
             isInit = false,
             isSourceHistory = false,
             isFirstRender = false,
-        } = payload || {};
-        let { curIndex } = payload || {};
-        const innerWidth = this.getInnerWidth();
-        const isPagingMode = this.getIsPagingMode();
+        } = payload || {}
+        let { curIndex } = payload || {}
+        const innerWidth = this.getInnerWidth()
+        const isPagingMode = this.getIsPagingMode()
         // 计算文档信息
         if (isCompute) {
             // 清空浮动元素位置信息
-            this.position.setFloatPositionList([]);
+            this.position.setFloatPositionList([])
             if (isPagingMode) {
                 // 页眉信息
                 if (!header.disabled) {
-                    this.header.compute();
+                    this.header.compute()
                 }
                 // 页脚信息
                 if (!footer.disabled) {
-                    this.footer.compute();
+                    this.footer.compute()
                 }
             }
             // 行信息
-            const margins = this.getMargins();
-            const pageHeight = this.getHeight();
-            const extraHeight = this.header.getExtraHeight();
-            const mainOuterHeight = this.getMainOuterHeight();
-            const startX = margins[3];
-            const startY = margins[0] + extraHeight;
+            const margins = this.getMargins()
+            const pageHeight = this.getHeight()
+            const extraHeight = this.header.getExtraHeight()
+            const mainOuterHeight = this.getMainOuterHeight()
+            const startX = margins[3]
+            const startY = margins[0] + extraHeight
             const surroundElementList = pickSurroundElementList(
                 this.elementList,
-            );
-            const maxChunkSize = 1000;
-            const elementListChunks = [];
+            )
+            const maxChunkSize = 1000
+            const elementListChunks = []
 
             for (let i = 0; i < this.elementList.length; i += maxChunkSize) {
                 elementListChunks.push(
                     this.elementList.slice(i, i + maxChunkSize),
-                );
+                )
             }
-            this.rowList = [];
-            let currentStartIndex = 0;
+            this.rowList = []
+            let currentStartIndex = 0
             for (const chunk of elementListChunks) {
                 const rowListChunk = this.computeRowList({
                     startX,
@@ -3033,64 +3087,64 @@ export class Draw {
                     surroundElementList,
                     elementList: chunk,
                     startIndex: currentStartIndex,
-                });
-                currentStartIndex += chunk.length;
-                this.rowList = this.rowList.concat(rowListChunk);
+                })
+                currentStartIndex += chunk.length
+                this.rowList = this.rowList.concat(rowListChunk)
             }
             // 页面信息
-            this.pageRowList = this._computePageList(isFootnote);
+            this.pageRowList = this._computePageList()
             // 位置信息
-            this.position.computePositionList();
+            this.position.computePositionList()
             // 搜索信息
-            const searchKeyword = this.search.getSearchKeyword();
+            const searchKeyword = this.search.getSearchKeyword()
             if (searchKeyword) {
-                this.search.compute(searchKeyword);
+                this.search.compute(searchKeyword)
             }
             // 控件关键词高亮
-            this.control.computeHighlightList();
+            this.control.computeHighlightList()
         }
         // 清除光标等副作用
-        this.imageObserver.clearAll();
-        this.cursor.recoveryCursor();
+        this.imageObserver.clearAll()
+        this.cursor.recoveryCursor()
         // 创建纸张
         for (let i = 0; i < this.pageRowList.length; i++) {
             if (!this.pageList[i]) {
-                this._createPage(i);
+                this._createPage(i)
             }
         }
         // 移除多余页
-        const curPageCount = this.pageRowList.length;
-        const prePageCount = this.pageList.length;
+        const curPageCount = this.pageRowList.length
+        const prePageCount = this.pageList.length
         if (prePageCount > curPageCount) {
-            const deleteCount = prePageCount - curPageCount;
-            this.ctxList.splice(curPageCount, deleteCount);
+            const deleteCount = prePageCount - curPageCount
+            this.ctxList.splice(curPageCount, deleteCount)
             this.pageList
                 .splice(curPageCount, deleteCount)
-                .forEach((page) => page.remove());
+                .forEach((page) => page.remove())
         }
         // 绘制元素
         // 连续页因为有高度的变化会导致canvas渲染空白，需立即渲染，否则会出现闪动
         if (isLazy && isPagingMode) {
-            this._lazyRender();
+            this._lazyRender()
         } else {
-            this._immediateRender();
+            this._immediateRender()
         }
         // 光标重绘
         if (isSetCursor) {
-            curIndex = this.setCursor(curIndex);
+            curIndex = this.setCursor(curIndex)
         }
         // 历史记录用于undo、redo（非首次渲染内容变更 || 第一次存在光标时）
         if (
             (isSubmitHistory && !isFirstRender) ||
             (curIndex !== undefined && this.historyManager.isStackEmpty())
         ) {
-            this.submitHistory(curIndex);
+            this.submitHistory(curIndex)
         }
         // 信息变动回调
         nextTick(() => {
             // 重新唤起弹窗类控件
             if (isCompute && this.control.getActiveControl()) {
-                this.control.reAwakeControl();
+                this.control.reAwakeControl()
             }
             // 表格工具重新渲染
             if (
@@ -3098,142 +3152,142 @@ export class Draw {
                 !this.isReadonly() &&
                 this.position.getPositionContext().isTable
             ) {
-                this.tableTool.render();
+                this.tableTool.render()
             }
             // 页眉指示器重新渲染
             if (isCompute && !this.zone.isMainActive()) {
-                this.zone.drawZoneIndicator();
+                this.zone.drawZoneIndicator()
             }
             // 页面尺寸改变
             if (this.listener.pageSizeChange) {
-                this.listener.pageSizeChange(this.pageRowList.length);
+                this.listener.pageSizeChange(this.pageRowList.length)
             }
             if (this.eventBus.isSubscribe('pageSizeChange')) {
-                this.eventBus.emit('pageSizeChange', this.pageRowList.length);
+                this.eventBus.emit('pageSizeChange', this.pageRowList.length)
             }
             // 文档内容改变
             if ((isSubmitHistory || isSourceHistory) && !isInit) {
                 if (this.listener.contentChange) {
-                    this.listener.contentChange();
+                    this.listener.contentChange()
                 }
                 if (this.eventBus.isSubscribe('contentChange')) {
-                    this.eventBus.emit('contentChange');
+                    this.eventBus.emit('contentChange')
                 }
             }
-        });
+        })
     }
 
     public setCursor(curIndex: number | undefined) {
-        const positionContext = this.position.getPositionContext();
-        const positionList = this.position.getPositionList();
+        const positionContext = this.position.getPositionContext()
+        const positionList = this.position.getPositionList()
         if (positionContext.isTable) {
-            const { index, trIndex, tdIndex } = positionContext;
-            const elementList = this.getOriginalElementList();
+            const { index, trIndex, tdIndex } = positionContext
+            const elementList = this.getOriginalElementList()
             const tablePositionList =
                 elementList[index!].trList?.[trIndex!].tdList[tdIndex!]
-                    .positionList;
+                    .positionList
             if (curIndex === undefined && tablePositionList) {
-                curIndex = tablePositionList.length - 1;
+                curIndex = tablePositionList.length - 1
             }
-            const tablePosition = tablePositionList?.[curIndex!];
-            this.position.setCursorPosition(tablePosition || null);
+            const tablePosition = tablePositionList?.[curIndex!]
+            this.position.setCursorPosition(tablePosition || null)
         } else {
             this.position.setCursorPosition(
                 curIndex !== undefined ? positionList[curIndex] : null,
-            );
+            )
             if (curIndex !== undefined) {
                 const cursorPositionChange: ICursorPositionChange = (
                     index: number,
                 ) => {
-                    return index;
-                };
-                cursorPositionChange(curIndex);
+                    return index
+                }
+                cursorPositionChange(curIndex)
 
-                this.eventBus.emit('cursorPositionChange', curIndex);
+                this.eventBus.emit('cursorPositionChange', curIndex)
             }
         }
         // 定位到图片元素并且位置发生变化
-        let isShowCursor = true;
+        let isShowCursor = true
         if (
             curIndex !== undefined &&
             positionContext.isImage &&
             positionContext.isDirectHit
         ) {
-            const elementList = this.getElementList();
-            const element = elementList[curIndex];
+            const elementList = this.getElementList()
+            const element = elementList[curIndex]
             if (IMAGE_ELEMENT_TYPE.includes(element.type!)) {
-                isShowCursor = false;
-                const position = this.position.getCursorPosition();
-                this.previewer.updateResizer(element, position);
+                isShowCursor = false
+                const position = this.position.getCursorPosition()
+                this.previewer.updateResizer(element, position)
             }
         }
         this.cursor.drawCursor({
             isShow: isShowCursor,
-        });
-        return curIndex;
+        })
+        return curIndex
     }
 
     public submitHistory(curIndex: number | undefined) {
-        const positionContext = this.position.getPositionContext();
-        const oldElementList = getSlimCloneElementList(this.elementList);
+        const positionContext = this.position.getPositionContext()
+        const oldElementList = getSlimCloneElementList(this.elementList)
         const oldHeaderElementList = getSlimCloneElementList(
             this.header.getElementList(),
-        );
+        )
         const oldFooterElementList = getSlimCloneElementList(
             this.footer.getElementList(),
-        );
-        const oldRange = deepClone(this.range.getRange());
-        const pageNo = this.pageNo;
-        const oldPositionContext = deepClone(positionContext);
-        const zone = this.zone.getZone();
+        )
+        const oldRange = deepClone(this.range.getRange())
+        const pageNo = this.pageNo
+        const oldPositionContext = deepClone(positionContext)
+        const zone = this.zone.getZone()
         this.historyManager.execute(() => {
-            this.zone.setZone(zone);
-            this.setPageNo(pageNo);
-            this.position.setPositionContext(deepClone(oldPositionContext));
-            this.header.setElementList(deepClone(oldHeaderElementList));
-            this.footer.setElementList(deepClone(oldFooterElementList));
-            this.elementList = deepClone(oldElementList);
-            this.range.replaceRange(deepClone(oldRange));
+            this.zone.setZone(zone)
+            this.setPageNo(pageNo)
+            this.position.setPositionContext(deepClone(oldPositionContext))
+            this.header.setElementList(deepClone(oldHeaderElementList))
+            this.footer.setElementList(deepClone(oldFooterElementList))
+            this.elementList = deepClone(oldElementList)
+            this.range.replaceRange(deepClone(oldRange))
             this.render({
                 curIndex,
                 isSubmitHistory: false,
                 isSourceHistory: true,
-            });
-        });
+            })
+        })
     }
 
     public destroy() {
-        this.container.remove();
-        this.globalEvent.removeEvent();
-        this.scrollObserver.removeEvent();
-        this.selectionObserver.removeEvent();
+        this.container.remove()
+        this.globalEvent.removeEvent()
+        this.scrollObserver.removeEvent()
+        this.selectionObserver.removeEvent()
     }
 
     public clearSideEffect() {
         // 预览工具组件
-        this.getPreviewer().clearResizer();
+        this.getPreviewer().clearResizer()
         // 表格工具组件
-        this.getTableTool().dispose();
+        this.getTableTool().dispose()
         // 超链接弹窗
-        this.getHyperlinkParticle().clearHyperlinkPopup();
+        this.getHyperlinkParticle().clearHyperlinkPopup()
         // 日期控件
-        this.getDateParticle().clearDatePicker();
+        this.getDateParticle().clearDatePicker()
     }
 
     public setParagraphIndentById(
         ids: string | string[],
         spacing: { before?: number; after?: number; firstLine?: number },
     ) {
-        const isDisabled = this.isReadonly() || this.isDisabled();
-        if (isDisabled) return;
-        const idArray = Array.isArray(ids) ? ids : [ids];
-        const elementList = this.getOriginalElementList();
+        const isDisabled = this.isReadonly() || this.isDisabled()
+        if (isDisabled) return
+        const idArray = Array.isArray(ids) ? ids : [ids]
+        const elementList = this.getOriginalElementList()
         const spacingDiffernce =
             spacing?.firstLine -
-            elementList.find((el) => el.id === ids)?.spacing?.firstLine;
+            elementList.find((el) => el.id === ids)?.spacing?.firstLine
         const updatedElements = elementList.map((element) => {
             if (idArray.includes(element.id)) {
-                const existingSpacing = element.spacing || {};
+                const existingSpacing = element.spacing || {}
 
                 return {
                     ...element,
@@ -3252,90 +3306,90 @@ export class Draw {
                                 ? spacing.firstLine
                                 : existingSpacing.firstLine,
                     },
-                };
+                }
             }
-            return element;
-        });
-        const positionList = this.position.getPositionList();
-        let coordinates = null;
+            return element
+        })
+        const positionList = this.position.getPositionList()
+        let coordinates = null
         if (ids !== null) {
             if (Array.isArray(ids))
                 coordinates =
                     positionList[
                         elementList.findIndex((elem) => elem?.id === ids[0])
-                    ].coordinate;
+                    ].coordinate
             else {
                 coordinates =
                     positionList[
                         elementList.findIndex((elem) => elem?.id === ids)
-                    ].coordinate;
+                    ].coordinate
             }
         }
-        const posX = coordinates.leftTop[0] - 25 + (spacingDiffernce || 0);
+        const posX = coordinates.leftTop[0] - 25 + (spacingDiffernce || 0)
         const posY =
-            (coordinates.leftTop[1] + coordinates.leftBottom[1]) / 2 + 2;
+            (coordinates.leftTop[1] + coordinates.leftBottom[1]) / 2 + 2
         if (ids !== undefined) {
-            const paragraphIndentChange: IParagraphIndentChange = (payload) => {
-                return ids;
-            };
-            paragraphIndentChange({ ids, x: posX, y: posY });
+            const paragraphIndentChange: IParagraphIndentChange = () => {
+                return ids
+            }
+            paragraphIndentChange({ ids, x: posX, y: posY })
 
             this.eventBus.emit('paragraphIndentChange', {
                 ids,
                 x: posX,
                 y: posY,
-            });
+            })
         }
-        this.setEditorData({ main: updatedElements });
-        this.elementList = updatedElements;
-        this.render();
+        this.setEditorData({ main: updatedElements })
+        this.elementList = updatedElements
+        this.render()
     }
 
     public setPlacholderText() {
-        const range = this.range.getRange();
-        const startIndex = range.startIndex;
-        const endIndex = range.endIndex;
-        const elementList = this.elementList;
+        const range = this.range.getRange()
+        const startIndex = range.startIndex
+        const endIndex = range.endIndex
+        const elementList = this.elementList
 
         if (startIndex === endIndex) {
-            return;
+            return
         }
 
         for (let i = startIndex; i <= endIndex; i += 1) {
             if (!elementList[i].isPlaceholder) {
-                elementList[i].isPlaceholder = true;
+                elementList[i].isPlaceholder = true
             } else {
-                delete elementList[i].isPlaceholder;
+                delete elementList[i].isPlaceholder
             }
         }
-        this.render();
+        this.render()
     }
 
     public setDisabledText() {
-        const range = this.range.getRange();
-        const startIndex = range.startIndex;
-        const endIndex = range.endIndex;
-        const elementList = this.elementList;
+        const range = this.range.getRange()
+        const startIndex = range.startIndex
+        const endIndex = range.endIndex
+        const elementList = this.elementList
 
         if (startIndex === endIndex) {
-            return;
+            return
         }
 
         for (let i = startIndex; i <= endIndex; i += 1) {
             if (!elementList[i].isDisabled) {
-                elementList[i].isDisabled = true;
+                elementList[i].isDisabled = true
             } else {
-                delete elementList[i].isDisabled;
+                delete elementList[i].isDisabled
             }
         }
-        this.render();
+        this.render()
     }
 
     public transformCellIntoFormula() {
         const { isTable, tdIndex, trIndex, index } =
-            this.position.getPositionContext();
-        if (!isTable) return;
-        const elementList = this.getElementList();
+            this.position.getPositionContext()
+        if (!isTable) return
+        const elementList = this.getElementList()
 
         this.spliceElementList(elementList, 1, elementList.length - 1, [
             {
@@ -3345,17 +3399,17 @@ export class Draw {
                 tableId: elementList[0].tableId,
                 isDisabled: false,
             },
-        ]);
+        ])
 
         this.elementList[index!].trList[trIndex].tdList[
             tdIndex
-        ].isFormulaEditing = true;
+        ].isFormulaEditing = true
 
-        const rangeManager = this.getRange();
-        rangeManager.setRange(1, 1);
+        const rangeManager = this.getRange()
+        rangeManager.setRange(1, 1)
         this.render({
             curIndex: 1,
-        });
+        })
     }
 
     public calculateFormula(
@@ -3367,32 +3421,32 @@ export class Draw {
         isRecalculated?: boolean,
     ) {
         if (!isAccepted) {
-            this.spliceElementList(elementList, 1, elementList.length - 1);
+            this.spliceElementList(elementList, 1, elementList.length - 1)
             this.elementList[formulaTableElementIndex!].trList[trIndex].tdList[
                 tdIndex
-            ].backgroundColor = '';
+            ].backgroundColor = ''
             this.elementList[formulaTableElementIndex!].trList[trIndex].tdList[
                 tdIndex
-            ].formula = '';
+            ].formula = ''
             this.elementList[formulaTableElementIndex!].trList[trIndex].tdList[
                 tdIndex
-            ].isFormulaEditing = false;
-            elementList[0].isDisabled = false;
-            const rangeManager = this.getRange();
-            rangeManager.setRange(0, 0);
+            ].isFormulaEditing = false
+            elementList[0].isDisabled = false
+            const rangeManager = this.getRange()
+            rangeManager.setRange(0, 0)
             this.render({
                 curIndex: 0,
-            });
-            return;
+            })
+            return
         }
 
         const rawFormula = isRecalculated
             ? this.elementList[formulaTableElementIndex].trList[trIndex].tdList[
                   tdIndex
               ].formula
-            : elementList.map((el) => el.value).join('');
+            : elementList.map((el) => el.value).join('')
 
-        let formula = rawFormula.replace(/=/g, '');
+        let formula = rawFormula.replace(/=/g, '')
 
         const getCellValue = (trIndex: number, tdIndex: number) => {
             return this.elementList[formulaTableElementIndex!].trList[
@@ -3400,29 +3454,29 @@ export class Draw {
             ].tdList[tdIndex].value
                 .slice(1)
                 .map((el) => el.value)
-                .join('');
-        };
+                .join('')
+        }
 
         formula = formula
             .replace(/\uFEFF/g, '')
             .replace(/\u200B/g, '')
-            .replace(/\u00A0/g, ' ');
+            .replace(/\u00A0/g, ' ')
         if (formula.trim() === '') {
-            return;
+            return
         }
         this.elementList[formulaTableElementIndex].trList[trIndex].tdList[
             tdIndex
-        ].formula = formula.slice();
+        ].formula = formula.slice()
         formula = formula.replace(/C(\d+)R(\d+)/g, (_match, col, row) => {
-            const tdIndex = parseInt(col, 10);
-            const trIndex = parseInt(row, 10);
-            return getCellValue(tdIndex, trIndex);
-        });
-        let result;
+            const tdIndex = parseInt(col, 10)
+            const trIndex = parseInt(row, 10)
+            return getCellValue(tdIndex, trIndex)
+        })
+        let result
         try {
-            result = evaluate(formula);
+            result = evaluate(formula)
         } catch (error) {
-            result = '#ERROR';
+            result = '#ERROR'
         }
         const resultElements: IElement[] = result
             .toString()
@@ -3434,51 +3488,51 @@ export class Draw {
                     trId: elementList[0].trId,
                     tableId: elementList[0].tableId,
                     isDisabled: true,
-                };
-            });
+                }
+            })
         this.spliceElementList(elementList, 1, elementList.length - 1, [
             ...resultElements,
-        ]);
+        ])
         this.elementList[formulaTableElementIndex].trList[trIndex].tdList[
             tdIndex
-        ].backgroundColor = '#D8EAFF';
+        ].backgroundColor = '#D8EAFF'
         this.elementList[formulaTableElementIndex].trList[trIndex].tdList[
             tdIndex
-        ].isFormulaEditing = false;
-        const rangeManager = this.getRange();
-        rangeManager.setRange(elementList.length - 1, elementList.length - 1);
+        ].isFormulaEditing = false
+        const rangeManager = this.getRange()
+        rangeManager.setRange(elementList.length - 1, elementList.length - 1)
         this.render({
             curIndex: elementList.length - 1,
-        });
+        })
     }
 
     public deleteFormula() {
         const { isTable, tdIndex, trIndex, index } =
-            this.position.getPositionContext();
-        if (!isTable) return;
-        const elementList = this.getElementList();
+            this.position.getPositionContext()
+        if (!isTable) return
+        const elementList = this.getElementList()
         const formulaElement =
-            this.elementList[index!].trList[trIndex].tdList[tdIndex];
-        this.spliceElementList(elementList, 1, elementList.length - 1);
+            this.elementList[index!].trList[trIndex].tdList[tdIndex]
+        this.spliceElementList(elementList, 1, elementList.length - 1)
 
-        formulaElement.isFormulaEditing = false;
-        formulaElement.backgroundColor = '';
-        formulaElement.formula = '';
-        this.options.isTableFormulaEditing = false;
-        const rangeManager = this.getRange();
-        rangeManager.setRange(0, 0);
+        formulaElement.isFormulaEditing = false
+        formulaElement.backgroundColor = ''
+        formulaElement.formula = ''
+        this.options.isTableFormulaEditing = false
+        const rangeManager = this.getRange()
+        rangeManager.setRange(0, 0)
         this.render({
             curIndex: 0,
-        });
+        })
     }
 
     public editFormula() {
         const { isTable, tdIndex, trIndex, index } =
-            this.position.getPositionContext();
-        if (!isTable) return;
-        const elementList = this.getElementList();
+            this.position.getPositionContext()
+        if (!isTable) return
+        const elementList = this.getElementList()
         const formulaElement =
-            this.elementList[index!].trList[trIndex].tdList[tdIndex];
+            this.elementList[index!].trList[trIndex].tdList[tdIndex]
 
         const formulaString: IElement[] = formulaElement.formula
             .split('')
@@ -3490,22 +3544,22 @@ export class Draw {
                     trId: formulaElement?.value[0].trId,
                     value: elem,
                     isDisabled: false,
-                };
-            });
+                }
+            })
         this.spliceElementList(elementList, 1, elementList.length - 1, [
             ...formulaString,
-        ]);
+        ])
 
-        formulaElement.isFormulaEditing = true;
+        formulaElement.isFormulaEditing = true
 
         this.options.isTableFormulaEditing === true
             ? (this.options.isTableFormulaEditing = false)
-            : (this.options.isTableFormulaEditing = true);
+            : (this.options.isTableFormulaEditing = true)
 
-        const rangeManager = this.getRange();
-        rangeManager.setRange(elementList.length - 1, elementList.length - 1);
+        const rangeManager = this.getRange()
+        rangeManager.setRange(elementList.length - 1, elementList.length - 1)
         this.render({
             curIndex: elementList.length - 1,
-        });
+        })
     }
 }

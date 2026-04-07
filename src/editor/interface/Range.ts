@@ -1,5 +1,5 @@
-import { EditorZone } from '../dataset/enum/Editor';
-import { IElement, IElementFillRect } from './Element';
+import { EditorZone } from '../dataset/enum/Editor'
+import { IElement, IElementFillRect } from './Element'
 
 export interface IRange {
     startIndex: number;

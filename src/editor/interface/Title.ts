@@ -1,5 +1,5 @@
-import { EditorZone } from '../dataset/enum/Editor';
-import { IElement } from './Element';
+import { EditorZone } from '../dataset/enum/Editor'
+import { IElement } from './Element'
 
 export interface ITitleSizeOption {
     defaultFirstSize?: number;

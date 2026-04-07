@@ -1,4 +1,4 @@
-import { BlockType } from '../dataset/enum/Block';
+import { BlockType } from '../dataset/enum/Block'
 
 export interface IIFrameBlock {
     src?: string;

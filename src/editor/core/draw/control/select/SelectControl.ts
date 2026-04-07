@@ -1,117 +1,117 @@
 import {
     EDITOR_COMPONENT,
     EDITOR_PREFIX,
-} from '../../../../dataset/constant/Editor';
+} from '../../../../dataset/constant/Editor'
 import {
     CONTROL_STYLE_ATTR,
     EDITOR_ELEMENT_STYLE_ATTR,
-} from '../../../../dataset/constant/Element';
-import { ControlComponent } from '../../../../dataset/enum/Control';
-import { EditorComponent } from '../../../../dataset/enum/Editor';
-import { ElementType } from '../../../../dataset/enum/Element';
-import { KeyMap } from '../../../../dataset/enum/KeyMap';
-import { DeepRequired } from '../../../../interface/Common';
+} from '../../../../dataset/constant/Element'
+import { ControlComponent } from '../../../../dataset/enum/Control'
+import { EditorComponent } from '../../../../dataset/enum/Editor'
+import { ElementType } from '../../../../dataset/enum/Element'
+import { KeyMap } from '../../../../dataset/enum/KeyMap'
+import { DeepRequired } from '../../../../interface/Common'
 import {
     IControlContext,
     IControlInstance,
     IControlRuleOption,
-} from '../../../../interface/Control';
-import { IEditorOption } from '../../../../interface/Editor';
-import { IElement } from '../../../../interface/Element';
-import { omitObject, pickObject, splitText } from '../../../../utils';
-import { formatElementContext } from '../../../../utils/element';
-import { Control } from '../Control';
+} from '../../../../interface/Control'
+import { IEditorOption } from '../../../../interface/Editor'
+import { IElement } from '../../../../interface/Element'
+import { omitObject, pickObject, splitText } from '../../../../utils'
+import { formatElementContext } from '../../../../utils/element'
+import { Control } from '../Control'
 
 export class SelectControl implements IControlInstance {
-    private element: IElement;
-    private control: Control;
-    private isPopup: boolean;
-    private selectDom: HTMLDivElement | null;
-    private options: DeepRequired<IEditorOption>;
+    private element: IElement
+    private control: Control
+    private isPopup: boolean
+    private selectDom: HTMLDivElement | null
+    private options: DeepRequired<IEditorOption>
 
     constructor(element: IElement, control: Control) {
-        this.options = control.getDraw().getOptions();
-        this.element = element;
-        this.control = control;
-        this.isPopup = false;
-        this.selectDom = null;
+        this.options = control.getDraw().getOptions()
+        this.element = element
+        this.control = control
+        this.isPopup = false
+        this.selectDom = null
     }
 
     public setElement(element: IElement) {
-        this.element = element;
+        this.element = element
     }
 
     public getElement(): IElement {
-        return this.element;
+        return this.element
     }
 
     public getIsPopup(): boolean {
-        return this.isPopup;
+        return this.isPopup
     }
 
     public getCode(): string | null {
-        return this.element.control?.code || null;
+        return this.element.control?.code || null
     }
 
     public getValue(context: IControlContext = {}): IElement[] {
         const elementList =
-            context.elementList || this.control.getElementList();
-        const { startIndex } = context.range || this.control.getRange();
-        const startElement = elementList[startIndex];
-        const data: IElement[] = [];
+            context.elementList || this.control.getElementList()
+        const { startIndex } = context.range || this.control.getRange()
+        const startElement = elementList[startIndex]
+        const data: IElement[] = []
         // 向左查找
-        let preIndex = startIndex;
+        let preIndex = startIndex
         while (preIndex > 0) {
-            const preElement = elementList[preIndex];
+            const preElement = elementList[preIndex]
             if (
                 preElement.controlId !== startElement.controlId ||
                 preElement.controlComponent === ControlComponent.PREFIX
             ) {
-                break;
+                break
             }
             if (preElement.controlComponent === ControlComponent.VALUE) {
-                data.unshift(preElement);
+                data.unshift(preElement)
             }
-            preIndex--;
+            preIndex--
         }
         // 向右查找
-        let nextIndex = startIndex + 1;
+        let nextIndex = startIndex + 1
         while (nextIndex < elementList.length) {
-            const nextElement = elementList[nextIndex];
+            const nextElement = elementList[nextIndex]
             if (
                 nextElement.controlId !== startElement.controlId ||
                 nextElement.controlComponent === ControlComponent.POSTFIX
             ) {
-                break;
+                break
             }
             if (nextElement.controlComponent === ControlComponent.VALUE) {
-                data.push(nextElement);
+                data.push(nextElement)
             }
-            nextIndex++;
+            nextIndex++
         }
-        return data;
+        return data
     }
 
     public setValue(): number {
-        return -1;
+        return -1
     }
 
     public keydown(evt: KeyboardEvent): number | null {
         if (this.control.getIsDisabledControl()) {
-            return null;
+            return null
         }
-        const elementList = this.control.getElementList();
-        const range = this.control.getRange();
+        const elementList = this.control.getElementList()
+        const range = this.control.getRange()
         // 收缩边界到Value内
-        this.control.shrinkBoundary();
-        const { startIndex, endIndex } = range;
-        const startElement = elementList[startIndex];
-        const endElement = elementList[endIndex];
+        this.control.shrinkBoundary()
+        const { startIndex, endIndex } = range
+        const startElement = elementList[startIndex]
+        const endElement = elementList[endIndex]
         // backspace
         if (evt.key === KeyMap.Backspace) {
             // 清空选项
             if (startIndex !== endIndex) {
-                return this.clearSelect();
+                return this.clearSelect()
             } else {
                 if (
                     startElement.controlComponent === ControlComponent.PREFIX ||
@@ -120,19 +120,19 @@ export class SelectControl implements IControlInstance {
                         ControlComponent.PLACEHOLDER
                 ) {
                     // 前缀、后缀、占位符
-                    return this.control.removeControl(startIndex);
+                    return this.control.removeControl(startIndex)
                 } else {
                     // 清空选项
-                    return this.clearSelect();
+                    return this.clearSelect()
                 }
             }
         } else if (evt.key === KeyMap.Delete) {
             // 移除选区元素
             if (startIndex !== endIndex) {
                 // 清空选项
-                return this.clearSelect();
+                return this.clearSelect()
             } else {
-                const endNextElement = elementList[endIndex + 1];
+                const endNextElement = elementList[endIndex + 1]
                 if (
                     (startElement.controlComponent ===
                         ControlComponent.PREFIX &&
@@ -144,27 +144,27 @@ export class SelectControl implements IControlInstance {
                         ControlComponent.PLACEHOLDER
                 ) {
                     // 前缀、后缀、占位符
-                    return this.control.removeControl(startIndex);
+                    return this.control.removeControl(startIndex)
                 } else {
                     // 清空选项
-                    return this.clearSelect();
+                    return this.clearSelect()
                 }
             }
         }
-        return endIndex;
+        return endIndex
     }
 
     public cut(): number {
         if (this.control.getIsDisabledControl()) {
-            return -1;
+            return -1
         }
-        this.control.shrinkBoundary();
-        const { startIndex, endIndex } = this.control.getRange();
+        this.control.shrinkBoundary()
+        const { startIndex, endIndex } = this.control.getRange()
         if (startIndex === endIndex) {
-            return startIndex;
+            return startIndex
         }
         // 清空选项
-        return this.clearSelect();
+        return this.clearSelect()
     }
 
     public clearSelect(
@@ -172,60 +172,60 @@ export class SelectControl implements IControlInstance {
         options: IControlRuleOption = {},
     ): number {
         const { isIgnoreDisabledRule = false, isAddPlaceholder = true } =
-            options;
+            options
         // 校验是否可以设置
         if (
             !isIgnoreDisabledRule &&
             this.control.getIsDisabledControl(context)
         ) {
-            return -1;
+            return -1
         }
         const elementList =
-            context.elementList || this.control.getElementList();
-        const { startIndex } = context.range || this.control.getRange();
-        const startElement = elementList[startIndex];
-        let leftIndex = -1;
-        let rightIndex = -1;
+            context.elementList || this.control.getElementList()
+        const { startIndex } = context.range || this.control.getRange()
+        const startElement = elementList[startIndex]
+        let leftIndex = -1
+        let rightIndex = -1
         // 向左查找
-        let preIndex = startIndex;
+        let preIndex = startIndex
         while (preIndex > 0) {
-            const preElement = elementList[preIndex];
+            const preElement = elementList[preIndex]
             if (
                 preElement.controlId !== startElement.controlId ||
                 preElement.controlComponent === ControlComponent.PREFIX
             ) {
-                leftIndex = preIndex;
-                break;
+                leftIndex = preIndex
+                break
             }
-            preIndex--;
+            preIndex--
         }
         // 向右查找
-        let nextIndex = startIndex + 1;
+        let nextIndex = startIndex + 1
         while (nextIndex < elementList.length) {
-            const nextElement = elementList[nextIndex];
+            const nextElement = elementList[nextIndex]
             if (
                 nextElement.controlId !== startElement.controlId ||
                 nextElement.controlComponent === ControlComponent.POSTFIX
             ) {
-                rightIndex = nextIndex - 1;
-                break;
+                rightIndex = nextIndex - 1
+                break
             }
-            nextIndex++;
+            nextIndex++
         }
-        if (!~leftIndex || !~rightIndex) return -1;
+        if (!~leftIndex || !~rightIndex) return -1
         // 删除元素
-        const draw = this.control.getDraw();
+        const draw = this.control.getDraw()
         draw.spliceElementList(
             elementList,
             leftIndex + 1,
             rightIndex - leftIndex,
-        );
+        )
         // 增加占位符
         if (isAddPlaceholder) {
-            this.control.addPlaceholder(preIndex, context);
+            this.control.addPlaceholder(preIndex, context)
         }
-        this.element.control!.code = null;
-        return preIndex;
+        this.element.control!.code = null
+        return preIndex
     }
 
     public setSelect(
@@ -238,50 +238,50 @@ export class SelectControl implements IControlInstance {
             !options.isIgnoreDisabledRule &&
             this.control.getIsDisabledControl(context)
         ) {
-            return;
+            return
         }
         const elementList =
-            context.elementList || this.control.getElementList();
-        const range = context.range || this.control.getRange();
-        const control = this.element.control!;
-        const oldCode = control.code;
+            context.elementList || this.control.getElementList()
+        const range = context.range || this.control.getRange()
+        const control = this.element.control!
+        const oldCode = control.code
         // 选项相同时无需重复渲染
         if (code === oldCode) {
             this.control.repaintControl({
                 curIndex: range.startIndex,
                 isCompute: false,
                 isSubmitHistory: false,
-            });
-            this.destroy();
-            return;
+            })
+            this.destroy()
+            return
         }
-        const valueSets = control.valueSets;
-        if (!Array.isArray(valueSets) || !valueSets.length) return;
+        const valueSets = control.valueSets
+        if (!Array.isArray(valueSets) || !valueSets.length) return
         // 转换code
-        const valueSet = valueSets.find((v) => v.code === code);
-        if (!valueSet) return;
+        const valueSet = valueSets.find((v) => v.code === code)
+        if (!valueSet) return
         // 样式赋值元素-默认值的第一个字符样式，否则取默认样式
-        const valueElement = this.getValue(context)[0];
+        const valueElement = this.getValue(context)[0]
         const styleElement = valueElement
             ? pickObject(valueElement, EDITOR_ELEMENT_STYLE_ATTR)
-            : pickObject(elementList[range.startIndex], CONTROL_STYLE_ATTR);
+            : pickObject(elementList[range.startIndex], CONTROL_STYLE_ATTR)
         // 清空选项
         const prefixIndex = this.clearSelect(context, {
             isAddPlaceholder: false,
-        });
-        if (!~prefixIndex) return;
+        })
+        if (!~prefixIndex) return
         // 当前无值时清空占位符
         if (!oldCode) {
-            this.control.removePlaceholder(prefixIndex, context);
+            this.control.removePlaceholder(prefixIndex, context)
         }
         // 属性赋值元素-默认为前缀属性
         const propertyElement = omitObject(
             elementList[prefixIndex],
             EDITOR_ELEMENT_STYLE_ATTR,
-        );
-        const start = prefixIndex + 1;
-        const data = splitText(valueSet.value);
-        const draw = this.control.getDraw();
+        )
+        const start = prefixIndex + 1
+        const data = splitText(valueSet.value)
+        const draw = this.control.getDraw()
         for (let i = 0; i < data.length; i++) {
             const newElement: IElement = {
                 ...styleElement,
@@ -289,84 +289,84 @@ export class SelectControl implements IControlInstance {
                 type: ElementType.TEXT,
                 value: data[i],
                 controlComponent: ControlComponent.VALUE,
-            };
+            }
             formatElementContext(elementList, [newElement], prefixIndex, {
                 editorOptions: this.options,
-            });
-            draw.spliceElementList(elementList, start + i, 0, [newElement]);
+            })
+            draw.spliceElementList(elementList, start + i, 0, [newElement])
         }
         // 设置状态
-        control.code = code;
+        control.code = code
         // 重新渲染控件
         if (!context.range) {
-            const newIndex = start + data.length - 1;
+            const newIndex = start + data.length - 1
             this.control.repaintControl({
                 curIndex: newIndex,
-            });
-            this.destroy();
+            })
+            this.destroy()
         }
     }
 
     private _createSelectPopupDom() {
-        const control = this.element.control!;
-        const valueSets = control.valueSets;
-        if (!Array.isArray(valueSets) || !valueSets.length) return;
-        const position = this.control.getPosition();
-        if (!position) return;
+        const control = this.element.control!
+        const valueSets = control.valueSets
+        if (!Array.isArray(valueSets) || !valueSets.length) return
+        const position = this.control.getPosition()
+        if (!position) return
         // dom树：<div><ul><li>item</li></ul></div>
-        const selectPopupContainer = document.createElement('div');
+        const selectPopupContainer = document.createElement('div')
         selectPopupContainer.classList.add(
             `${EDITOR_PREFIX}-select-control-popup`,
-        );
+        )
         selectPopupContainer.setAttribute(
             EDITOR_COMPONENT,
             EditorComponent.POPUP,
-        );
-        const ul = document.createElement('ul');
+        )
+        const ul = document.createElement('ul')
         for (let v = 0; v < valueSets.length; v++) {
-            const valueSet = valueSets[v];
-            const li = document.createElement('li');
-            const code = this.getCode();
+            const valueSet = valueSets[v]
+            const li = document.createElement('li')
+            const code = this.getCode()
             if (code === valueSet.code) {
-                li.classList.add('active');
+                li.classList.add('active')
             }
             li.onclick = () => {
-                this.setSelect(valueSet.code);
-            };
-            li.append(document.createTextNode(valueSet.value));
-            ul.append(li);
+                this.setSelect(valueSet.code)
+            }
+            li.append(document.createTextNode(valueSet.value))
+            ul.append(li)
         }
-        selectPopupContainer.append(ul);
+        selectPopupContainer.append(ul)
         // 定位
         const {
             coordinate: {
                 leftTop: [left, top],
             },
             lineHeight,
-        } = position;
-        const preY = this.control.getPreY();
-        selectPopupContainer.style.left = `${left}px`;
-        selectPopupContainer.style.top = `${top + preY + lineHeight}px`;
+        } = position
+        const preY = this.control.getPreY()
+        selectPopupContainer.style.left = `${left}px`
+        selectPopupContainer.style.top = `${top + preY + lineHeight}px`
         // 追加至container
-        const container = this.control.getContainer();
-        container.append(selectPopupContainer);
-        this.selectDom = selectPopupContainer;
+        const container = this.control.getContainer()
+        container.append(selectPopupContainer)
+        this.selectDom = selectPopupContainer
     }
 
     public awake() {
-        if (this.isPopup || this.control.getIsDisabledControl()) return;
-        const { startIndex } = this.control.getRange();
-        const elementList = this.control.getElementList();
+        if (this.isPopup || this.control.getIsDisabledControl()) return
+        const { startIndex } = this.control.getRange()
+        const elementList = this.control.getElementList()
         if (elementList[startIndex + 1]?.controlId !== this.element.controlId) {
-            return;
+            return
         }
-        this._createSelectPopupDom();
-        this.isPopup = true;
+        this._createSelectPopupDom()
+        this.isPopup = true
     }
 
     public destroy() {
-        if (!this.isPopup) return;
-        this.selectDom?.remove();
-        this.isPopup = false;
+        if (!this.isPopup) return
+        this.selectDom?.remove()
+        this.isPopup = false
     }
 }
